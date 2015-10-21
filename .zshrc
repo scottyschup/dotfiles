@@ -49,16 +49,15 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git atom ruby colorize rails zsh-syntax-highlighting)
+plugins=(git atom ruby colorize rails zsh-syntax-highlighting z)
 
 # User configuration
-
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export SPARK_HOME=/usr/local/Cellar/apache-spark/1.4.1-custom
 export PYTHONPATH=$SPARK_HOME/libexec/python:$SPARK_HOME/libexec/python/build:$PYTHONPATH
 export PYSPARK_HOME=/usr/local/Cellar/apache-spark/1.4.1-custom/python
 export ASPERA_ANALYTICS_HOME=~/Documents/gitlab/analytics/a0/data
-# export MANPATH="/usr/local/man:$MANPATH"
+export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
@@ -85,7 +84,6 @@ source $ZSH/oh-my-zsh.sh
 # general common functions
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
-export PATH="/usr/local/sbin:$PATH"
 
 alias az='atom ~/.zshrc'
 alias av='atom ~/.vimrc'
@@ -108,12 +106,13 @@ function pingGoogle {
 }
 
 # navigation
-alias ll='ls -lAhL'
+alias ll='k -Ah'
 alias lt='ls -AhL *'
-alias llt='ls -lAhL *'
-alias up='cd ..'
-alias upp='cd ../..'
-alias upl='cd ../ && ls -lah'
+alias llt='k -Ah *'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias upl='cd ../ && k -Ah'
 
 function cdl { 
   cd $1 && ls -lah
@@ -279,3 +278,6 @@ bindkey -s "^[Om" "-"
 bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
+
+source ~/.k.sh
+source ~/.z.sh
