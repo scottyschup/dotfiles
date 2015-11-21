@@ -107,15 +107,16 @@ function pingGoogle {
 
 # navigation
 alias ll='k -Ah'
-alias lt='ls -AhL *'
-alias llt='k -Ah *'
+alias lst='ls -AhL *'
+alias lt='k -Ah *'
+alias up='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias upl='cd ../ && k -Ah'
 
 function cdl { 
-  cd $1 && ls -lah
+  cd $1 && k -Ah
 }
 
 function cda {
@@ -127,7 +128,7 @@ function whcd {
 }
 
 function whcdl {
-  cd `which $1 | xargs dirname` && ls -lah
+  cd `which $1 | xargs dirname` && k -Ah
 }
 
 function mkcd {
@@ -212,10 +213,11 @@ alias stop-spark='cd /usr/local/Cellar/apache-spark/1.4.1-custom/sbin && ./stop-
 alias restart-spark='cd /usr/local/Cellar/apache-spark/1.4.1-custom/sbin && stop-spark; sleep 3; start-spark'
 alias start-redis='redis-server'
 alias start-api-server='cd ~/Documents/gitlab/analytics/a0/data && ./run.py -d 5 -p --mode object server'
-alias switch-to-local-server-file='cd ~/Documents/gitlab/analytics/a0 && cp ./server.yaml.local ./server.yaml'
-alias switch-to-remote-server-file='cd ~/Documents/gitlab/analytics/a0 && cp ./server.yaml.remote ./server.yaml'
+alias switch-to-local-server-file='cd ~/Documents/gitlab/analytics/a0-proto-analytics && cp ./server.yaml.local ./server.yaml'
+alias switch-to-remote-server-file='cd ~/Documents/gitlab/analytics/a0-proto-analytics && cp ./server.yaml.remote ./server.yaml'
 
 # git aliases
+alias g='git'
 alias ga='git add'
 alias gaa='git add .'
 alias gac='git add . && git commit -m'
@@ -224,9 +226,9 @@ alias gba='git branch -a' # list all branches
 alias gbd='git branch -D' # delete local branch
 alias gbdr='git push origin --delete' # delete remote branch
 alias gcb='git checkout -b' # create new branch
-alias gc='git commit -m'
+alias gcm='git commit -m'
 alias gco='git checkout'
-alias gcm='git checkout master'
+alias gcom='git checkout master'
 alias gd='git diff'
 alias gds='git diff --stat'
 alias gdns='git diff --numstat'
@@ -236,10 +238,41 @@ alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gm='git merge'
 alias gp='git push'
 alias gpl='git pull'
-alias gplsu='git pull --set-upstream'
-alias gpsu='git push --set-upstream'
+alias gplu='git pull -u'
+alias gpluo='git pull -u origin'
+alias gpu='git push -u'
+alias gpuo='git push -u origin'
+alias gra='git remote add'
+alias grb='git rebase'
+alias grbm='git rebase master'
+alias grr='git remote remove'
+alias grao='git remote add origin'
+alias grro='git remote remove origin'
+alias grv='git remote --verbose'
 alias gs='git status'
+alias gst='git stash'
+alias gsa='git stash apply'
+alias gsai='git stash apply --index'
+alias gsb='git stash branch'
+alias gsl='git stash list'
+alias gsu='git stash show -p | git apply -R' #=> git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
+
+function gacp {
+  if [ $1 ]; then
+    G_MESSAGE=$1
+  else
+    return "Enter a commit message"
+  fi
+
+  G_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+  git add .; git commit -m $G_MESSAGE; git push -u origin $G_BRANCH
+}
+
+# grunt
+alias gt='grunt'
+alias gts='grunt serve'
+alias gtt='grunt test'
 
 function glastnhashes {
   git rev-list --max-count=$1 HEAD
@@ -254,6 +287,9 @@ alias be='bundle exec'
 alias bi='bundle install'
 alias bo='bundle open'
 alias bu='bundle update'
+
+# rails
+alias r='rails'
 
 # Keypad
 # 0 . Enter
