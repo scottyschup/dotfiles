@@ -1,110 +1,6 @@
 # all my aliases
 # For a full list of active aliases, run `alias`.
 
-function cd_atom {
-  cd $1 && atom .
-}
-
-function cd_ll {
-  cd $1 && k -Ah
-}
-
-function git_add_commit_push {
-  if [ $1 ]; then
-    G_MESSAGE=$1
-  else
-    return "Enter a commit message"
-  fi
-
-  G_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-  git add .; git commit -m $G_MESSAGE; git push -u origin $G_BRANCH
-}
-
-function git_lastnhashes {
-  git rev-list --max-count=$1 HEAD
-}
-
-function mkdir_cd {
-  if [ ! -n "$1" ]; then
-    echo "Enter a directory name"
-  elif [ -d $1 ]; then
-    echo "\`$1' already exists"
-  else
-    mkdir $1 && cd $1
-  fi
-}
-
-function pingGoogle {
-  if [ ! -n "$1" ]; then
-    ping -c 5 google.com
-  else
-    ping -c $1 google.com
-  fi
-}
-
-function precmd {
-  setTitles $PWD
-}
-
-function setMainTitle {
-  echo -ne "\033]2;$(titleOrPWD $1)\007"
-}
-
-function setTabTitle {
-  echo -ne "\033]1;$(shortTitle $1)\007"
-}
-
-function setTitles {
-  if [ $2 ]; then
-    TITLE2=$2
-  else
-    TITLE2=$1
-  fi
-  setMainTitle $TITLE2
-  setTabTitle $1
-}
-
-function shortTitle {
-  COUNTER=0
-  TMP_TITLE=`titleOrPWD $1`
-  for word in $(echo $TMP_TITLE | tr "/" " "); do
-    let "COUNTER+=1"
-    APU_WORD=$PU_WORD
-    PU_WORD=$U_WORD
-    U_WORD=$word
-  done
-  #
-  if [ $COUNTER -lt '3' ]; then
-    TITLE=$TMP_TITLE
-  elif [ $APU_WORD = $USER ]; then
-    TITLE="~/$PU_WORD/$U_WORD"
-  elif [ $PU_WORD = $USER ]; then
-    TITLE="~/$U_WORD"
-  elif [ $U_WORD = $USER ]; then
-    TITLE='~'
-  else
-    TITLE=".../$PU_WORD/$U_WORD"
-  fi
-  echo "$TITLE"
-}
-
-function titleOrPWD {
-  if [ $1 ]; then
-    TITLE=$1
-  else
-    TITLE=$PWD
-  fi
-  echo $TITLE
-}
-
-function which_cd {
-  cd `which $1 | xargs dirname`
-}
-
-function which_cd_ll {
-  cd `which $1 | xargs dirname` && k -Ah
-}
-
 # bundle
 alias be='bundle exec'
 alias bera='bundle exec rake'
@@ -128,6 +24,7 @@ alias gb='git branch'
 alias gba='git branch -a' # list all branches
 alias gbd='git branch -D' # delete local branch
 alias gbdr='git push origin --delete' # delete remote branch
+alias gbr='git branch -r' # list remote branches
 alias gcb='git checkout -b'
 alias gcm='git commit -m'
 alias gco='git checkout'
@@ -163,6 +60,11 @@ alias gsl='git stash list'
 alias gsu='git stash show -p | git apply -R' #=> git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
+# grunt
+alias gt='grunt'
+alias gts='grunt serve'
+alias gtt='grunt test'
+
 # heroku
 alias ghd='git push origin master && git push heroku master && heroku run rake db:migrate'
 alias gph='git push heroku'
@@ -173,6 +75,7 @@ alias hdbm='heroku run rake db:migrate'
 alias hdbr='heroku pg:reset && heroku run rake db:migrate && heroku run rake db:seed'
 
 # miscellany
+alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
 
@@ -185,6 +88,8 @@ alias lt='k -Ah *'
 alias mkcd='mkdir_cd'
 alias up='cd ..'
 alias upl='cd .. && k -Ah'
+alias upp='cd ../..'
+alias uppl='cd ../.. && k -Ah'
 alias whcd='which_cd'
 alias whcdl='which_cd_ll'
 

@@ -1,19 +1,9 @@
-export ZSH=~/.oh-my-zsh
-export OLD_HOME='/Users/OldMacLappy/Users/Scott'
-ZSH_THEME="robbyrussell"
-DISABLE_AUTO_UPDATE="true"
-DISABLE_AUTO_TITLE="true"
-ENABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
-HIST_STAMPS="mm/dd/yyyy"
-plugins=(git atom ruby colorize rails vi-mode z)
-source $ZSH/oh-my-zsh.sh
-source ~/.oh-my-zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.k.sh
+export DOTFILES="~/.dotfiles"
+source $DOTFILES/.zshrc
+source `brew --prefix`/etc/profile.d/z.sh
 
 export LANG=en_US.UTF-8
-export PATH="~/.rbenv/bin:/usr/local/git/bin:/Applications/Postgres.app/Contents/Versions/9.4/bin:/opt/local/bin:/opt/local/sbin:~/.rbenv/shims:/mybin:$PATH"
+export OLD_HOME='/Users/OldMacLappy/Users/Scott'
 
-source ~/dotfiles/.aliases
-source `brew --prefix`/etc/profile.d/z.sh
-eval "$(rbenv init -)"
+export PATH="/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin"
+export PATH="/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH"
