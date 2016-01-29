@@ -1,3 +1,4 @@
+# My custom shell functions, most of which should probably be scripts in a bin somewhere. A project for another day
 
 function cd_atom {
   cd $1 && atom .

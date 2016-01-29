@@ -1,5 +1,7 @@
 # all my aliases
 # For a full list of active aliases, run `alias`.
+# Most of the navigation aliases require k.sh to be installed
+# Some of the aliases below are for functions in the ./.functions file
 
 # bundle
 alias be='bundle exec'
@@ -57,7 +59,7 @@ alias gsa='git stash apply'
 alias gsai='git stash apply --index'
 alias gsb='git stash branch'
 alias gsl='git stash list'
-alias gsu='git stash show -p | git apply -R' #=> git stash unapply
+alias gsu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
 # grunt

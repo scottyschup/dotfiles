@@ -1,6 +1,5 @@
 export DOTFILES="$HOME/.dotfiles"
 source $DOTFILES/.zshrc
-source ~/.z.sh
 
 export MANPATH="/usr/local/man"
 export PATH="/usr/local/sbin:$PATH"
