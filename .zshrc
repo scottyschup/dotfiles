@@ -11,6 +11,7 @@ source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighti
 source ~/.k.sh
 source $DOTFILES/.aliases
 source $DOTFILES/.functions
+source $DOTFILES/custom_zsh_tabs.sh
 
 export LANG=en_US.UTF-8
 export PATH="~/.rbenv/bin:~/.rbenv/shims:$PATH"
