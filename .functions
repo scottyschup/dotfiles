@@ -64,3 +64,11 @@ function which_cd {
 function which_cd_ll {
   cd `which $1 | xargs dirname` && k -Ah
 }
+
+function z_atom {
+  z $1 && atom .
+}
+
+function z_ll {
+  z $1 && k -Ah
+}
