@@ -27,9 +27,9 @@ alias gba='git branch -a' # list all branches
 alias gbd='git branch -D' # delete local branch
 alias gbdr='git push origin --delete' # delete remote branch
 alias gbr='git branch -r' # list remote branches
-alias gcb='git checkout -b'
 alias gcm='git commit -m'
 alias gco='git checkout'
+alias gcob='git checkout -b'
 alias gcom='git checkout master'
 alias gd='git diff'
 alias gds='git diff --stat'
@@ -38,6 +38,7 @@ alias gf='git fetch'
 alias ghl='cat .git/refs/heads/master' # full hash
 alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gin='git init'
+alias gig='git_ignore_and_remove'
 alias gln='git_lastnhashes'
 alias gm='git merge'
 alias gp='git push'
@@ -80,6 +81,7 @@ alias hdbr='heroku pg:reset && heroku run rake db:migrate && heroku run rake db:
 alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
+alias flushOpenWith='eval "$(/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder;)"'
 
 # navigation
 alias cda='cd_atom'

@@ -19,6 +19,10 @@ function git_add_commit_push {
   git add .; git commit -m $G_MESSAGE; git push -u origin $G_BRANCH
 }
 
+function git_ignore_and_remove {
+  echo $1 >> ./.gitignore; git rm --cached $1
+}
+
 function git_lastnhashes {
   git rev-list --max-count=$1 HEAD
 }
