@@ -26,6 +26,7 @@ alias gb='git branch'
 alias gba='git branch -a' # list all branches
 alias gbd='git branch -D' # delete local branch
 alias gbdr='git push origin --delete' # delete remote branch
+alias gbpr='git remote prune origin' # removes dead branches from remote origin
 alias gbr='git branch -r' # list remote branches
 alias gcm='git commit -m'
 alias gco='git checkout'
