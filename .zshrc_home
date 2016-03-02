@@ -5,5 +5,5 @@ source `brew --prefix`/etc/profile.d/z.sh
 export LANG=en_US.UTF-8
 export OLD_HOME='/Users/OldMacLappy/Users/Scott'
 
-export PATH="/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin"
-export PATH="/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH"
+export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
+export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
