@@ -117,7 +117,7 @@ alias rdms='rake db:migrate:status'
 # server
 alias pyss='python -m SimpleHTTPServer'
 
-# dotfiles
+# dotfiles (and iTerm autolaunch)
 alias aa='atom $DOTFILES/.aliases'
 alias ad='atom $DOTFILES' # opens atom with navigation pane for all dotfiles
 alias af='atom $DOTFILES/.functions'
@@ -131,3 +131,6 @@ alias va='vim $DOTFILES/.aliases'
 alias vf='vim $DOTFILES/.functions'
 alias vv='vim $DOTFILES/.vimrc'
 alias vz='vim $DOTFILES/.zshrc'
+alias ai='atom $DOTFILES/iTermAutoLaunch.scpt'
+alias vi='vim $DOTFILES/iTermAutoLaunch.scpt'
+
