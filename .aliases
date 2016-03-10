@@ -109,11 +109,11 @@ alias zl='z_ll'
 # rails
 alias r='rails'
 alias gi='gem install'
-alias rdm='rake db:migrate'
-alias rdrs='rake db:reset'
-alias rds='rake db:seed'
-alias rdrb='rake db:rollback'
-alias rdms='rake db:migrate:status'
+alias rdbm='rake db:migrate'
+alias rdbr='rake db:reset'
+alias rdbs='rake db:seed'
+alias rdbrb='rake db:rollback'
+alias rdbms='rake db:migrate:status'
 
 # server
 alias pyss='python -m SimpleHTTPServer'
