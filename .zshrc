@@ -13,4 +13,3 @@ source $DOTFILES/custom_zsh_tabs.sh # this should go into zsh_custom/plugins
 export LANG=en_US.UTF-8
 export PATH=~/.rbenv/bin:~/.rbenv/shims:$PATH:~/bin
 eval "$(rbenv init -)"
-# export MANPATH="/usr/share/man"
