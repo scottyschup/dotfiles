@@ -8,15 +8,20 @@ function cd_ll {
   cd $1 && k -Ah
 }
 
-function git_add_commit_push {
-  if [ $1 ]; then
-    G_MESSAGE=$1
+function git_add_commit {
+  if [ $2 ]; then
+    G_ADD=$1
+    G_MESSAGE=$2
   else
     return "Enter a commit message"
   fi
+  git add $G_ADD; git commit -m $G_MESSAGE;
+}
 
+function git_add_commit_push {
+  gac $1 $2
   G_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-  git add .; git commit -m $G_MESSAGE; git push -u origin $G_BRANCH
+  git push -u origin $G_BRANCH
 }
 
 function git_commit_push {
