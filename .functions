@@ -24,6 +24,17 @@ function git_add_commit_push {
   git push -u origin $G_BRANCH
 }
 
+function git_branch_delete_remote {
+  if [ $2 ]; then
+    REMOTE=$1
+    BRANCH=$2
+  else
+    REMOTE='origin'
+    BRANCH=$1
+  fi
+  git push $REMOTE --delete $BRANCH
+}
+
 function git_commit_push {
   git commit -m $1 && git push
 }
@@ -52,6 +63,17 @@ function pingGoogle {
   else
     ping -c $1 google.com
   fi
+}
+
+function rails_reset {
+  mysql.server start
+  export RAILS_ENV="development"
+  bundle install
+  rake db:drop
+  rake db:create
+  rake db:migrate
+  rake db:seed
+  rails server
 }
 
 function untarAll {
