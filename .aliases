@@ -124,8 +124,9 @@ alias za='z_atom'
 alias zl='z_ll'
 
 # rails
-alias r='rails'
 alias gi='gem install'
+alias r='rails'
+alias rc="export RAILS_ENV='development'; rails console"
 alias rdbm='rake db:migrate'
 alias rdbr='rake db:reset'
 alias rdbs='rake db:seed'
