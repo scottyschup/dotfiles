@@ -1,4 +1,6 @@
 export DOTFILES="$HOME/.dotfiles"
 source $DOTFILES/.zshrc
 
+export RAILS_ENV="development"
+
 export PATH=/usr/local/sbin:$PATH
