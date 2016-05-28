@@ -17,16 +17,13 @@ tell application "iTerm"
     delay 2
 
     tell first session
-      write text "z wood"
-      write text "node"
+      write text "z wood; node"
     end tell
     tell second session
-      write text "z sawmill"
-      write text "redis-cli"
+      write text "z sawmill; redis-cli"
     end tell
     tell third session
-      write text "z lumber"
-      write text "r c"
+      write text "z lumber; r c"
     end tell
 
     launch session "Default Session"
@@ -39,16 +36,13 @@ tell application "iTerm"
     delay 2
 
     tell fourth session
-      write text "z wood"
-      write text "gts"
+      write text "z wood; atom .; gls"
     end tell
     tell fifth session
-      write text "redis-cli SHUTDOWN"
-      write text "redis-server"
+      write text "redis-cli SHUTDOWN; redis-server"
     end tell
     tell sixth session
-      write text "z lumber"
-      write text "r s"
+      write text "z lumber; atom .; omni_killer puma; r s"
     end tell
 
     launch session "Default Session"

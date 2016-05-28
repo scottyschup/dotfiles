@@ -10,22 +10,49 @@ function cd_ll {
 
 function git_add_commit {
   if [ $2 ]; then
-    G_ADD=$1
-    G_MESSAGE=$2
+    g_add=$1
+    g_msg=$2
   else
     return "Enter a commit message"
   fi
-  git add $G_ADD; git commit -m $G_MESSAGE;
+  git add $g_add; git commit -m $g_msg;
 }
 
 function git_add_commit_push {
   gac $1 $2
-  G_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-  git push -u origin $G_BRANCH
+  g_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+  git push -u origin $g_branch
+}
+
+function git_branch_delete_remote {
+  if [ $2 ]; then
+    remote=$1
+    branch=$2
+  else
+    remote='origin'
+    branch=$1
+  fi
+  git push $remote --delete $branch
 }
 
 function git_commit_push {
   git commit -m $1 && git push
+}
+
+function git_diff_file {
+  if [ $3 ]; then
+    commit2=$3
+  else
+    commit2="HEAD"
+  fi
+
+  if [ $2 ]; then
+    file=$1
+    commit1=$2
+    git diff $commit1 $commit2 $file
+  else
+    echo "Usage: git_diff_file COMMIT FILE_NAME" >&2; exit 1
+  fi
 }
 
 function git_ignore_and_remove {
@@ -46,12 +73,38 @@ function mkdir_cd {
   fi
 }
 
-function pingGoogle {
+function omni_killer {
+  for pid in $(pids_for $1); do
+    kill -9 $pid;
+  done
+}
+
+function pids_for {
+  ps aux |
+  grep $1 |
+  grep -v grep |
+  awk '{print $2}' |
+  tr '\n' ' ' |
+  sed 's/\s$//'
+}
+
+function ping_google {
   if [ ! -n "$1" ]; then
     ping -c 5 google.com
   else
     ping -c $1 google.com
   fi
+}
+
+function rails_reset {
+  mysql.server restart &&
+  export RAILS_ENV="development" &&
+  bundle install &&
+  rake db:drop &&
+  rake db:create &&
+  rake db:migrate &&
+  rake db:seed &&
+  rails server
 }
 
 function untarAll {

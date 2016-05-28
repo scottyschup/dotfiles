@@ -26,16 +26,20 @@ alias garc='git add . && git rebase --continue'
 alias gb='git branch'
 alias gba='git branch -a' # list all branches
 alias gbd='git branch -D' # delete local branch
-alias gbdr='git push origin --delete' # delete remote branch
+alias gbdr='git_branch_delete_remote' # delete remote branch
 alias gbpr='git remote prune origin' # removes dead branches from remote origin
 alias gbr='git branch -r' # list remote branches
+alias gca='git commit --amend'
+alias gcfm='git checkout --force master'
 alias gcm='git commit -m'
 alias gcp='git_commit_push'
 alias gco='git checkout'
 alias gcob='git checkout -b'
+alias gcof='git checkout --force'
 alias gcog='git checkout gh-pages'
 alias gcom='git checkout master'
 alias gd='git diff'
+alias gdf='git_diff_file'
 alias gds='git diff --stat'
 alias gdns='git diff --numstat'
 alias gf='git fetch'
@@ -46,6 +50,7 @@ alias gig='git_ignore_and_remove'
 alias gln='git_lastnhashes'
 alias gm='git merge'
 alias gp='git push'
+alias gpf='git push --force'
 alias gpl='git pull'
 alias gplu='git pull -u'
 alias gpluo='git pull -u origin'
@@ -58,6 +63,7 @@ alias grbm='git rebase master'
 alias grbs='git rebase --skip'
 alias grollback='git reset HEAD~1'
 alias grollforward='git reset HEAD@{1}'
+alias grp='git remote prune'
 alias grpo='git remote prune origin' # removes dead branches from remote origin
 alias grr='git remote remove'
 alias grao='git remote add origin'
@@ -65,33 +71,35 @@ alias grro='git remote remove origin'
 alias grv='git remote --verbose'
 alias gs='git status'
 alias gst='git stash'
-alias gsa='git stash apply'
-alias gsai='git stash apply --index'
-alias gsb='git stash branch'
-alias gsl='git stash list'
-alias gsu='git stash show -p | git apply -R' # git stash unapply
+alias gsta='git stash apply'
+alias gstai='git stash apply --index'
+alias gstb='git stash branch'
+alias gstl='git stash list'
+alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
-alias vggi='vim ~/.gitignore_global'
 
 # grunt
 alias gt='grunt'
 alias gts='grunt serve'
+alias gtsf='grunt serve --force'
 alias gtt='grunt test'
+alias gtrs='rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force'
 
-# heroku
-alias ghd='git push origin master && git push heroku master && heroku run rake db:migrate'
-alias gph='git push heroku'
-alias gphp='git push origin master && git push heroku master'
-alias ho='heroku open'
-alias hr='heroku run'
-alias hdbm='heroku run rake db:migrate'
-alias hdbr='heroku pg:reset && heroku run rake db:migrate && heroku run rake db:seed'
+# gulp
+alias gl='gulp'
+alias gls='gulp serve'
+alias glr='rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve'
 
 # miscellany
 alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
 alias flushOpenWith='eval "$(/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder;)"'
+
+# mysql
+alias msst='mysql.server start'
+alias mssp='mysql.server stop'
+alias msr='mysql.server restart'
 
 # navigation
 alias cda='cd_atom'
@@ -110,13 +118,15 @@ alias za='z_atom'
 alias zl='z_ll'
 
 # rails
-alias r='rails'
 alias gi='gem install'
+alias r='rails'
+alias rc="export RAILS_ENV='development'; rails console"
 alias rdbm='rake db:migrate'
 alias rdbr='rake db:reset'
 alias rdbs='rake db:seed'
 alias rdbrb='rake db:rollback'
 alias rdbms='rake db:migrate:status'
+alias rrs='rails_reset'
 
 # server
 alias pyss='python -m SimpleHTTPServer'
@@ -128,11 +138,12 @@ alias af='atom $DOTFILES/.functions'
 alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
 alias sa='source $DOTFILES/.aliases'
-alias sd='. $DOTFILES/.aliases; . $DOTFILES/.functions; . $DOTFILES/.zshrc'
+alias sd='. $DOTFILES/.aliases; . $DOTFILES/.functions; . ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
-alias sz='source $DOTFILES/.zshrc'
+alias sz='source ~/.zshrc'
 alias va='vim $DOTFILES/.aliases'
 alias vf='vim $DOTFILES/.functions'
+alias vggi='vim ~/.gitignore_global'
 alias vv='vim $DOTFILES/.vimrc'
 alias vz='vim $DOTFILES/.zshrc'
 alias vi='vim $DOTFILES/iTermAutoLaunch.scpt'
