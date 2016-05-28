@@ -78,17 +78,17 @@ alias gstl='git stash list'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
-# grunt
+# javascript/npm/nvm/gulp/grunt
+alias gl='gulp'
+alias gls='gulp serve'
+alias glr='rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve'
 alias gt='grunt'
 alias gts='grunt serve'
 alias gtsf='grunt serve --force'
 alias gtt='grunt test'
 alias gtrs='rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force'
-
-# gulp
-alias gl='gulp'
-alias gls='gulp serve'
-alias glr='rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve'
+alias npme='PATH=$(npm bin):$PATH'
+alias wp='$(npm bin)/webpack'
 
 # miscellany
 alias captainslog='atom -n ~/Documents/work_log.md'
@@ -117,7 +117,7 @@ alias whcdl='which_cd_ll'
 alias za='z_atom'
 alias zl='z_ll'
 
-# rails
+# ruby/rails
 alias gi='gem install'
 alias r='rails'
 alias rc="export RAILS_ENV='development'; rails console"
