@@ -89,9 +89,9 @@ alias gtt='grunt test'
 alias gtrs='rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force'
 alias npme='PATH=$(npm bin):$PATH'
 alias react_new='new_react_project'
-alias react_install='npm install --save react && npm install --save react-dom'
+alias react_install='npm install --save react react-dom'
 alias react_webpack="cp $DOTFILES/webpack.config.js ./webpack.config.js && npm install --save webpack"
-alias react_babel_install='npm install --save babel-core && npm install --save babel-loader && npm install --save babel-preset-react'
+alias react_babel_install='npm install --save babel-core babel-loader babel-preset-react'
 alias wp='$(npm bin)/webpack'
 
 # miscellany
