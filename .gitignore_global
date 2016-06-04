@@ -24,3 +24,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# javascript projects
+node_modules
+bower_components
+bundle.js*

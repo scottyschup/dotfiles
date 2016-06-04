@@ -7,3 +7,6 @@ export OLD_HOME='/Users/OldMacLappy/Users/Scott'
 
 export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
 export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
+
+export NVM_DIR="/Users/ssschupbach/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
