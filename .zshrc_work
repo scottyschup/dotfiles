@@ -2,6 +2,7 @@ export DOTFILES="$HOME/.dotfiles"
 source $DOTFILES/.zshrc
 
 export RAILS_ENV="development"
+export SIGNUP_DATABASE_PASSWORD="Aspera123_"
 
 export PATH=/usr/local/sbin:$PATH
 
