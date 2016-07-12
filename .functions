@@ -117,11 +117,13 @@ function pids_for {
 }
 
 function ping_google {
-  if [ ! -n "$1" ]; then
-    ping -c 5 google.com
+  if [ $1 ]; then
+    $count=$1
   else
-    ping -c $1 google.com
+    $count=5
   fi
+
+  ping -c $count google.com
 }
 
 function rails_reset {
@@ -133,6 +135,15 @@ function rails_reset {
   rake db:migrate &&
   rake db:seed &&
   rails server
+}
+
+function reload_redis {
+  if [ $1 ]; then
+    new_dump_file=$1
+  else
+    new_dump_file="sony.rdb"
+  fi
+  cp "$ANALYTICS_HOME/$new_dump_file" "$ANALYTICS_HOME/sawmill/dump.rdb"
 }
 
 function untarAll {

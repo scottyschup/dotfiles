@@ -54,6 +54,7 @@ alias gpf='git push --force'
 alias gpl='git pull'
 alias gplu='git pull -u'
 alias gpluo='git pull -u origin'
+alias gpo='git push -u origin'
 alias gpu='git push -u'
 alias gpuo='git push -u origin'
 alias gra='git remote add'
@@ -99,6 +100,7 @@ alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
 alias flushOpenWith='eval "$(/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder;)"'
+alias rlr='reload_redis'
 
 # mysql
 alias msst='mysql.server start'
@@ -136,6 +138,7 @@ alias rrs='rails_reset'
 alias pyss='python -m SimpleHTTPServer'
 
 # dotfiles (and iTerm autolaunch)
+alias a='atom'
 alias aa='atom $DOTFILES/.aliases'
 alias ad='atom $DOTFILES' # opens atom with navigation pane for all dotfiles
 alias af='atom $DOTFILES/.functions'
