@@ -128,7 +128,6 @@ function ping_google {
 
 function rails_reset {
   mysql.server restart &&
-  export RAILS_ENV="development" &&
   bundle install &&
   rake db:drop &&
   rake db:create &&
