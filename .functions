@@ -35,6 +35,28 @@ function git_branch_delete_remote {
   git push $remote --delete $branch
 }
 
+function git_branch_delete_local_and_remotes {
+  if [ ! -n $1 ]; then
+    return 'Must enter at least a branch name'
+  fi
+  remotes=( "$@" )
+  unset "remotes[$#]"
+
+  for remote in $remotes; do
+    shift
+  done
+
+  if [ $remotes[1] ]; then
+    for remote in $remotes; do
+      git_branch_delete_remote $remote $@
+    done
+  else
+    git_branch_delete_remote $@
+  fi
+
+  git branch -D $@
+}
+
 function git_commit_push {
   git commit -m $1 && git push
 }
