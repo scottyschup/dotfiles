@@ -12,8 +12,8 @@ source $DOTFILES/.functions
 source $DOTFILES/custom_zsh_tabs.sh # this should go into zsh_custom/plugins
 export LANG=en_US.UTF-8
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/Documents/github/go:$GOROOT
-export PATH=$PATH:$GOROOT/bin:/usr/local/opt/go/libexec/bin # add Go
+export GOPATH=$HOME/Documents/github/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin # add GO
 export PATH=~/.rbenv/bin:~/.rbenv/shims:$PATH:~/bin
 eval "$(rbenv init -)"
 

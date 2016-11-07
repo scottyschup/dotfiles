@@ -14,7 +14,6 @@ alias bu='bundle update'
 # docker
 alias dk='docker'
 alias dkc='docker-compose'
-alias dkm='docker-machine'
 
 # git
 alias g='git'
