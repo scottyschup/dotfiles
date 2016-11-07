@@ -11,6 +11,9 @@ alias bi='bundle install'
 alias bo='bundle open'
 alias bu='bundle update'
 
+# colorize
+alias catc='colorize'
+
 # docker
 alias dk='docker'
 alias dkc='docker-compose'
@@ -78,7 +81,7 @@ alias gstl='git stash list'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
-# javascript/npm/nvm/gulp/grunt
+# javascript/npm/nvm/gulp/grunt/react
 alias gl='gulp'
 alias gls='gulp serve'
 alias glr='rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve'

@@ -1,19 +1,35 @@
-export ZSH=~/.oh-my-zsh
+export ZSH=~/.oh-my-zsh # or wherever your oh-my-zsh installation lives
 ZSH_THEME="robbyrussell"
 DISABLE_AUTO_UPDATE="true"
 DISABLE_AUTO_TITLE="true"
 ENABLE_CORRECTION="false" # this prevents zsh from offering spelling corrections to 'mistyped' commands
 COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="mm/dd/yyyy"
-plugins=(atom colorize git k rails ruby z zsh-syntax-highlighting)
+
+# ZSH custom plugins; found in `$ZSH/custom/plugins`
+plugins=(colorize) # syntax highlighting for the terminal; aliased as `catc`; SUPER slow with larger files; bundled with oh-my-zsh
+
+plugins+=(git) # shows git info for directories containing git repos; bundled with oh-my-zsh
+
+plugins+=(k) # pimped out version of `l`; aliased as `l+` in the navigation section
+# install k:
+# `git clone https://github.com/supercrabtree/k $ZSH/custom/plugins/k`
+# `git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k`
+
+plugins+=(z) # frecency based navigation; bundled with oh-my-zsh
+
+plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
+# install zsh-syntax-highlighting:
+# `git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting`
+# `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting`
+
+# Source
 source $ZSH/oh-my-zsh.sh
 source $DOTFILES/.aliases
 source $DOTFILES/.functions
-source $DOTFILES/custom_zsh_tabs.sh # this should go into zsh_custom/plugins
+source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
+
 export LANG=en_US.UTF-8
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/Documents/github/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin # add GO
 export PATH=~/.rbenv/bin:~/.rbenv/shims:$PATH:~/bin
 eval "$(rbenv init -)"
 

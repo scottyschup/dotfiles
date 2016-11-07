@@ -1,3 +1,5 @@
+// used to create new react projects
+
 module.exports = {
   context: __dirname,
   entry: "./lib/app.jsx",

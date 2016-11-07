@@ -1,1 +1,2 @@
+# Don't include `.zshrc_VARIANT`s in git repo, because secrets
 .zshrc_*

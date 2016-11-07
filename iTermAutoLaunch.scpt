@@ -1,4 +1,8 @@
 -- create symlink at ~/Library/Application Support/iTerm/AutoLaunch.scpt
+-- I had comments in here originally, but they seemed to affect the running of
+-- the script, so I pulled them.
+--
+-- I don't really use this anymore. Too finicky.
 on delay duration
   set endTime to (current date) + duration
   repeat while (current date) is less than endTime

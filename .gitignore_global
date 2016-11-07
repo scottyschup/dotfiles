@@ -2,9 +2,9 @@
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
-Icon
-
+# Icon must end with two `\r`s, but `\r\r` is converted to `\r\n`, hence `[\r]`
+# http://stackoverflow.com/questions/17556250/how-to-ignore-icon-in-git
+Icon[\r]
 
 # Thumbnails
 ._*
