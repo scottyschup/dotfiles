@@ -48,4 +48,4 @@ cp k.sh $ZSH_CUSTOM/plugins/k/k.plugin.zsh
 cp z.sh $ZSH_CUSTOM/plugins/z/z.plugin.zsh
 ```
 
-If you're not using all the plugins, just remove them from the `plugins=()` line in `.zshrc`.
+If you're not using all the plugins, just remove the relevant `plugins+=()` lines in `.zshrc`.
