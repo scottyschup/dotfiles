@@ -104,10 +104,13 @@ alias ci='curl -I'
 alias flushOpenWith='eval "$(/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder;)"'
 alias rlr='reload_redis'
 
-# mysql
+# mysql/postgres
 alias msst='mysql.server start'
 alias mssp='mysql.server stop'
 alias msr='mysql.server restart'
+alias pg='postgres -D /usr/local/var/postgres'
+alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
+alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
 
 # navigation
 alias cda='cd_atom'
