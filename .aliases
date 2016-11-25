@@ -137,6 +137,7 @@ alias rdbr='rake db:reset'
 alias rdbs='rake db:seed'
 alias rdbrb='rake db:rollback'
 alias rdbms='rake db:migrate:status'
+alias rn='rails_new'
 alias rrs='rails_reset'
 
 # server

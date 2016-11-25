@@ -148,6 +148,10 @@ function ping_google {
   ping -c $count google.com
 }
 
+function rails_new {
+  rails _4.2.5.1_ new $1 --rc="~/.railsrc" --template="~/.railsrc"
+}
+
 function rails_reset {
   mysql.server restart &&
   bundle install &&
