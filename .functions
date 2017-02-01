@@ -129,6 +129,10 @@ function omni_killer {
   done
 }
 
+function over {
+  cd ../$1
+}
+
 function pids_for {
   ps aux |
   grep $1 |
