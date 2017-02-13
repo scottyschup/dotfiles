@@ -28,6 +28,7 @@ source $ZSH/oh-my-zsh.sh
 source $DOTFILES/.aliases
 source $DOTFILES/.functions
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
+ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
 export LANG=en_US.UTF-8
 export PATH=~/.rbenv/bin:~/.rbenv/shims:/usr/local/sbin:$PATH:~/bin
