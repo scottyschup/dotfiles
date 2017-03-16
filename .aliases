@@ -81,6 +81,9 @@ alias gstl='git stash list'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
+# heroku
+alias hrc='heroku run rails console --app'
+
 # javascript/npm/nvm/gulp/grunt/react
 alias gl='gulp'
 alias gls='gulp serve'
@@ -131,6 +134,18 @@ alias whcdl='which_cd_ll'
 alias za='z_atom'
 alias zl='z_ll'
 
+# python
+alias pi='pip install'
+alias pu='pip install --upgrade pip'
+alias pe='pyenv'
+alias pev='pyenv versions'
+alias pei='pyenv install'
+alias pel='pyenv local'
+alias peu='pyenv local'
+alias peg='pyenv global'
+alias per='pyenv rehash' # run this after installing executables
+alias peh='pyenv help'
+
 # ruby/rails
 alias gi='gem install'
 alias rs='rails server'
@@ -154,7 +169,7 @@ alias af='atom $DOTFILES/.functions'
 alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
 alias sa='source $DOTFILES/.aliases'
-alias sd='. $DOTFILES/.aliases; . $DOTFILES/.functions; . ~/.zshrc'
+alias sd='. ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
 alias sz='source ~/.zshrc'
 alias va='vim $DOTFILES/.aliases'
