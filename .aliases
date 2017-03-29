@@ -104,9 +104,13 @@ alias wp='$(npm bin)/webpack'
 alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
+alias die='omni_killer'
 alias flushOpenWith=openWithFix
 alias grepI='grep -i'
+alias ok='omni_killer'
 alias openWithFix='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user;killall Finder;echo "Open With has been rebuilt, Finder will relaunch"'
+alias pids='pids_for'
+alias psgrep='psaux_with_grep'
 alias rlr='reload_redis'
 
 # mysql/postgres

@@ -134,8 +134,7 @@ function over {
 }
 
 function pids_for {
-  ps aux |
-  grep $1 |
+  psaux_with_grep $1 |
   grep -v grep |
   awk '{print $2}' |
   tr '\n' ' ' |
@@ -150,6 +149,11 @@ function ping_google {
   fi
 
   ping -c $count google.com
+}
+
+function psaux_with_grep {
+  ps aux |
+  grep $1
 }
 
 function rails_new {
