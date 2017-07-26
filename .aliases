@@ -3,8 +3,15 @@
 # Most of the navigation aliases require k.sh to be installed
 # Some of the aliases below are for functions in the ./.functions file
 
+# brew
+alias brss='brew services start'
+alias brsp='brew services stop'
+alias brsl='brew services list'
+alias bri='brew install'
+
 # bundle
 alias be='bundle exec'
+alias bea='bundle exec avant'
 alias bera='bundle exec rake'
 alias bers='bundle exec rspec'
 alias bi='bundle install'
@@ -106,7 +113,7 @@ alias chrome='open -a "Google Chrome"'
 alias ci='curl -I'
 alias die='omni_killer'
 alias flushOpenWith=openWithFix
-alias grepI='grep -i'
+alias grepi='grep -i'
 alias ok='omni_killer'
 alias openWithFix='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user;killall Finder;echo "Open With has been rebuilt, Finder will relaunch"'
 alias pids='pids_for'
@@ -120,6 +127,8 @@ alias msr='mysql.server restart'
 alias pg='postgres -D /usr/local/var/postgres'
 alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
 alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
+alias bpgst='brew services start postgresql@9.4'
+alias bpgsp='brew services stop postgresql@9.4'
 
 # navigation
 alias back='cd ..'
@@ -138,6 +147,10 @@ alias whcdl='which_cd_ll'
 alias za='z_atom'
 alias zl='z_ll'
 
+# postgres
+alias start_pg='brew services start postgresql@9.4'
+alias stop_pg='brew services stop postgresql@9.4'
+
 # python
 alias pi='pip install'
 alias pu='pip install --upgrade pip'
@@ -150,10 +163,16 @@ alias peg='pyenv global'
 alias per='pyenv rehash' # run this after installing executables
 alias peh='pyenv help'
 
+# redis
+alias start_redis='brew services start redis'
+alias stop_redis='brew services stop redis'
+alias rcli='redis-cli'
+
 # ruby/rails
 alias gi='gem install'
 alias rs='rails server'
-alias rc="export RAILS_ENV='development'; rails console"
+alias rc="rails console"
+alias rcdev="export RAILS_ENV='development'; rails console"
 alias rdbd='rake db:drop'
 alias rdbm='rake db:migrate'
 alias rdbr='rake db:reset'
@@ -175,7 +194,7 @@ alias af='atom $DOTFILES/.functions'
 alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
 alias sa='source $DOTFILES/.aliases'
-alias sd='. ~/.zshrc'
+alias sd='source ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
 alias sz='source ~/.zshrc'
 alias va='vim $DOTFILES/.aliases'

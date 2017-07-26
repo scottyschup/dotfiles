@@ -8,6 +8,8 @@ HIST_STAMPS="mm/dd/yyyy"
 
 # ZSH custom plugins; found in `$ZSH/custom/plugins`
 plugins=(colorize) # syntax highlighting for the terminal; aliased as `catc`; SUPER slow with larger files; bundled with oh-my-zsh
+# requires pygmentize
+# pip install pygments
 
 plugins+=(git) # shows git info for directories containing git repos; bundled with oh-my-zsh
 
@@ -15,6 +17,9 @@ plugins+=(k) # pimped out version of `l`; aliased as `l+` in the navigation sect
 # install k:
 # `git clone https://github.com/supercrabtree/k $ZSH/custom/plugins/k`
 # `git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k`
+
+# To get rid of "'numfmt' or 'gnumfmt' command not found..." error
+# brew install coreutils
 
 plugins+=(z) # frecency based navigation; bundled with oh-my-zsh
 
@@ -32,7 +37,8 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
 export LANG=en_US.UTF-8
 export PATH=~/.rbenv/bin:~/.rbenv/shims:/usr/local/sbin:$PATH:~/bin
-eval "$(rbenv init -)"
+eval "$(rbenv init -)" # requires rbenv install
+eval "$(pyenv init -)" # requires pyenv install
 
 # Use Keypad in terminal
 # 0 . Enter
