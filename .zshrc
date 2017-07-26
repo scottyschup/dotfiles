@@ -1,3 +1,4 @@
+export DOTFILES=$HOME/.dotfiles
 export ZSH=~/.oh-my-zsh # or wherever your oh-my-zsh installation lives
 ZSH_THEME="robbyrussell"
 DISABLE_AUTO_UPDATE="true"
@@ -15,8 +16,9 @@ plugins+=(git) # shows git info for directories containing git repos; bundled wi
 
 plugins+=(k) # pimped out version of `l`; aliased as `l+` in the navigation section
 # install k:
-# `git clone https://github.com/supercrabtree/k $ZSH/custom/plugins/k`
 # `git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k`
+# or
+# `git clone https://github.com/supercrabtree/k $ZSH/custom/plugins/k`
 
 # To get rid of "'numfmt' or 'gnumfmt' command not found..." error
 # brew install coreutils
@@ -26,6 +28,7 @@ plugins+=(z) # frecency based navigation; bundled with oh-my-zsh
 plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
 # install zsh-syntax-highlighting:
 # `git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting`
+# or
 # `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting`
 
 # Source
@@ -39,6 +42,8 @@ export LANG=en_US.UTF-8
 export PATH=~/.rbenv/bin:~/.rbenv/shims:/usr/local/sbin:$PATH:~/bin
 eval "$(rbenv init -)" # requires rbenv install
 eval "$(pyenv init -)" # requires pyenv install
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
 
 # Use Keypad in terminal
