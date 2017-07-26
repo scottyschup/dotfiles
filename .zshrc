@@ -40,6 +40,7 @@ export PATH=~/.rbenv/bin:~/.rbenv/shims:/usr/local/sbin:$PATH:~/bin
 eval "$(rbenv init -)" # requires rbenv install
 eval "$(pyenv init -)" # requires pyenv install
 
+
 # Use Keypad in terminal
 # 0 . Enter
 bindkey -s "^[Op" "0"
