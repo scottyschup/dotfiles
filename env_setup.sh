@@ -1,6 +1,8 @@
-
 # Show hidden files in Finder
-defaults write -g AppleShowAllFiles TRUE
+defaults write -g AppleShowAllFiles TRUE # show hidden files everywhere
+defaults write com.apple.dock autohide-time-modifier -float 1.0 # animation speed
+defaults write com.apple.Dock autohide-delay -float 2.0 # delay between trigger and event
+killall Dock Finder
 
 # get dotfiles if not already done
 # may need to setup new SSH key with Github first
@@ -11,6 +13,7 @@ open https://github.com/settings/keys
 cd ~
 git clone git@github.com:scottyschup/dotfiles.git
 mv dotfiles .dotfiles
+export DOTFILES=~/.dotfiles
 
 # install homebrew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -19,6 +22,12 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 brew cask install iterm2
 brew cask install spectacle
 brew cask install sublime-text
+# font for sublime theme - one dark
+# also need to manually install theme through Subl's pkg installer
+brew tap caskroom/fonts
+brew cask install font-source-code-pro
+cp $DOTFILES/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings # will overwrite existing user preferences
+
 
 # install oh-my-zsh
 export ZSH=~/.oh-my-zsh
@@ -29,19 +38,15 @@ ln -s ~/.dotfiles/.zshrc_avant ~/.zshrc # if using dotfiles repo; amend variant 
 brew install coreutils # needed by k
 git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
-# colorize plugin requires pygmentize (through pip)
-# install pyenv to get pip
+# colorize plugin requires pygmentize (pygments)
+# install pyenv
 brew install pyenv
 pyenv install 2.7.10
 pyenv global 2.7.10
+# use pip to install pygmentize
 pip install --upgrade pip
 pip install pygments
 source ~/.zshrc
-
-# font for theme - one dark (Sublime)
-# also need to manually install theme through Subl's pkg installer
-brew tap caskroom/fonts
-brew cask install font-source-code-pro
 
 
 # install avant-basic necessities
@@ -68,3 +73,6 @@ export NVM_DIR="$HOME/.nvm"
 
 # install rbenv
 brew install rbenv
+rbenv install 2.3.4
+rbenv global 2.3.4
+
