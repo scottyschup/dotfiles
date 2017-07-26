@@ -39,7 +39,6 @@ source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/cu
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
 export LANG=en_US.UTF-8
-export PATH=~/.rbenv/bin:~/.rbenv/shims:/usr/local/sbin:$PATH:~/bin
 eval "$(rbenv init -)" # requires rbenv install
 eval "$(pyenv init -)" # requires pyenv install
 export NVM_DIR="$HOME/.nvm"

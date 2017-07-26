@@ -4,10 +4,13 @@
 # Some of the aliases below are for functions in the ./.functions file
 
 # brew
+alias bri='brew install'
+alias brs='brew search'
 alias brss='brew services start'
 alias brsp='brew services stop'
 alias brsl='brew services list'
-alias bri='brew install'
+alias brci='brew cask install'
+alias brcs='brew cask search'
 
 # bundle
 alias be='bundle exec'
@@ -108,17 +111,15 @@ alias react_babel_install='npm install --save babel-core babel-loader babel-pres
 alias wp='$(npm bin)/webpack'
 
 # miscellany
-alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
-alias ci='curl -I'
+alias curli='curl -I'
 alias die='omni_killer'
-alias flushOpenWith=openWithFix
 alias grepi='grep -i'
-alias ok='omni_killer'
-alias openWithFix='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user;killall Finder;echo "Open With has been rebuilt, Finder will relaunch"'
 alias pids='pids_for'
 alias psgrep='psaux_with_grep'
 alias rlr='reload_redis'
+alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
+alias rebuild_spotlight_index="sudo mdutil -i on /"
 
 # mysql/postgres
 alias msst='mysql.server start'
