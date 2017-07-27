@@ -171,6 +171,7 @@ alias rcli='redis-cli'
 
 # ruby/rails
 alias gi='gem install'
+alias r=rails
 alias rs='rails server'
 alias rc="rails console"
 alias rcdev="export RAILS_ENV='development'; rails console"
