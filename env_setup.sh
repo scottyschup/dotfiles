@@ -10,16 +10,18 @@ defaults write com.apple.Dock autohide-delay -float 2.0
 ## restart Dock and Finder
 killall Dock Finder
 
-# Dotfiles
-## may need to setup new SSH key with Github first
+# Git/Github setup
+## Probably need to setup new SSH key with Github
 sshkeygen
 cat ~/.ssh/id_rsa.pub | pbcopy
 open https://github.com/settings/keys
-## clone dotfiles repo
-cd ~
 brew install git # system git would be fine for this, but might as well just do it now
+git config --global --edit # edit name and email address
+
+
+# Dotfiles
 git clone git@github.com:scottyschup/dotfiles.git
-mv dotfiles .dotfiles
+mv dotfiles ~/.dotfiles
 export DOTFILES=~/.dotfiles
 
 # Homebrew
@@ -47,7 +49,7 @@ git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
 ## colorize plugin requires pygmentize (pygments); see next steps
 
-# install pyenv
+# Python via pyenv
 brew install pyenv
 pyenv install 2.7.10 # includes pip
 pyenv global 2.7.10
@@ -56,13 +58,13 @@ pip install --upgrade pip
 pip install pygments
 source ~/.zshrc
 
-# install nvm
-brew install nvm
-# Add these to .zshrc if not using dotfiles yet
+# Node via nvm
+brew install nvm npm
+# Add these to .*shrc if not using dotfiles
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
-# install rbenv
+# Ruby via rbenv
 brew install rbenv
 brew install openssl libyaml libffi # per ruby-build's recommended build env wiki https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 rbenv install 2.3.4
@@ -70,36 +72,51 @@ rbenv global 2.3.4
 gem update --system # only if which ruby points to brew ruby, not system ruby; otherwise re-source dotfiles
 gem install bundler
 
-# install other commonly used components
-brew install npm redis
+# Redis
+brew install redis
 
 # Avant
 mkdir ~/avant
 export AVANT=~/avant
 cd $AVANT
 
-## install avant-basic necessities
+## avant-basic
+### install avant-basic necessities
 brew install rabbitmq heroku-toolbelt qt55
-## setup redis.conf
+### setup redis.conf
 cp /usr/local/etc/redis.conf.default /usr/local/etc/redis.conf
-## start rabbitmq
+### start rabbitmq
 brew services start rabbitmq
-## link qt55
+### link qt55
 brew link --force qt55
 
-# install and start postgres
+### install and start postgres
 brew install postgresql@9.4
 brew link postgresql@9.4 --force
 brew services start postgresql@9.4
 
-# TODO: pg setup
-
-## avant-basic
-### Don't forget to install Xcode through App Store and launch to accept agreement. Also see note after bundle install step below about other potential problems
-git clone git@github.com:avantcredit/avant-basic.git
-cd avant-basic
-rbenv install 2.2.4
-gem install bundler -v 1.14.6
-# Run the following line if bundle install fails at Capybara with `Project ERROR: Xcode not set up properly. You may need to confirm the license agreement by running /usr/bin/xcodebuild` and running xcodebuild says `xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance`
+### Don't forget to install Xcode through App Store and launch it once to accept agreement.
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
+### get the repo
+git clone git@github.com:avantcredit/avant-basic.git
+cd avant-basic
+
+### build the correct ruby
+rbenv install `${`cat .ruby-version`#'ruby-'}`
+
+### gems
+gem update --system
+gem install bundler -v 1.14.6
+bundle install
+
+### database
+cp config/database.yml.sample.yaml config/database.yml
+/bin/local_prep
+
+### install and start mailcatcher
+gem install mailcatcher
+mailcatcher # Daemonized by default; add -f flag to run in foreground
+
+### spin up the app
+/bin/start_development
