@@ -221,3 +221,5 @@ function z_atom {
 function z_ll {
   z $1 && k -Ah
 }
+
+echo '.functions sourced'

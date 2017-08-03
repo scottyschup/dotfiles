@@ -41,9 +41,6 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 export LANG=en_US.UTF-8
 eval "$(rbenv init -)" # requires rbenv install
 eval "$(pyenv init -)" # requires pyenv install
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
-
 
 # Use Keypad in terminal
 # 0 . Enter
@@ -68,3 +65,5 @@ bindkey -s "^[Om" "-"
 bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
+
+echo '.zshrc sourced'

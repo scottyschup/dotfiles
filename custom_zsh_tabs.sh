@@ -52,3 +52,5 @@ function titleOrPWD {
   fi
   echo $TITLE
 }
+
+echo 'custom_zsh_tabs.sh sourced'
