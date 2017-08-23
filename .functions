@@ -8,6 +8,17 @@ function cd_ll {
   cd $1 && k -Ah
 }
 
+function args_test {
+  last=${@: -1}
+  echo $@
+  echo $last
+  echo $#
+}
+
+function cd_subl {
+  cd $1 && subl .
+}
+
 function git_add_commit {
   if [ $2 ]; then
     g_add=$1
@@ -124,9 +135,20 @@ function new_react_project {
 }
 
 function omni_killer {
-  for pid in $(pids_for $1); do
-    kill -9 $pid;
+  count=0
+  pids=$(pids_for $1)
+
+  for pid in $pids; do
+    kill -9 $((pid)) && ((count++))
   done
+
+  if [ $count = 1 ]; then
+    echo "1 $1 process terminated: $pids"
+  elif [ $count -gt 0 ]; then
+    echo "$count $1 processes terminated: $pids"
+  else
+    echo "No $1 processes found."
+  fi
 }
 
 function over {

@@ -17,13 +17,12 @@ alias bcg='bundle config --global'
 alias bcl='bundle config --local'
 alias bcd='bundle config --delete'
 alias be='bundle exec'
-alias bea='bundle exec avant'
 alias berk='bundle exec rake'
 alias bers='bundle exec rspec'
 alias bi='bundle install'
-alias bigl='bundle config --local frozen false && bundle install && bundle config --local frozen true'
 alias bo='bundle open'
 alias bu='bundle update'
+alias tbers='time bundle exec rspec'
 
 # colorize
 alias catc='colorize'
@@ -31,6 +30,8 @@ alias catc='colorize'
 # docker
 alias dk='docker'
 alias dkc='docker-compose'
+alias dke='docker exec -it'
+alias dkm='docker-machine'
 
 # git
 alias g='git'
@@ -123,6 +124,7 @@ alias psgrep='psaux_with_grep'
 alias rlr='reload_redis'
 alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
 alias rebuild_spotlight_index="sudo mdutil -i on /"
+alias grep_alias='alias | grep -i' # zsh only
 
 # mysql/postgres
 alias msst='mysql.server start'
@@ -191,22 +193,35 @@ alias rrs='rails_reset'
 # server
 alias pyss='python -m SimpleHTTPServer'
 
-# dotfiles (and iTerm autolaunch)
+# text editing
+## atom
 alias a='atom'
-alias aa='atom $DOTFILES/.aliases'
 alias ad='atom $DOTFILES' # opens atom with navigation pane for all dotfiles
+alias aa='atom $DOTFILES/.aliases'
 alias af='atom $DOTFILES/.functions'
 alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
+
+## sublime
+alias s='subl'
+alias sa='subl $DOTFILES/.aliases'
+alias sd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
+alias sf='subl $DOTFILES/.functions'
+alias sv='subl $DOTFILES/.vimrc'
+alias sz='subl $DOTFILES/.zshrc'
+
+## dotfiles
 alias sa='source $DOTFILES/.aliases'
 alias sd='source ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
 alias sz='source ~/.zshrc'
+
+## vim
+alias v='vim'
 alias va='vim $DOTFILES/.aliases'
 alias vf='vim $DOTFILES/.functions'
 alias vggi='vim ~/.gitignore_global'
 alias vv='vim $DOTFILES/.vimrc'
 alias vz='vim $DOTFILES/.zshrc'
-alias vi='vim $DOTFILES/iTermAutoLaunch.scpt'
 
 echo '.aliases sourced'

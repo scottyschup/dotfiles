@@ -58,6 +58,7 @@ aspera-license
 bower_components
 bundle.js*
 derby.log
+**/*.log
 logs
 metastore_db
 node_modules

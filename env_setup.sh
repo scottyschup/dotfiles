@@ -7,6 +7,13 @@ defaults write -g AppleShowAllFiles TRUE
 defaults write com.apple.dock autohide-time-modifier -float 1.0
 ## Add longer delay between dock show trigger and dock show event
 defaults write com.apple.Dock autohide-delay -float 2.0
+## Keep onoxious "Try Safari" popup frmo popping up all the time (requires logout/login?  )
+defaults write com.apple.coreservices.uiagent CSUIHasSafariBeenLaunched -bool YES
+defaults write com.apple.coreservices.uiagent CSUIRecommendSafariNextNotificationDate -date 2050-01-01T00:00:00Z
+defaults write com.apple.coreservices.uiagent CSUILastOSVersionWhereSafariRecommendationWasMade -float 10.99
+## Prevent power button from sleeping laptop immediately (still works after 2 seconds or so, I think)
+defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool no
+
 ## restart Dock and Finder
 killall Dock Finder
 
@@ -75,6 +82,12 @@ gem install bundler
 # Redis
 brew install redis
 
+# Docker
+brew cask install virtualbox
+brew install docker docker-machine docker-compose
+docker-machine create -d virtualbox dev
+eval "$(docker-machine env dev)"
+
 # Avant
 mkdir ~/avant
 export AVANT=~/avant
@@ -103,7 +116,7 @@ git clone git@github.com:avantcredit/avant-basic.git
 cd avant-basic
 
 ### build the correct ruby
-rbenv install `${`cat .ruby-version`#'ruby-'}`
+rbenv install ${$(cat .ruby-version)#ruby-}
 
 ### gems
 gem update --system
