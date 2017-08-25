@@ -96,6 +96,13 @@ function git_lastnhashes {
   git rev-list --max-count=$1 HEAD
 }
 
+function git_stash_apply_saved_stash {
+  if [ ! -n $1 ]; then
+    return 'Must enter a stash name'
+  fi
+  git stash apply stash^{/$1}
+}
+
 function mkdir_cd {
   if [ ! -n "$1" ]; then
     echo "Enter a directory name"
@@ -139,7 +146,7 @@ function omni_killer {
   pids=$(pids_for $1)
 
   for pid in $pids; do
-    kill -9 $((pid)) && ((count++))
+    (kill -9 $((pid)) || kill -9 $pid) && ((count++))
   done
 
   if [ $count = 1 ]; then

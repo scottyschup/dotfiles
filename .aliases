@@ -89,9 +89,12 @@ alias grv='git remote --verbose'
 alias gs='git status'
 alias gst='git stash'
 alias gsta='git stash apply'
+unalias gstaa # not sure where this one is coming from
 alias gstai='git stash apply --index'
+alias gstas=git_stash_apply_saved_stash
 alias gstb='git stash branch'
 alias gstl='git stash list'
+alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
 
@@ -125,6 +128,7 @@ alias rlr='reload_redis'
 alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
 alias rebuild_spotlight_index="sudo mdutil -i on /"
 alias grep_alias='alias | grep -i' # zsh only
+alias aliases_for=grep_alias
 
 # mysql/postgres
 alias msst='mysql.server start'
