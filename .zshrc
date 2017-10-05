@@ -33,8 +33,9 @@ plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
 
 # Source
 source $ZSH/oh-my-zsh.sh
-source $DOTFILES/.aliases
+source $DOTFILES/.colors
 source $DOTFILES/.functions
+source $DOTFILES/.aliases
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 

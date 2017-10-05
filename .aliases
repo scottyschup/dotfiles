@@ -6,9 +6,10 @@
 # brew
 alias bri='brew install'
 alias brs='brew search'
-alias brss='brew services start'
-alias brsp='brew services stop'
 alias brsl='brew services list'
+alias brsp='brew services stop'
+alias brsr='brew services restart'
+alias brss='brew services start'
 alias brci='brew cask install'
 alias brcs='brew cask search'
 
@@ -66,6 +67,8 @@ alias gin='git init'
 alias gig='git_ignore_and_remove'
 alias gln='git_lastnhashes'
 alias gm='git merge'
+alias gma='git merge --abort; git stash; git checkout -- .; echo "Check stash if missing data."'
+alias gmdr='git merge --no-commit --no-ff'
 alias gp='git push'
 alias gpf='git push --force'
 alias gpl='git pull'
@@ -91,7 +94,7 @@ alias gst='git stash'
 alias gsta='git stash apply'
 unalias gstaa # not sure where this one is coming from
 alias gstai='git stash apply --index'
-alias gstas=git_stash_apply_saved_stash
+alias gstass=git_stash_apply_saved_stash
 alias gstb='git stash branch'
 alias gstl='git stash list'
 alias gstsv='git stash save'
@@ -179,9 +182,9 @@ alias stop_redis='brew services stop redis'
 alias rcli='redis-cli'
 
 # ruby/rails
+alias bersop='bundle_rails_server_on_port'
 alias gi='gem install'
 alias r=rails
-alias rs='rails server'
 alias rc="rails console"
 alias rcdev="export RAILS_ENV='development'; rails console"
 alias rdbd='rake db:drop'
@@ -193,6 +196,8 @@ alias rdbrb='rake db:rollback'
 alias rdbms='rake db:migrate:status'
 alias rn='rails_new'
 alias rrs='rails_reset'
+alias rs='rails server'
+alias rsop='rails_server_on_port'
 
 # server
 alias pyss='python -m SimpleHTTPServer'

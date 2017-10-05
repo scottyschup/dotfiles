@@ -1,3 +1,5 @@
+#! /bin/bash
+
 function precmd {
   setTitles $PWD
 }
