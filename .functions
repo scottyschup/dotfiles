@@ -160,10 +160,10 @@ function new_react_project {
 
 function omni_killer {
   count=0
-  pids=$(pids_for $1)
+  pids="$(pids_for $1)"
 
-  for pid in $pids; do
-    (kill -9 $((pid)) || kill -9 $pid) && ((count++))
+  for pid in $(echo $pids); do
+    (kill -9 $(($pid)) || kill -9 $pid) && ((count++))
   done
 
   if [ $count = 1 ]; then
@@ -184,7 +184,7 @@ function pids_for {
   grep -v grep |
   awk '{print $2}' |
   tr '\n' ' ' |
-  sed 's/\s$//'
+  sed 's/[[:space:]]*$//'
 }
 
 function ping_google {
