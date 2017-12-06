@@ -68,6 +68,6 @@ bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
 
-echo '.zshrc sourced'
-
 tabs -2
+
+echo 'Sourced .zshrc'

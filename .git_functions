@@ -34,12 +34,11 @@ function git_branch_delete {
     -l branch_name[s, ...]            # deletes local branch only
     -r [remote/]branch_name[s, ...]   # delete remote branch only
     -lr|-rl [remote/]branch_name[s, ...] # deletes local and remote branches
-If no remote provided for -r|-lr|-rl, origin is assumed
-"
+    If no remote provided for -r|-lr|-rl, origin is assumed
+    "
     return 1
     ;;
   esac
-  return 0
 }
 
 function git_branch_delete_local {
@@ -144,4 +143,4 @@ function test_git_branch_delete {
 }
 alias 'tgbd=test_git_branch_delete'
 
-echo '.git_functions sourced'
+echo 'Sourced .git_functions'

@@ -44,4 +44,4 @@ export IRED="\033[0;91m"  # Red
 # Reset
 export NONE="\033[0m"  # Text Reset
 
-echo '.colors sourced'
+echo 'Sourced .colors'

@@ -210,12 +210,12 @@ alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
 
 ## sublime
-alias s='subl'
-alias sa='subl $DOTFILES/.aliases'
-alias sd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
-alias sf='subl $DOTFILES/.functions'
-alias sv='subl $DOTFILES/.vimrc'
-alias sz='subl $DOTFILES/.zshrc'
+alias sub='subl'
+alias suba='subl $DOTFILES/.aliases'
+alias subd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
+alias subf='subl $DOTFILES/.functions'
+alias subv='subl $DOTFILES/.vimrc'
+alias subz='subl $DOTFILES/.zshrc'
 
 ## dotfiles
 alias sa='source $DOTFILES/.aliases'
@@ -231,4 +231,4 @@ alias vggi='vim ~/.gitignore_global'
 alias vv='vim $DOTFILES/.vimrc'
 alias vz='vim $DOTFILES/.zshrc'
 
-echo '.aliases sourced'
+echo 'Sourced .aliases'

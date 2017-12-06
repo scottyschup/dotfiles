@@ -55,4 +55,4 @@ function titleOrPWD {
   echo $TITLE
 }
 
-echo 'custom_zsh_tabs.sh sourced'
+echo 'Sourced custom_zsh_tabs.sh'
