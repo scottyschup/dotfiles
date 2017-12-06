@@ -120,6 +120,7 @@ function git_stash_apply_saved_stash {
 }
 
 function test_git_branch_delete {
+  # Check for req'd arg
   if [ $# -lt 1 ]
   then
     echo "Usage $0: Must specify local and/or remote: -{l|r|lr|rl}"
@@ -129,19 +130,24 @@ function test_git_branch_delete {
   flag=$1
   shift
 
-  if [ $1 ] # note: this is the new $1 after the shift
+  # Check for optional branch names
+  if [ $1 ] # note: this is the new $1 after the shift above
   then
     branch_names=( "$@" )
   else
     branch_names=(git_branch_delete_test_branch1 git_branch_delete_test_branch2)
   fi
 
-  git stash
+  # Stash any uncommited changes
+  stash_name=branch_deletion_testing
+  gstsv $stash_name
   echo
 
+  # Create each branch
   for branch_name in $branch_names
   do
     gcob $branch_name
+    # Push branch to origin if -r was specified
     if [ "$flag" == "-lr" ] || [ "$flag" == "-rl" ]
     then
       gacp . "Create test branch: $branch_name"
@@ -149,14 +155,22 @@ function test_git_branch_delete {
     echo
   done
 
+  # Prepend 'origin/' to the second branch name to make sure 
+  # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
 
+  # Return to master branch for deletion test
   gcom
   echo
-  gbd "$flag ${branch_names[*]}"
+
+  gbd $flag ${branch_names}
   echo
+
+  # List branches for visual verification
   gba
-  echo "Unsaved changes may have stashed, but you'll have to manually apply them"
+
+  # Attempt to recover save stash
+  gstass $stash_name
 }
 alias 'tgbd=test_git_branch_delete'
 
