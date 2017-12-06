@@ -82,7 +82,6 @@ function git_branch_delete_local {
 
 }
 
-
 function git_branch_delete_remote {
   for remote_branch in $@
   do
@@ -102,28 +101,9 @@ function git_branch_delete_local_and_remotes {
   if [ ! -n $1 ]; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
+
   git_branch_delete_remote "$@"
-
-  local_branches=()
-  for branch in "$@"
-  do
-
-  done
-  git branch -D "$local_branches"
-  # remotes=( "$@" )
-  # unset "remotes[$#]" # remove final
-
-  # for remote in $remotes; do
-  #   shift # remove from $@
-  # done
-
-  # if [ $remotes[1] ]; then
-  #   for remote in $remotes; do
-  #     git_branch_delete_remote $remote $@
-  #   done
-  # else
-  #   git_branch_delete_remote $@
-  # fi
+  git_branch_delete_local "$@"
 }
 
 function git_commit_push {
