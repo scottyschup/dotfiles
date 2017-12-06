@@ -56,16 +56,16 @@ function git_branch_delete {
     shift
     git_branch_delete_remote "$@"
     ;;
-  '-lr')
+  '-lr'|'-rl')
     shift
     git_branch_delete_local_and_remotes "$@"
     ;;
   *)
-    echo "Usage: $0 
+    echo "Usage: $0: At least one flag is required:
     -l branch_name[s, ...]            # deletes local branch only
     -r [remote/]branch_name[s, ...]   # delete remote branch only
-    -lr [remote/]branch_name[s, ...] # deletes local and remote branches
-If no remote provided for -r or -lr, origin is assumed
+    -lr|-rl [remote/]branch_name[s, ...] # deletes local and remote branches
+If no remote provided for -r|-lr|-rl, origin is assumed
 "
     ;;
   esac
@@ -73,9 +73,9 @@ If no remote provided for -r or -lr, origin is assumed
 
 function git_branch_delete_local {
   local_branches=()
-  for branch in "$@"
+  for branch in $@
   do
-    remote_and_or_branch=( $(echo "branch" | tr "/" " ") )
+    remote_and_or_branch=( $(echo "$branch" | tr "/" " ") )
     local_branches+=("${remote_and_or_branch[$#]}")
   done
   git branch -D "$local_branches"
@@ -98,12 +98,12 @@ function git_branch_delete_remote {
 }
 
 function git_branch_delete_local_and_remotes {
-  if [ ! -n $1 ]; then
+  if [ $# -lt 1 ]; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
 
-  git_branch_delete_remote "$@"
   git_branch_delete_local "$@"
+  git_branch_delete_remote "$@"
 }
 
 function git_commit_push {
