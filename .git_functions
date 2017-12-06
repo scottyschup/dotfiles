@@ -137,7 +137,7 @@ function test_git_branch_delete {
   fi
 
   git stash
-  echo "\n"
+  echo
 
   for branch_name in $branch_names
   do
@@ -146,17 +146,17 @@ function test_git_branch_delete {
     then
       gacp . "Create test branch: $branch_name"
     fi
-    echo "\n"
+    echo
   done
 
   branch_names[2]="origin/${branch_names[2]}"
 
   gcom
-  echo "\n"
+  echo
   gbd "$flag ${branch_names[*]}"
-  echo "\n"
+  echo
   gba
-  echo "\nUnsaved changes may have stashed, but you'll have to manually apply them"
+  echo "Unsaved changes may have stashed, but you'll have to manually apply them"
 }
 alias 'tgbd=test_git_branch_delete'
 
