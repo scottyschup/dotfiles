@@ -76,8 +76,8 @@ function git_branch_delete_local_and_remotes {
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
 
-  git_branch_delete_local "$@"
-  git_branch_delete_remote "$@"
+  git_branch_delete_local $@
+  git_branch_delete_remote $@
 }
 
 function git_commit_push {
@@ -111,7 +111,7 @@ function git_lastnhashes {
 
 function git_stash_apply_saved_stash {
   if [ ! -n $1 ]; then
-    echo 'Must enter a stash name'
+    echo "Usage $0: Must enter a stash name"
     return 1
   else
     git stash apply stash^{/"$1"}
@@ -122,7 +122,7 @@ function git_stash_apply_saved_stash {
 function test_git_branch_delete {
   if [ $# -lt 1 ]
   then
-    echo 'Must specify local and/or remote: -{l|r|lr|rl}'
+    echo "Usage $0: Must specify local and/or remote: -{l|r|lr|rl}"
     return 1
   fi
 
@@ -141,7 +141,7 @@ function test_git_branch_delete {
 
   for branch_name in $branch_names
   do
-    gcob "$branch_name"
+    gcob $branch_name
     if [ "$flag" == "-lr" || "$flag" == "-rl" ]
     then
       gacp . "Create test branch: $branch_name"
