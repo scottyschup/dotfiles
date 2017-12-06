@@ -129,12 +129,13 @@ function test_git_branch_delete {
   flag=$1
   shift
 
-  if [ $1 ]
+  if [ $flag ]
   then
     branch_names=( "$@" )
   else
     branch_names=(git_branch_delete_test_branch1 git_branch_delete_test_branch2)
   fi
+
   git stash
   echo "\n"
 
