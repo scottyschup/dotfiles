@@ -46,37 +46,84 @@ function git_add_commit_push {
   git push -u origin $g_branch
 }
 
+function git_branch_delete {
+  case $1 in
+  '-l')
+    shift
+    git_branch_delete_local "$@"
+    ;;
+  '-r')
+    shift
+    git_branch_delete_remote "$@"
+    ;;
+  '-lr')
+    shift
+    git_branch_delete_local_and_remotes "$@"
+    ;;
+  *)
+    echo "Usage: $0 
+    -l branch_name[s, ...]            # deletes local branch only
+    -r [remote/]branch_name[s, ...]   # delete remote branch only
+    -lr [remote/]branch_name[s, ...] # deletes local and remote branches
+If no remote provided for -r or -lr, origin is assumed
+"
+    ;;
+  esac
+}
+
+function git_branch_delete_local {
+  local_branches=()
+  for branch in "$@"
+  do
+    remote_and_or_branch=( $(echo "branch" | tr "/" " ") )
+    local_branches+=("${remote_and_or_branch[$#]}")
+  done
+  git branch -D "$local_branches"
+
+}
+
+
 function git_branch_delete_remote {
-  if [ $2 ]; then
-    remote=$1
-    branch=$2
-  else
-    remote='origin'
-    branch=$1
-  fi
-  git push $remote --delete $branch
+  for remote_branch in $@
+  do
+    remote_and_or_branch=( $(echo $remote_branch | tr "/" " ") )
+    if [ ${#remote_and_or_branch} -eq 2 ]; then
+      remote=${remote_and_or_branch[1]}
+      branch=${remote_and_or_branch[2]}
+    else
+      remote='origin'
+      branch="$remote_and_or_branch"
+    fi
+    git push $remote --delete $branch
+  done
 }
 
 function git_branch_delete_local_and_remotes {
   if [ ! -n $1 ]; then
-    return 'Error: must enter a branch name'
+    return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
-  remotes=( "$@" )
-  unset "remotes[$#]"
+  git_branch_delete_remote "$@"
 
-  for remote in $remotes; do
-    shift
+  local_branches=()
+  for branch in "$@"
+  do
+
   done
+  git branch -D "$local_branches"
+  # remotes=( "$@" )
+  # unset "remotes[$#]" # remove final
 
-  if [ $remotes[1] ]; then
-    for remote in $remotes; do
-      git_branch_delete_remote $remote $@
-    done
-  else
-    git_branch_delete_remote $@
-  fi
+  # for remote in $remotes; do
+  #   shift # remove from $@
+  # done
 
-  git branch -D $@
+  # if [ $remotes[1] ]; then
+  #   for remote in $remotes; do
+  #     git_branch_delete_remote $remote $@
+  #   done
+  # else
+  #   git_branch_delete_remote $@
+  # fi
 }
 
 function git_commit_push {
@@ -167,9 +214,9 @@ function omni_killer {
   done
 
   if [ $count = 1 ]; then
-    echo "1 $1 process terminated: $pids"
+    echo "1 $1 process terminated: $pids."
   elif [ $count -gt 0 ]; then
-    echo "$count $1 processes terminated: $pids"
+    echo "$count $1 processes terminated: $pids."
   else
     echo "No $1 processes found."
   fi
