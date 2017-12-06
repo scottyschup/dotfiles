@@ -75,11 +75,12 @@ function git_branch_delete_local {
   local_branches=()
   for branch in $@
   do
-    remote_and_or_branch=( $(echo "$branch" | tr "/" " ") )
-    local_branches+=("${remote_and_or_branch[$#]}")
+    remote_and_or_branch=( $(echo $branch | tr "/" " ") )
+    length=${#remote_and_or_branch}
+    local_branches+=("${remote_and_or_branch[$length]}")
   done
-  git branch -D "$local_branches"
 
+  git branch -D $local_branches
 }
 
 function git_branch_delete_remote {
