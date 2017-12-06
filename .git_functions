@@ -142,7 +142,7 @@ function test_git_branch_delete {
   for branch_name in $branch_names
   do
     gcob $branch_name
-    if [ "$flag" == "-lr" || "$flag" == "-rl" ]
+    if [ "$flag" == "-lr" ] || [ "$flag" == "-rl" ]
     then
       gacp . "Create test branch: $branch_name"
     fi
