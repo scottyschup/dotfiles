@@ -129,7 +129,7 @@ function test_git_branch_delete {
   flag=$1
   shift
 
-  if [ $flag ]
+  if [ $1 ] # note: this is the new $1 after the shift
   then
     branch_names=( "$@" )
   else
