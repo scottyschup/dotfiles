@@ -77,8 +77,8 @@ function git_branch_delete_local_and_remotes {
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
 
-  echo $(git_branch_delete_local "$@")
-  echo $(git_branch_delete_remote "$@")
+  git_branch_delete_local "$@"
+  git_branch_delete_remote "$@"
 }
 
 function git_commit_push {
