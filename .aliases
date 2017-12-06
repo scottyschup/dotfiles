@@ -13,17 +13,7 @@ alias brss='brew services start'
 alias brci='brew cask install'
 alias brcs='brew cask search'
 
-# bundle
-alias bcg='bundle config --global'
-alias bcl='bundle config --local'
-alias bcd='bundle config --delete'
-alias be='bundle exec'
-alias berk='bundle exec rake'
-alias bers='bundle exec rspec'
-alias bi='bundle install'
-alias bo='bundle open'
-alias bu='bundle update'
-alias tbers='time bundle exec rspec'
+# bundle => ruby/rails
 
 # colorize
 alias catc='colorize'
@@ -43,9 +33,7 @@ alias gacp='git_add_commit_push'
 alias garc='git add . && git rebase --continue'
 alias gb='git branch'
 alias gba='git branch -a' # list all branches
-alias gbd='git branch -D' # delete local branch
-alias gbdlr='git_branch_delete_local_and_remotes'
-alias gbdr='git_branch_delete_remote' # delete remote branch
+alias gbd='git_branch_delete' # delete branch; -l [branch_name, ...] / -r [remote/]branch_name[, ...] / -lr [remote/]branch_name[, ...]; if no remote, origin assumed
 alias gbr='git branch -r' # list remote branches
 alias gca='git commit --amend'
 alias gcfm='git checkout --force master'
@@ -181,8 +169,17 @@ alias start_redis='brew services start redis'
 alias stop_redis='brew services stop redis'
 alias rcli='redis-cli'
 
-# ruby/rails
+# bundle/ruby/rails
+alias bcg='bundle config --global'
+alias bcl='bundle config --local'
+alias bcd='bundle config --delete'
+alias be='bundle exec'
+alias berk='bundle exec rake'
+alias bers='bundle exec rspec'
 alias bersop='bundle_rails_server_on_port'
+alias bi='bundle install'
+alias bo='bundle open'
+alias bu='bundle update'
 alias gi='gem install'
 alias r=rails
 alias rc="rails console"
@@ -198,6 +195,7 @@ alias rn='rails_new'
 alias rrs='rails_reset'
 alias rs='rails server'
 alias rsop='rails_server_on_port'
+alias tbers='time bundle exec rspec'
 
 # server
 alias pyss='python -m SimpleHTTPServer'
