@@ -121,13 +121,26 @@ function git_stash_apply_saved_stash {
 }
 
 function test_git_branch_delete {
+  if [ $# -ne 1 ]
+  then
+    echo 'Must specify local and/or remote: -{l|r|lr|rl}'
+    return 1
+  fi
+
+  gst
+  echo "\n"
   gcob git_branch_delete_test_branch1
   gacp . 'Create test branch 1'
+  echo "\n"
   gcob git_branch_delete_test_branch2
   gacp . 'Create test branch 2'
+  echo "\n"
   gcom
-  echo $(gbd -lr git_branch_delete_test_branch1 origin/git_branch_delete_test_branch2)
+  echo "\n"
+  gbd $1 git_branch_delete_test_branch1 origin/git_branch_delete_test_branch2
+  echo "\n"
   gba
+  echo "\nUnsaved changes may have stashed, but you'll have to manually apply them"
 }
 alias 'tgbd=test_git_branch_delete'
 
