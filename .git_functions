@@ -36,8 +36,10 @@ function git_branch_delete {
     -lr|-rl [remote/]branch_name[s, ...] # deletes local and remote branches
 If no remote provided for -r|-lr|-rl, origin is assumed
 "
+    return 1
     ;;
   esac
+  return 0
 }
 
 function git_branch_delete_local {
@@ -67,8 +69,6 @@ function git_branch_delete_remote {
 
     echo "${YLW}Deleting remote branch: $remote/$branch${NONE}"
     git push $remote --delete $branch
-    unset $remote
-    unset $branch
   done
 }
 
@@ -77,8 +77,8 @@ function git_branch_delete_local_and_remotes {
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
 
-  git_branch_delete_local "$@"
-  git_branch_delete_remote "$@"
+  echo $(git_branch_delete_local "$@")
+  echo $(git_branch_delete_remote "$@")
 }
 
 function git_commit_push {
@@ -122,11 +122,12 @@ function git_stash_apply_saved_stash {
 
 function test_git_branch_delete {
   gcob git_branch_delete_test_branch1
-  gacp . 'test'
+  gacp . 'Create test branch 1'
   gcob git_branch_delete_test_branch2
-  gacp . 'test'
+  gacp . 'Create test branch 2'
   gcom
-  gbd -lr git_branch_delete_test_branch1 origin/git_branch_delete_test_branch2
+  echo $(gbd -lr git_branch_delete_test_branch1 origin/git_branch_delete_test_branch2)
+  gba
 }
 alias 'tgbd=test_git_branch_delete'
 
