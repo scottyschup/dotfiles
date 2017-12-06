@@ -127,7 +127,7 @@ function test_git_branch_delete {
     return 1
   fi
 
-  gst
+  git stash
   echo "\n"
   gcob git_branch_delete_test_branch1
   gacp . 'Create test branch 1'
