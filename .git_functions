@@ -152,6 +152,9 @@ function test_git_branch_delete {
     then
       gacp . "Create test branch: $branch_name"
     fi
+
+    # Return to master branch
+    gcom
     echo
   done
 
@@ -159,11 +162,8 @@ function test_git_branch_delete {
   # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
 
-  # Return to master branch for deletion test
-  gcom
-  echo
-
-  gbd $flag ${branch_names}
+  echo "$branch_names"
+  gbd $flag $branch_names
   echo
 
   # List branches for visual verification
