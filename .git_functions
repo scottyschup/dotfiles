@@ -49,17 +49,13 @@ function git_branch_delete_local {
     local_branches+=("${remote_and_or_branch[$length]}")
   done
 
-  tmp_file=.git_functions.tmp
   echo "${YLW}Deleting local branch(es): $local_branches${NONE}"
-  git branch -D $local_branches > $tmp_file
-  echo "\t${GRN}$tmp_file${NONE}"
-  rm $tmp_file
+  git branch -D $local_branches
 }
 
 function git_branch_delete_remote {
   for remote_branch in $@
   do
-    tmp_file=.git_functions.tmp
     remote_and_or_branch=( $(echo $remote_branch | tr "/" " ") )
     if [ ${#remote_and_or_branch} -eq 2 ]; then
       remote=${remote_and_or_branch[1]}
@@ -68,10 +64,11 @@ function git_branch_delete_remote {
       remote='origin'
       branch="$remote_and_or_branch"
     fi
+
     echo "${YLW}Deleting remote branch: $remote/$branch${NONE}"
-    git push $remote --delete $branch > $tmp_file
-    echo "\t${GRN}$tmp_file${NONE}"
-    rm $tmp_file
+    git push $remote --delete $branch
+    unset $remote
+    unset $branch
   done
 }
 
