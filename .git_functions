@@ -184,11 +184,15 @@ function test_git_branch_delete {
   fi
 
   # Clean up
-  gfa
-  gbd $flag $(gb | delete_test)
-  echo 'Post clean up git brnach --all'
-  gba
+  clean_up_test_branches
 }
 alias 'tgbd=test_git_branch_delete'
+
+function clean_up_test_branches {
+  gfa
+  gbd $1 $(gb | delete_test)
+  echo 'Post clean up `git brnach --all`'
+  gba
+}
 
 echo 'Sourced .git_functions'
