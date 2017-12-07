@@ -112,10 +112,8 @@ function git_lastnhashes {
 function git_stash_apply_saved_stash {
   if [ ! -n $1 ]; then
     echo "Usage $0: Must enter a stash name"
-    return 1
   else
     git stash apply stash^{/"$1"}
-    return 0
   fi
 }
 
@@ -144,13 +142,14 @@ function test_git_branch_delete {
   echo
 
   # Create each branch
+  touch .tgbd.tmp
   for branch_name in $branch_names
   do
-    gcob $branch_name
+    gcob $branch_name >> .tgbd.tmp 2>&1
     # Push branch to origin if -r was specified
     if [ "$flag" == "-lr" ] || [ "$flag" == "-rl" ]
     then
-      gacp . "Create test branch: $branch_name"
+      gacp . "Create test branch: $branch_name" >> .tgbd.tmp 2>&1
     fi
 
     # Return to master branch
@@ -158,6 +157,8 @@ function test_git_branch_delete {
     echo
   done
 
+  cat .tgbd.tmp
+  rm .tgbd.tmp
   # Prepend 'origin/' to the second branch name to make sure 
   # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
