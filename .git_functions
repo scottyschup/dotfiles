@@ -163,7 +163,7 @@ function test_git_branch_delete {
     echo
   done
 
-  echo 'Temp File contents'
+  echo "Temp File contents $PWD"
   cat $tmp_file
   rm $tmp_file
   # Prepend 'origin/' to the second branch name to make sure 
