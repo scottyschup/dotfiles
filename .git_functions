@@ -149,7 +149,7 @@ function test_git_branch_delete {
   fi
 
   # Create each branch
-  local tmp_file="$PWD./.tgbd.tmp"
+  local tmp_file="$PWD/.tgbd.tmp"
   touch $tmp_file
   for branch_name in $branch_names
   do
