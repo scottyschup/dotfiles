@@ -68,6 +68,7 @@ function git_branch_delete_remote {
 
     echo "${YLW}Deleting remote branch: $remote/$branch${NONE}"
     git push $remote --delete $branch
+    grpo
   done
 }
 
@@ -78,6 +79,7 @@ function git_branch_delete_local_and_remotes {
 
   git_branch_delete_local $@
   git_branch_delete_remote $@
+  grpo
 }
 
 function git_commit_push {
@@ -139,7 +141,7 @@ function test_git_branch_delete {
 
   # Stash if any uncommited changes
   local git_status=$(git status | grep 'nothing to commit')
-  if [[ -z "$git_status" ]]
+  if [[ -z "$git_status" ]] # if true, means there are things to commit
   then
     local stash_name=branch_deletion_testing
     gstsv $stash_name
@@ -147,11 +149,11 @@ function test_git_branch_delete {
   fi
 
   # Create each branch
-  local tmp_file=./.tgbd.tmp
+  local tmp_file="$PWD./.tgbd.tmp"
   touch $tmp_file
   for branch_name in $branch_names
   do
-    gcob $branch_name >> $tmp_file 2>&1
+    gcob $branch_name >> $tmp_file
     # Push branch to origin if -r was specified
     if [[ "$flag" == "-lr" ]] || [[ "$flag" == "-rl" ]]
     then
@@ -189,9 +191,24 @@ function test_git_branch_delete {
 alias 'tgbd=test_git_branch_delete'
 
 function clean_up_test_branches {
+  local grep_pattern=delete_test
+  if [ $1 ]; then grep_pattern="$1"; fi
   gfa
-  gbd $1 $(gb | grep delete_test)
-  echo 'Post clean up `git brnach --all`'
+  local branches=( $(gba | grep $grep_pattern | tr "\n " " " ) )
+  echo "BRANCHES: $branches"
+  for branch in $branches
+  do
+    local remote=${branch#'remotes/'}
+    if [[ -z "$remote" ]]
+    then
+      echo "DELETING local branch: $branch"
+      gbd -l $branch
+    else
+      echo "DELETING remote branch: $remote"
+      gbd -r $remote
+    fi
+  done
+  echo 'Post clean up `git branch --all`:'
   gba
 }
 alias cutb=clean_up_test_branches
