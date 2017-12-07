@@ -142,14 +142,15 @@ function test_git_branch_delete {
   echo
 
   # Create each branch
-  touch .tgbd.tmp
+  tmp_file=./.tgbd.tmp
+  touch $tmp_file
   for branch_name in $branch_names
   do
-    gcob $branch_name >> .tgbd.tmp 2>&1
+    gcob $branch_name >> $tmp_file 2>&1
     # Push branch to origin if -r was specified
     if [ "$flag" == "-lr" ] || [ "$flag" == "-rl" ]
     then
-      gacp . "Create test branch: $branch_name" >> .tgbd.tmp 2>&1
+      gacp . "Create test branch: $branch_name" >> $tmp_file 2>&1
     fi
 
     # Return to master branch
@@ -157,8 +158,8 @@ function test_git_branch_delete {
     echo
   done
 
-  cat .tgbd.tmp
-  rm .tgbd.tmp
+  cat $tmp_file
+  rm $tmp_file
   # Prepend 'origin/' to the second branch name to make sure 
   # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
