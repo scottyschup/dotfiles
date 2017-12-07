@@ -169,10 +169,16 @@ function test_git_branch_delete {
   echo
 
   # List branches for visual verification
+  echo 'Pre clean up git branch --all'
   gba
 
   # Attempt to recover save stash
   gstass $stash_name
+  # Clean up
+  gfa
+  gbd -lr $(gb | delete_test)
+  echo 'Post clean up git brnach --all'
+  gba
 }
 alias 'tgbd=test_git_branch_delete'
 
