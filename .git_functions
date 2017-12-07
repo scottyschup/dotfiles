@@ -190,9 +190,10 @@ alias 'tgbd=test_git_branch_delete'
 
 function clean_up_test_branches {
   gfa
-  gbd $1 $(gb | delete_test)
+  gbd $1 $(gb | grep delete_test)
   echo 'Post clean up `git brnach --all`'
   gba
 }
+alias cutb=clean_up_test_branches
 
 echo 'Sourced .git_functions'
