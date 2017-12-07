@@ -125,24 +125,29 @@ function test_git_branch_delete {
     return 1
   fi
 
-  flag=$1
+  local flag=$1
   shift
 
   # Check for optional branch names
+  local branch_names=()
   if [ $1 ] # note: this is the new $1 after the shift above
   then
-    branch_names=( "$@" )
+    branch_names+=( "$@" )
   else
-    branch_names=(git_branch_delete_test_branch1 git_branch_delete_test_branch2)
+    branch_names+=(git_branch_delete_test_branch1 git_branch_delete_test_branch2)
   fi
 
-  # Stash any uncommited changes
-  stash_name=branch_deletion_testing
-  gstsv $stash_name
-  echo
+  # Stash if any uncommited changes
+  local git_status=$(git status | grep 'nothing to commit')
+  if [[ -z "$git_status" ]]
+  then
+    local stash_name=branch_deletion_testing
+    gstsv $stash_name
+    echo
+  fi
 
   # Create each branch
-  tmp_file=./.tgbd.tmp
+  local tmp_file=./.tgbd.tmp
   touch $tmp_file
   for branch_name in $branch_names
   do
@@ -172,8 +177,11 @@ function test_git_branch_delete {
   echo 'Pre clean up git branch --all'
   gba
 
-  # Attempt to recover save stash
-  gstass $stash_name
+  # Attempt to recover saved stash
+  if [[ -z "$git_status" ]]
+    then gstass $stash_name
+  fi
+
   # Clean up
   gfa
   gbd -lr $(gb | delete_test)
