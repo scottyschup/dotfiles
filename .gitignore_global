@@ -62,3 +62,4 @@ derby.log
 logs
 metastore_db
 node_modules
+.tmp
