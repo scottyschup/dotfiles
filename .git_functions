@@ -141,6 +141,7 @@ function test_git_branch_delete {
 
   # Stash if any uncommited changes
   local git_status=$(git status | grep 'nothing to commit')
+  echo "Git status: $git_status" >> $log_file
   if [[ -z "$git_status" ]] # if true, means there are things to commit
   then
     local stash_name=branch_deletion_testing
@@ -149,15 +150,15 @@ function test_git_branch_delete {
   fi
 
   # Create each branch
-  local tmp_file="$PWD/.tgbd.tmp"
-  touch $tmp_file
+  local log_file="$PWD/.tgbd.log"
+  touch $log_file
   for branch_name in $branch_names
   do
-    gcob $branch_name >> $tmp_file
+    gcob $branch_name >> $log_file
     # Push branch to origin if -r was specified
     if [[ "$flag" == "-lr" ]] || [[ "$flag" == "-rl" ]]
     then
-      gacp . "Create test branch: $branch_name" >> $tmp_file 2>&1
+      gacp . "Create test branch: $branch_name" >> $log_file 2>&1
     fi
 
     # Return to master branch
@@ -165,9 +166,6 @@ function test_git_branch_delete {
     echo
   done
 
-  echo "Temp File contents $PWD"
-  cat $tmp_file
-  rm $tmp_file
   # Prepend 'origin/' to the second branch name to make sure 
   # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
@@ -185,10 +183,27 @@ function test_git_branch_delete {
     then gstass $stash_name
   fi
 
-  # Clean up
+  # Success check
+  was_successful $branch_names
+  # Clean up and post clean gba
   clean_up_test_branches
 }
 alias 'tgbd=test_git_branch_delete'
+
+function was_successful {
+  check=()
+  for branch_name in $1
+  do
+    check+=( $(gba | grep "$branch_name") )
+  done
+  if [ ${#check} == 0 ]
+  then
+    echo "Success!"
+  else
+    echo "Uh-oh! :("
+    gba
+  fi
+}
 
 function clean_up_test_branches {
   local grep_pattern=delete_test
