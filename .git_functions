@@ -243,7 +243,7 @@ function clean_up_test_branches {
     gbd -r $remote
   done
 
-  echo was_successful
+  echo $(was_successful)
 }
 alias cutb=clean_up_test_branches
 
