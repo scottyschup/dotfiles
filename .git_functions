@@ -27,7 +27,7 @@ function git_branch_delete {
     ;;
   '-lr'|'-rl')
     shift
-    git_branch_delete_local_and_remotes "$@"
+    git_branch_delete_local_and_remote "$@"
     ;;
   *)
     echo "Usage: $0: At least one flag is required:
@@ -66,13 +66,12 @@ function git_branch_delete_remote {
       branch="$remote_and_or_branch"
     fi
 
-    echo "${YLW}Deleting remote branch: $remote/$branch${NONE}"
     git push $remote --delete $branch
     grpo
   done
 }
 
-function git_branch_delete_local_and_remotes {
+function git_branch_delete_local_and_remote {
   if [ $# -lt 1 ]; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
