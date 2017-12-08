@@ -201,6 +201,7 @@ alias 'tgbd=test_git_branch_delete'
 
 function was_successful {
   echo "FUNCTION: $0 *****************************************"
+  if [ $# == 0 ]; then return "Must pass in branches to check for"; fi
 
   gfa
   check=()
