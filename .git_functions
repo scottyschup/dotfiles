@@ -201,7 +201,10 @@ alias 'tgbd=test_git_branch_delete'
 
 function was_successful {
   echo "FUNCTION: $0 *****************************************"
-  if [ $# == 0 ]; then return "Must pass in branches to check for"; fi
+  if [ $# == 0 ]
+  then 
+    return "Must pass in branches to check for"
+  fi
 
   gfa
   check=()
@@ -244,7 +247,7 @@ function clean_up_test_branches {
     gbd -r $remote
   done
 
-  echo $(was_successful)
+  echo $(was_successful $local_branches $remote_branches)
 }
 alias cutb=clean_up_test_branches
 
