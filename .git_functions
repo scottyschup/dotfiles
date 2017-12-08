@@ -16,6 +16,8 @@ function git_add_commit_push {
 }
 
 function git_branch_delete {
+  echo "FUNCTION: $0"
+
   case $1 in
   '-l')
     shift
@@ -42,6 +44,8 @@ function git_branch_delete {
 }
 
 function git_branch_delete_local {
+  echo "FUNCTION: $0"
+
   local_branches=()
   for branch in $@
   do
@@ -55,6 +59,7 @@ function git_branch_delete_local {
 }
 
 function git_branch_delete_remote {
+  echo "FUNCTION: $0"
   for remote_branch in $@
   do
     local remote_and_or_branch=( $(echo $remote_branch | tr "/" " ") )
@@ -73,6 +78,8 @@ function git_branch_delete_remote {
 }
 
 function git_branch_delete_local_and_remote {
+  echo "FUNCTION: $0"
+
   if [ $# -lt 1 ]; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
@@ -120,6 +127,8 @@ function git_stash_apply_saved_stash {
 }
 
 function test_git_branch_delete {
+  echo "FUNCTION: $0"
+
   # Check for req'd arg
   if [ $# -lt 1 ]
   then
@@ -191,6 +200,8 @@ function test_git_branch_delete {
 alias 'tgbd=test_git_branch_delete'
 
 function was_successful {
+  echo "FUNCTION: $0"
+
   check=()
   for branch_name in $1
   do
@@ -206,6 +217,8 @@ function was_successful {
 }
 
 function clean_up_test_branches {
+  echo "FUNCTION: $0"
+
   local grep_pattern=delete_test
   if [ $1 ]; then grep_pattern="$1"; fi
   gfa # to get any locally removed branches that are still in remote
