@@ -211,12 +211,12 @@ alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
 
 ## sublime
-alias sub='subl'
-alias suba='subl $DOTFILES/.aliases'
-alias subd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
-alias subf='subl $DOTFILES/.functions'
-alias subv='subl $DOTFILES/.vimrc'
-alias subz='subl $DOTFILES/.zshrc'
+alias s='subl'
+alias sba='subl $DOTFILES/.aliases'
+alias sbd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
+alias sbf='subl $DOTFILES/.functions'
+alias sbv='subl $DOTFILES/.vimrc'
+alias sbz='subl $DOTFILES/.zshrc'
 
 ## dotfiles
 alias sa='source $DOTFILES/.aliases'
