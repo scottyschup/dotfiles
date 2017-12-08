@@ -173,7 +173,7 @@ function test_git_branch_delete {
   echo
 
   # List branches for visual verification
-  echo 'Pre clean up git branch --all'
+  echo 'Pre-clean up git branch --all'
   gba
 
   # Attempt to recover saved stash
@@ -185,6 +185,8 @@ function test_git_branch_delete {
   was_successful $branch_names
   # Clean up and post clean gba
   clean_up_test_branches
+  echo 'Post-clean up `git branch --all`:'
+  gba
 }
 alias 'tgbd=test_git_branch_delete'
 
@@ -206,25 +208,26 @@ function was_successful {
 function clean_up_test_branches {
   local grep_pattern=delete_test
   if [ $1 ]; then grep_pattern="$1"; fi
-  gfa
-  local branches=( $(gba | grep $grep_pattern | tr "\n " " " ) )
-  echo "BRANCHES: $branches"
-  for branch in $branches
+  gfa # to get any locally removed branches that are still in remote
+  local remote_branches=( $(gb -r | grep $grep_pattern | tr "\n " " " ) )
+  local local_branches=( $(gb | grep $grep_pattern | tr "\n " " " ) )
+
+  echo "LOCAL BRANCHES: $local_branches"
+  for branch in $local_branches
+  do
+    echo "DELETING local branch: $branch"
+    gbd -l $branch
+  done
+
+  echo "REMOTE BRANCHES: $remote_branches"
+  for branch in $remote_branches
   do
     local remote=${branch#'remotes/'}
-    if [[ -z "$remote" ]]
-    then
-      echo "DELETING local branch: $branch"
-      gbd -l $branch
-    else
-      echo "DELETING remote branch: $remote"
-      gbd -r $remote
-    fi
+    echo "DELETING remote branch: $remote"
+    gbd -r $remote
   done
 
   grpo
-  echo 'Post clean up `git branch --all`:'
-  gba
 }
 alias cutb=clean_up_test_branches
 
