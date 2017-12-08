@@ -120,15 +120,10 @@ function git_stash_apply_saved_stash {
 }
 
 function test_git_branch_delete {
-  local log_file="$PWD/.tgbd.log"
-
-  if [ ! -f "$log_file" ]; then touch $log_file; fi
-
   # Check for req'd arg
   if [ $# -lt 1 ]
   then
-    local message="Usage $0: Must specify local and/or remote: -{l|r|lr|rl}"
-    echo $message && echo $message >> $Log_file
+    echo "Usage $0: Must specify local and/or remote: -{l|r|lr|rl}"
     return 1
   fi
 
@@ -146,7 +141,7 @@ function test_git_branch_delete {
 
   # Stash if any uncommited changes
   local git_status=$(git status | grep 'nothing to commit')
-  echo "Git status: $git_status" >> $log_file
+  echo "Git status: $git_status"
   if [[ -z "$git_status" ]] # if true, means there are things to commit
   then
     local stash_name=branch_deletion_testing
@@ -157,11 +152,11 @@ function test_git_branch_delete {
   # Create each branch
   for branch_name in $branch_names
   do
-    gcob $branch_name >> $log_file
+    gcob $branch_name
     # Push branch to origin if -r was specified
     if [[ "$flag" == "-lr" ]] || [[ "$flag" == "-rl" ]]
     then
-      gacp . "Create test branch: $branch_name" >> $log_file 2>&1
+      gacp . "Create test branch: $branch_name"
     fi
 
     # Return to master branch
@@ -226,6 +221,8 @@ function clean_up_test_branches {
       gbd -r $remote
     fi
   done
+
+  grpo
   echo 'Post clean up `git branch --all`:'
   gba
 }
