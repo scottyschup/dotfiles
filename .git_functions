@@ -225,6 +225,7 @@ function was_successful {
 
 function clean_up_test_branches {
   echo "FUNCTION: $0 *****************************************"
+  echo "ARGS $@"
 
   local grep_pattern=delete_test
   if [ $1 ]; then grep_pattern="$1"; fi
