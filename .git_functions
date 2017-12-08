@@ -211,9 +211,11 @@ function was_successful {
   if [ ${#check} == 0 ]
   then
     echo "Success!"
+    return 0
   else
     echo "Uh-oh! :("
-    gba
+    echo $check
+    return 1
   fi
 }
 
@@ -242,6 +244,7 @@ function clean_up_test_branches {
   done
 
   grpo
+  return was_successful
 }
 alias cutb=clean_up_test_branches
 
