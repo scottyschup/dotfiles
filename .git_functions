@@ -210,11 +210,11 @@ function was_successful {
   done
   if [ ${#check} == 0 ]
   then
-    echo "Success!"
+    echo "\nSuccess!"
     return 0
   else
-    echo "Uh-oh! :("
-    echo $check
+    echo "\nUh-oh! :("
+    echo "\n$check"
     return 1
   fi
 }
