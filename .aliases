@@ -42,9 +42,11 @@ alias gcp='git_commit_push'
 alias gco='git checkout'
 alias gcob='git checkout -b'
 alias gcof='git checkout --force'
-alias gcog='git checkout gh-pages'
 alias gcofm='git checkout --force master'
+alias gcog='git checkout gh-pages'
 alias gcom='git checkout master'
+alias gconf='git config -l'
+alias gconfg='git config --global -l'
 alias gd='git diff'
 alias gdf='git_diff_file'
 alias gds='git diff --stat'
@@ -88,9 +90,15 @@ alias gstai='git stash apply --index'
 alias gstass=git_stash_apply_saved_stash
 alias gstb='git stash branch'
 alias gstl='git stash list'
+alias gsts='git stash show --text'
 alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
+alias upgg="git config --global user.email 'ssschupbach@gmail.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
+alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+alias upgl="git config user.email 'ssschupbach@gmail.com'; git config user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
+alias uwgl="git config user.email 'scott.schupbach@avant.com'; git config user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+
 
 # heroku
 alias hrc='heroku run rails console --app'
