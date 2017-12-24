@@ -3,13 +3,17 @@
 # Most of the navigation aliases require k.sh to be installed
 # Some of the aliases below are for functions in the ./.functions file
 
-# bundle
-alias be='bundle exec'
-alias bera='bundle exec rake'
-alias bers='bundle exec rspec'
-alias bi='bundle install'
-alias bo='bundle open'
-alias bu='bundle update'
+# brew
+alias bri='brew install'
+alias brs='brew search'
+alias brsl='brew services list'
+alias brsp='brew services stop'
+alias brsr='brew services restart'
+alias brss='brew services start'
+alias brci='brew cask install'
+alias brcs='brew cask search'
+
+# bundle => ruby/rails
 
 # colorize
 alias catc='colorize'
@@ -17,19 +21,19 @@ alias catc='colorize'
 # docker
 alias dk='docker'
 alias dkc='docker-compose'
+alias dke='docker exec -it'
+alias dkm='docker-machine'
 
 # git
 alias g='git'
 alias ga='git add'
-alias gaa='git add .'
+alias gaa='git add .' # aka git add -A
 alias gac='git_add_commit'
 alias gacp='git_add_commit_push'
 alias garc='git add . && git rebase --continue'
 alias gb='git branch'
 alias gba='git branch -a' # list all branches
-alias gbd='git branch -D' # delete local branch
-alias gbdlr='git_branch_delete_local_and_remotes'
-alias gbdr='git_branch_delete_remote' # delete remote branch
+alias gbd='git_branch_delete' # delete branch; -l [branch_name, ...] / -r [remote/]branch_name[, ...] / -lr [remote/]branch_name[, ...]; if no remote, origin assumed
 alias gbr='git branch -r' # list remote branches
 alias gca='git commit --amend'
 alias gcfm='git checkout --force master'
@@ -38,8 +42,11 @@ alias gcp='git_commit_push'
 alias gco='git checkout'
 alias gcob='git checkout -b'
 alias gcof='git checkout --force'
+alias gcofm='git checkout --force master'
 alias gcog='git checkout gh-pages'
 alias gcom='git checkout master'
+alias gconf='git config -l'
+alias gconfg='git config --global -l'
 alias gd='git diff'
 alias gdf='git_diff_file'
 alias gds='git diff --stat'
@@ -51,12 +58,16 @@ alias gin='git init'
 alias gig='git_ignore_and_remove'
 alias gln='git_lastnhashes'
 alias gm='git merge'
+alias gma='git merge --abort; git stash; git checkout -- .; echo "Check stash if missing data."'
+alias gmdr='git merge --no-commit --no-ff'
 alias gp='git push'
 alias gpf='git push --force'
 alias gpl='git pull'
 alias gplu='git pull -u'
 alias gpluo='git pull -u origin'
 alias gpo='git push -u origin'
+alias gpsu='git push --set-upstream'
+alias gpsuo='git push --set-upstream origin'
 alias gpu='git push -u'
 alias gpuo='git push -u origin'
 alias gra='git remote add'
@@ -65,7 +76,6 @@ alias grbc='git rebase --continue'
 alias grbm='git rebase master'
 alias grbs='git rebase --skip'
 alias grollback='git reset HEAD~1'
-alias grollforward='git reset HEAD@{1}'
 alias grp='git remote prune'
 alias grpo='git remote prune origin' # removes dead branches from remote origin
 alias grr='git remote remove'
@@ -75,11 +85,23 @@ alias grv='git remote --verbose'
 alias gs='git status'
 alias gst='git stash'
 alias gsta='git stash apply'
+unalias gstaa # not sure where this one is coming from
 alias gstai='git stash apply --index'
+alias gstass=git_stash_apply_saved_stash
 alias gstb='git stash branch'
 alias gstl='git stash list'
+alias gsts='git stash show --text'
+alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
+alias upgg="git config --global user.email 'ssschupbach@gmail.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
+alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+alias upgl="git config user.email 'ssschupbach@gmail.com'; git config user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
+alias uwgl="git config user.email 'scott.schupbach@avant.com'; git config user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+
+
+# heroku
+alias hrc='heroku run rails console --app'
 
 # javascript/npm/nvm/gulp/grunt/react
 alias gl='gulp'
@@ -98,11 +120,17 @@ alias react_babel_install='npm install --save babel-core babel-loader babel-pres
 alias wp='$(npm bin)/webpack'
 
 # miscellany
-alias captainslog='atom -n ~/Documents/work_log.md'
 alias chrome='open -a "Google Chrome"'
-alias ci='curl -I'
-alias flushOpenWith='eval "$(/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder;)"'
+alias curli='curl -I'
+alias die='omni_killer'
+alias grepi='grep -i'
+alias pids='pids_for'
+alias psgrep='psaux_with_grep'
 alias rlr='reload_redis'
+alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
+alias rebuild_spotlight_index="sudo mdutil -i on /"
+alias grep_alias='alias | grep -i' # zsh only
+alias aliases_for=grep_alias
 
 # mysql/postgres
 alias msst='mysql.server start'
@@ -111,8 +139,11 @@ alias msr='mysql.server restart'
 alias pg='postgres -D /usr/local/var/postgres'
 alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
 alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
+alias bpgst='brew services start postgresql@9.4'
+alias bpgsp='brew services stop postgresql@9.4'
 
 # navigation
+alias back='cd ..'
 alias cda='cd_atom'
 alias cdl='cd_ll'
 alias la='k -A'
@@ -128,35 +159,87 @@ alias whcdl='which_cd_ll'
 alias za='z_atom'
 alias zl='z_ll'
 
-# ruby/rails
+# postgres
+alias start_pg='brew services start postgresql@9.4'
+alias stop_pg='brew services stop postgresql@9.4'
+
+# python
+alias pi='pip install'
+alias pu='pip install --upgrade pip'
+alias pe='pyenv'
+alias pev='pyenv versions'
+alias pei='pyenv install'
+alias pel='pyenv local'
+alias peu='pyenv local'
+alias peg='pyenv global'
+alias per='pyenv rehash' # run this after installing executables
+alias peh='pyenv help'
+
+# redis
+alias start_redis='brew services start redis'
+alias stop_redis='brew services stop redis'
+alias rcli='redis-cli'
+
+# bundle/ruby/rails
+alias bcg='bundle config --global'
+alias bcl='bundle config --local'
+alias bcd='bundle config --delete'
+alias be='bundle exec'
+alias berk='bundle exec rake'
+alias bers='bundle exec rspec'
+alias bersop='bundle_rails_server_on_port'
+alias bi='bundle install'
+alias bo='bundle open'
+alias bu='bundle update'
 alias gi='gem install'
-alias r='rails'
-alias rc="export RAILS_ENV='development'; rails console"
+alias r=rails
+alias rc="rails console"
+alias rcdev="export RAILS_ENV='development'; rails console"
+alias rdbd='rake db:drop'
 alias rdbm='rake db:migrate'
 alias rdbr='rake db:reset'
-alias rdbs='rake db:seed'
+alias rdbsd='rake db:seed'
+alias rdbsu='rake db:setup'
 alias rdbrb='rake db:rollback'
 alias rdbms='rake db:migrate:status'
 alias rn='rails_new'
 alias rrs='rails_reset'
+alias rs='rails server'
+alias rsop='rails_server_on_port'
+alias tbers='time bundle exec rspec'
 
 # server
 alias pyss='python -m SimpleHTTPServer'
 
-# dotfiles (and iTerm autolaunch)
+# text editing
+## atom
 alias a='atom'
-alias aa='atom $DOTFILES/.aliases'
 alias ad='atom $DOTFILES' # opens atom with navigation pane for all dotfiles
+alias aa='atom $DOTFILES/.aliases'
 alias af='atom $DOTFILES/.functions'
 alias av='atom $DOTFILES/.vimrc'
 alias az='atom $DOTFILES/.zshrc'
+
+## sublime
+alias s='subl'
+alias sba='subl $DOTFILES/.aliases'
+alias sbd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
+alias sbf='subl $DOTFILES/.functions'
+alias sbv='subl $DOTFILES/.vimrc'
+alias sbz='subl $DOTFILES/.zshrc'
+
+## dotfiles
 alias sa='source $DOTFILES/.aliases'
-alias sd='. $DOTFILES/.aliases; . $DOTFILES/.functions; . ~/.zshrc'
+alias sd='source ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
 alias sz='source ~/.zshrc'
+
+## vim
+alias v='vim'
 alias va='vim $DOTFILES/.aliases'
 alias vf='vim $DOTFILES/.functions'
 alias vggi='vim ~/.gitignore_global'
 alias vv='vim $DOTFILES/.vimrc'
 alias vz='vim $DOTFILES/.zshrc'
-alias vi='vim $DOTFILES/iTermAutoLaunch.scpt'
+
+echo 'Sourced .aliases'

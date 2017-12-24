@@ -12,6 +12,12 @@ This is just for me to make my terminal workflow more consistent between work an
   ```sh
   export DOTFILES=$HOME/.dotfiles # or wherever your copy lives
   ln -s $DOTFILES/.zshrc_VARIANT ~/.zshrc
+  ln -s $DOTFILES/.zshenv ~/.zshenv
+  ```
+
+- create a .railsrc symlink as well:
+  ```sh
+  ln -s $DOTFILES/.railsrc ~/.railsrc
   ```
 
 - create a .railsrc symlink as well:

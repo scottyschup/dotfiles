@@ -1,3 +1,5 @@
+#! /bin/bash
+
 function precmd {
   setTitles $PWD
 }
@@ -52,3 +54,5 @@ function titleOrPWD {
   fi
   echo $TITLE
 }
+
+echo 'Sourced custom_zsh_tabs.sh'

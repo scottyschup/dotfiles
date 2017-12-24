@@ -8,90 +8,37 @@ function cd_ll {
   cd $1 && k -Ah
 }
 
-function git_add_commit {
-  if [ $2 ]; then
-    g_add=$1
-    g_msg=$2
+function args_test {
+  last=${@: -1}
+  echo $@
+  echo $last
+  echo $#
+}
+
+function bundle_rails_server_on_port {
+  if [ $1 ]; then
+    bundle exec rails server -p $1
+    return 0
   else
-    return "Enter a commit message"
-  fi
-  git add $g_add; git commit -m $g_msg;
-}
-
-function git_add_commit_push {
-  gac $1 $2
-  g_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-  git push -u origin $g_branch
-}
-
-function git_branch_delete_remote {
-  if [ $2 ]; then
-    remote=$1
-    branch=$2
-  else
-    remote='origin'
-    branch=$1
-  fi
-  git push $remote --delete $branch
-}
-
-function git_branch_delete_local_and_remotes {
-  if [ ! -n $1 ]; then
-    return 'Must enter at least a branch name'
-  fi
-  remotes=( "$@" )
-  unset "remotes[$#]"
-
-  for remote in $remotes; do
-    shift
-  done
-
-  if [ $remotes[1] ]; then
-    for remote in $remotes; do
-      git_branch_delete_remote $remote $@
-    done
-  else
-    git_branch_delete_remote $@
-  fi
-
-  git branch -D $@
-}
-
-function git_commit_push {
-  git commit -m $1 && git push
-}
-
-function git_diff_file {
-  if [ $3 ]; then
-    commit2=$3
-  else
-    commit2="HEAD"
-  fi
-
-  if [ $2 ]; then
-    file=$1
-    commit1=$2
-    git diff $commit1 $commit2 $file
-  else
-    echo "Usage: git_diff_file COMMIT FILE_NAME" >&2; exit 1
+    echo "${RED}Error: Enter port number to run server on${NONE}"
+    return 1
   fi
 }
 
-function git_ignore_and_remove {
-  echo $1 >> ./.gitignore; git rm --cached $1
-}
-
-function git_lastnhashes {
-  git rev-list --max-count=$1 HEAD
+function cd_subl {
+  cd $1 && subl .
 }
 
 function mkdir_cd {
   if [ ! -n "$1" ]; then
     echo "Enter a directory name"
+    return 1
   elif [ -d $1 ]; then
     echo "\`$1' already exists"
+    return 2
   else
     mkdir $1 && cd $1
+    return 0
   fi
 }
 
@@ -124,32 +71,61 @@ function new_react_project {
 }
 
 function omni_killer {
-  for pid in $(pids_for $1); do
-    kill -9 $pid;
+  count=0
+  pids="$(pids_for $1)"
+
+  for pid in $(echo $pids); do
+    (kill -9 $(($pid)) || kill -9 $pid) && ((count++))
   done
+
+  if [ $count = 1 ]; then
+    echo "1 $1 process terminated: $pids."
+  elif [ $count -gt 0 ]; then
+    echo "$count $1 processes terminated: $pids."
+  else
+    echo "No $1 processes found."
+  fi
+}
+
+function over {
+  cd ../$1
 }
 
 function pids_for {
-  ps aux |
-  grep $1 |
+  psaux_with_grep $1 |
   grep -v grep |
   awk '{print $2}' |
   tr '\n' ' ' |
-  sed 's/\s$//'
+  sed 's/[[:space:]]*$//'
 }
 
 function ping_google {
   if [ $1 ]; then
-    $count=$1
+    count=$1
   else
-    $count=5
+    count=5
   fi
 
   ping -c $count google.com
 }
 
+function psaux_with_grep {
+  ps aux |
+  grep $1
+}
+
 function rails_new {
   rails _4.2.5.1_ new $1 --rc="~/.railsrc" --template="~/.railsrc"
+}
+
+function rails_server_on_port {
+  if [ $1 ]
+    rails server -p $1
+    return 0
+  then
+    echo 'Error: Enter port number to run server on'
+    return 1
+  fi
 }
 
 function rails_reset {
@@ -169,6 +145,17 @@ function reload_redis {
     new_dump_file="sony.rdb"
   fi
   cp "$ANALYTICS_HOME/$new_dump_file" "$ANALYTICS_HOME/sawmill/dump.rdb"
+}
+
+function uninstallAllLocalGems {
+  YLW='\033[1;33m'
+  NONE='\033[0m'
+  list=`gem list --no-versions`
+  for gem in `echo $list`; do # `echo $list` part is for zsh; bash only needs $list
+    if [[ $gem = bundler ]]; then echo -e "${YLW}Skipping $gem${NONE}"; continue; fi
+    gem uninstall $gem -aIx
+  done
+  gem list
 }
 
 function untarAll {
@@ -202,3 +189,5 @@ function z_atom {
 function z_ll {
   z $1 && k -Ah
 }
+
+echo 'Sourced .functions'
