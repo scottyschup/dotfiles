@@ -68,6 +68,7 @@ alias gpluo='git pull -u origin'
 alias gpo='git push -u origin'
 alias gpsu='git push --set-upstream'
 alias gpsuo='git push --set-upstream origin'
+alias gpsuom='git push --set-upstream origin master'
 alias gpu='git push -u'
 alias gpuo='git push -u origin'
 alias gra='git remote add'
@@ -98,7 +99,6 @@ alias upgg="git config --global user.email 'ssschupbach@gmail.com'; git config -
 alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
 alias upgl="git config user.email 'ssschupbach@gmail.com'; git config user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
 alias uwgl="git config user.email 'scott.schupbach@avant.com'; git config user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
-
 
 # heroku
 alias hrc='heroku run rails console --app'
