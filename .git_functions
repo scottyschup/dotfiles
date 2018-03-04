@@ -16,7 +16,7 @@ function git_add_commit_push {
 }
 
 function git_branch_delete {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
 
   case $1 in
   '-l')
@@ -44,7 +44,7 @@ function git_branch_delete {
 }
 
 function git_branch_delete_local {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
 
   local_branches=()
   for branch in $@
@@ -55,11 +55,12 @@ function git_branch_delete_local {
   done
 
   echo "${YLW}Deleting local branch(es): $local_branches${NONE}"
-  git branch -D $local_branches
+  git_resp=$(git branch -D "$local_branches")
+  handle_git_resp "$git_resp"
 }
 
 function git_branch_delete_remote {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
   for remote_branch in $@
   do
     local remote_and_or_branch=( $(echo $remote_branch | tr "/" " ") )
@@ -78,7 +79,7 @@ function git_branch_delete_remote {
 }
 
 function git_branch_delete_local_and_remote {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
 
   if [ $# -lt 1 ]; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
@@ -126,8 +127,16 @@ function git_stash_apply_saved_stash {
   fi
 }
 
+function handle_git_resp {
+  if [[ $1 == "err*" ]]; then
+    echo "${RED}$1${NONE}"
+  else
+    echo "${GRN}$1${NONE}"
+  fi
+}
+
 function test_git_branch_delete {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
 
   # Check for req'd arg
   if [ $# -lt 1 ]
@@ -200,7 +209,7 @@ function test_git_branch_delete {
 alias 'tgbd=test_git_branch_delete'
 
 function was_successful {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
   if [ $# == 0 ]
   then 
     return "Must pass in branches to check for"
@@ -224,7 +233,7 @@ function was_successful {
 }
 
 function clean_up_test_branches {
-  echo "FUNCTION: $0 *****************************************"
+  echo "***** FUNCTION: $0"
   echo "ARGS $@"
 
   local grep_pattern=delete_test
