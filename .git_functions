@@ -111,6 +111,28 @@ function git_diff_file {
   fi
 }
 
+function git_checkout_safe_force {
+  branch=$1
+  g_status=${$(git status)[-1]}
+
+  if [ "$g_status" != "clean" ]; then
+    stash=1
+    git stash
+  fi
+
+  git checkout $branch
+  if [ $? -eq 1 ]; then
+    git checkout -b $branch
+  fi
+
+  if [ $stash ]; then
+    echo "$YLW\nWARNING:$NONE the following unstaged changes were stashed!"
+    echo "`git stash show`"
+  else
+    echo $GRN"Success!"$NONE
+  fi
+}
+
 function git_ignore_and_remove {
   echo $1 >> ./.gitignore; git rm --cached $1
 }
@@ -135,6 +157,15 @@ function handle_git_resp {
   fi
 }
 
+function git_include_from_external_dir {
+  remote_path=$1
+  local_path=${2:-.}
+  cp -r $remote_path $local_path && git status
+}
+alias gifed=git_include_from_external_dir
+
+
+# Test branch delete
 function test_git_branch_delete {
   echo "***** FUNCTION: $0"
 
@@ -206,7 +237,7 @@ function test_git_branch_delete {
   echo 'Post-clean up `git branch --all`:'
   gba
 }
-alias 'tgbd=test_git_branch_delete'
+alias tgbd=test_git_branch_delete
 
 function was_successful {
   echo "***** FUNCTION: $0"
