@@ -64,7 +64,8 @@ function new_react_project {
   touch lib/app.jsx &&
   echo "${GRN}initialize git repo${NONE}"
   git init &&
-  gac . "initial commit" &&
+  git add .
+  git commit -m "Initial commit" &&
   atom . &&
   wp --watch
 

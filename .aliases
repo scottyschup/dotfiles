@@ -118,7 +118,7 @@ alias npme='PATH=$(npm bin):$PATH'
 alias react_new='new_react_project'
 alias react_install='npm install --save react react-dom'
 alias react_webpack="cp $DOTFILES/webpack.config.js ./webpack.config.js && npm install --save webpack"
-alias react_babel_install='npm install --save babel-core babel-loader babel-preset-react'
+alias react_babel_install='npm install --save babel-core babel-loader babel-preset-env'
 alias wp='$(npm bin)/webpack'
 
 # miscellany
