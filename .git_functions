@@ -16,8 +16,6 @@ function git_add_commit_push {
 }
 
 function git_branch_delete {
-  echo "***** FUNCTION: $0"
-
   case $1 in
   '-l')
     shift
@@ -29,23 +27,29 @@ function git_branch_delete {
     ;;
   '-lr'|'-rl')
     shift
+    if test $# -eq 0; then
+      git_branch_delete_usage
+      return 2
+    fi
     git_branch_delete_local_and_remote "$@"
     ;;
   *)
-    echo "Usage: $0: At least one flag is required:
-    -l branch_name[s, ...]            # deletes local branch only
-    -r [remote/]branch_name[s, ...]   # delete remote branch only
-    -lr|-rl [remote/]branch_name[s, ...] # deletes local and remote branches
-    If no remote provided for -r|-lr|-rl, origin is assumed
-    "
+    git_branch_delete_usage
     return 1
     ;;
   esac
 }
 
-function git_branch_delete_local {
-  echo "***** FUNCTION: $0"
+function git_branch_delete_usage {
+  echo "Usage: git_branch_delete: At least one flag is required:
+    -l branch_name[s, ...]               # deletes local branch only
+    -r [remote/]branch_name[s, ...]      # delete remote branch only
+    -lr|-rl [remote/]branch_name[s, ...] # deletes local and remote branches
+If no remote provided for -r|-lr|-rl, origin is assumed
+"
+}
 
+function git_branch_delete_local {
   local_branches=()
   for branch in $@
   do
@@ -60,34 +64,33 @@ function git_branch_delete_local {
 }
 
 function git_branch_delete_remote {
-  echo "***** FUNCTION: $0"
   for remote_branch in $@
   do
-    local remote_and_or_branch=( $(echo $remote_branch | tr "/" " ") )
-    echo "GBDR: r and/or branch: $remote_and_or_branch $(${#remote_and_or_branch})"
-    if [ ${#remote_and_or_branch} -eq 2 ]; then
+    local remote_and_or_branch=( $(echo "$remote_branch" | tr "/" " ") )
+
+    if [ ${#remote_and_or_branch[@]} -eq 2 ]; then
       remote=${remote_and_or_branch[1]}
       branch=${remote_and_or_branch[2]}
     else
+      echo 'Defaulting to remote => origin'
       remote='origin'
       branch="$remote_and_or_branch"
     fi
 
     git push $remote --delete $branch
-    grpo
+    git remote prune origin
   done
 }
 
 function git_branch_delete_local_and_remote {
-  echo "***** FUNCTION: $0"
-
-  if [ $# -lt 1 ]; then
+  echo "$#"
+  if test $# -eq 0; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
 
   git_branch_delete_local $@
   git_branch_delete_remote $@
-  grpo
+  git remote prune origin
 }
 
 function git_commit_push {
