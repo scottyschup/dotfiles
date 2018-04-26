@@ -50,8 +50,9 @@ If no remote provided for -r|-lr|-rl, origin is assumed
 }
 
 function git_branch_delete_local {
+  branches=( $@ )
   local_branches=()
-  for branch in $@
+  for branch in $branches
   do
     remote_and_or_branch=( $(echo $branch | tr "/" " ") )
     length=${#remote_and_or_branch}
