@@ -56,7 +56,7 @@ alias gf='git fetch'
 alias ghl='cat .git/refs/heads/master' # full hash
 alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gin='git init'
-alias gig='git_ignore_and_remove'
+alias gigrm='git_ignore_and_remove'
 alias gln='git_lastnhashes'
 alias gm='git merge'
 alias gma='git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data."'

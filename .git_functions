@@ -137,7 +137,17 @@ function git_checkout_safe_force {
 }
 
 function git_ignore_and_remove {
-  echo $1 >> ./.gitignore; git rm --cached $1
+  for file in $@;
+  do
+    printf "\n$file" >> ./.gitignore;
+
+    if [[ -f $file ]]; then
+      git rm --cached $file;
+    elif [[ -d $file ]]; then
+      git rm -r --cached $file;
+    fi
+  done
+  printf "\n" >> ./.gitignore;
 }
 
 function git_lastnhashes {
@@ -216,7 +226,7 @@ function test_git_branch_delete {
     echo
   done
 
-  # Prepend 'origin/' to the second branch name to make sure 
+  # Prepend 'origin/' to the second branch name to make sure
   # the remote-prefixed and the bare branch name both work
   branch_names[2]="origin/${branch_names[2]}"
 
@@ -245,7 +255,7 @@ alias tgbd=test_git_branch_delete
 function was_successful {
   echo "***** FUNCTION: $0"
   if [ $# == 0 ]
-  then 
+  then
     return "Must pass in branches to check for"
   fi
 
