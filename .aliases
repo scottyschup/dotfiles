@@ -182,7 +182,7 @@ alias start_redis='brew services start redis'
 alias stop_redis='brew services stop redis'
 alias rcli='redis-cli'
 
-# bundle/ruby/rails
+# bundle/ruby/rails/rbenv
 alias bcg='bundle config --global'
 alias bcl='bundle config --local'
 alias bcd='bundle config --delete'
@@ -209,6 +209,8 @@ alias rrs='rails_reset'
 alias rs='rails server'
 alias rsop='rails_server_on_port'
 alias tbers='time bundle exec rspec'
+alias rbenv_new_versions='brew update; brew upgrade ruby-build'
+alias rnv=rbenv_new_versions
 
 # server
 alias pyss='python -m SimpleHTTPServer'
