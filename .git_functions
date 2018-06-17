@@ -50,8 +50,9 @@ If no remote provided for -r|-lr|-rl, origin is assumed
 }
 
 function git_branch_delete_local {
+  branches=( $@ )
   local_branches=()
-  for branch in $@
+  for branch in $branches
   do
     remote_and_or_branch=( $(echo $branch | tr "/" " ") )
     length=${#remote_and_or_branch}
@@ -59,7 +60,7 @@ function git_branch_delete_local {
   done
 
   echo "${YLW}Deleting local branch(es): $local_branches${NONE}"
-  git_resp=$(git branch -D "$local_branches")
+  git_resp=$(git branch -D $local_branches)
   handle_git_resp "$git_resp"
 }
 
@@ -83,7 +84,6 @@ function git_branch_delete_remote {
 }
 
 function git_branch_delete_local_and_remote {
-  echo "$#"
   if test $# -eq 0; then
     return "Usage: $0 [remote/]branch_name[s, ...]"
   fi
@@ -153,7 +153,7 @@ function git_stash_apply_saved_stash {
 }
 
 function handle_git_resp {
-  if [[ $1 == "err*" ]]; then
+  if [[ $line == "err*" ]]; then
     echo "${RED}$1${NONE}"
   else
     echo "${GRN}$1${NONE}"

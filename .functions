@@ -42,6 +42,17 @@ function mkdir_cd {
   fi
 }
 
+function my_watch {
+  while :; do
+    result=$($@)
+    clear
+    echo "Updating every 2 seconds"
+    date
+    echo "\n$result"
+    sleep 2
+  done
+}
+
 function new_react_project {
   GRN='\033[0;32m'
   NONE='\033[0m'
@@ -87,6 +98,37 @@ function omni_killer {
     echo "No $1 processes found."
   fi
 }
+
+function output_to_file {
+  usage="Usage: output_to_file [-x] file_to_write_to command_to_run\nNote: -x will overwrite existing file contents;\nwithout -x will append"
+
+  if [[ $1 == -* ]]; then
+    flag="$1"
+    shift
+
+    if [[ $# -lt 2 ]]; then
+      echo "$usage"
+      return 1
+    fi
+  fi
+
+  file=$1
+  shift
+
+  case $flag in
+  '-x')
+    echo "\nOutput to file: $file\n\t$@\n" > $file
+    ;;
+  *)
+    echo "\nOutput to file: $file\n\t$@\n" >> $file
+    ;;
+  esac
+  unset flag
+
+  echo "Output $GRN$@$NONE to file $YLW$file$NONE"
+  $@ | col -b >> $file
+}
+alias o2f=output_to_file
 
 function over {
   cd ../$1
