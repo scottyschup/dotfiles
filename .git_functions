@@ -177,81 +177,6 @@ function git_include_from_external_dir {
 }
 alias gifed=git_include_from_external_dir
 
-
-# Test branch delete
-function test_git_branch_delete {
-  echo "***** FUNCTION: $0"
-
-  # Check for req'd arg
-  if [ $# -lt 1 ]
-  then
-    echo "Usage $0: Must specify local and/or remote: -{l|r|lr|rl}"
-    return 1
-  fi
-
-  local flag=$1
-  shift
-
-  # Check for optional branch names
-  local branch_names=()
-  if [ $1 ] # note: this is the new $1 after the shift above
-  then
-    branch_names+=( "$@" )
-  else
-    branch_names+=(git_branch_delete_test_branch1 git_branch_delete_test_branch2)
-  fi
-
-  # Stash if any uncommited changes
-  local git_status=$(git status | grep 'nothing to commit')
-  echo "Git status: $git_status"
-  if [[ -z "$git_status" ]] # if true, means there are things to commit
-  then
-    local stash_name=branch_deletion_testing
-    gstsv $stash_name
-    echo
-  fi
-
-  # Create each branch
-  for branch_name in $branch_names
-  do
-    gcob $branch_name
-    # Push branch to origin if -r was specified
-    if [[ "$flag" == "-lr" ]] || [[ "$flag" == "-rl" ]]
-    then
-      gacp . "Create test branch: $branch_name"
-    fi
-
-    # Return to master branch
-    gcofm
-    echo
-  done
-
-  # Prepend 'origin/' to the second branch name to make sure
-  # the remote-prefixed and the bare branch name both work
-  branch_names[2]="origin/${branch_names[2]}"
-
-  echo "$branch_names"
-  gbd $flag $branch_names
-  echo
-
-  # List branches for visual verification
-  echo 'Pre-clean up git branch --all'
-  gba
-
-  # Attempt to recover saved stash
-  if [[ -z "$git_status" ]]
-    then gstass $stash_name
-  fi
-
-  # Success check
-  was_successful $branch_names
-  # Clean up and post clean gba
-  clean_up_test_branches
-  echo 'Post-clean up `git branch --all`:'
-  gba
-}
-alias tgbd=test_git_branch_delete
-
 function was_successful {
   echo "***** FUNCTION: $0"
   if [ $# == 0 ]
@@ -275,34 +200,5 @@ function was_successful {
     return 1
   fi
 }
-
-function clean_up_test_branches {
-  echo "***** FUNCTION: $0"
-  echo "ARGS $@"
-
-  local grep_pattern=delete_test
-  if [ $1 ]; then grep_pattern="$1"; fi
-  gfa # to get any locally removed branches that are still in remote
-  local remote_branches=( $(gb -r | grep $grep_pattern | tr "\n " " " ) )
-  local local_branches=( $(gb | grep $grep_pattern | tr "\n " " " ) )
-
-  echo "LOCAL BRANCHES: $local_branches"
-  for branch in $local_branches
-  do
-    echo "DELETING local branch: $branch"
-    gbd -l $branch
-  done
-
-  echo "REMOTE BRANCHES: $remote_branches"
-  for branch in $remote_branches
-  do
-    local remote=${branch#'remotes/'}
-    echo "DELETING remote branch: $remote"
-    gbd -r $remote
-  done
-
-  echo $(was_successful $local_branches $remote_branches)
-}
-alias cutb=clean_up_test_branches
 
 echo 'Sourced .git_functions'

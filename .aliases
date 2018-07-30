@@ -53,6 +53,7 @@ alias gdf='git_diff_file'
 alias gds='git diff --stat'
 alias gdns='git diff --numstat'
 alias gf='git fetch'
+alias gfp='git fetch --all --prune; git pull'
 alias ghl='cat .git/refs/heads/master' # full hash
 alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gin='git init'
