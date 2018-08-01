@@ -1,3 +1,8 @@
+function current_git_branch {
+  echo `git branch  --no-color | grep -E '^\*' | awk '{print $2}'`
+}
+alias cgb=current_git_branch
+
 function git_add_commit {
   if [ $2 ]; then
     g_add=$1
@@ -97,23 +102,6 @@ function git_commit_push {
   git commit -m $1 && git push
 }
 
-
-function git_diff_file {
-  if [ $3 ]; then
-    commit2=$3
-  else
-    commit2="HEAD"
-  fi
-
-  if [ $2 ]; then
-    file=$1
-    commit1=$2
-    git diff $commit1 $commit2 $file
-  else
-    echo "Usage: git_diff_file COMMIT FILE_NAME" >&2; return 1
-  fi
-}
-
 function git_checkout_safe_force {
   branch=$1
   g_status=${$(git status)[-1]}
@@ -136,6 +124,22 @@ function git_checkout_safe_force {
   fi
 }
 
+function git_diff_file {
+  if [ $3 ]; then
+    commit2=$3
+  else
+    commit2="HEAD"
+  fi
+
+  if [ $2 ]; then
+    file=$1
+    commit1=$2
+    git diff $commit1 $commit2 $file
+  else
+    echo "Usage: git_diff_file COMMIT FILE_NAME" >&2; return 1
+  fi
+}
+
 function git_ignore_and_remove {
   for file in $@;
   do
@@ -154,8 +158,23 @@ function git_lastnhashes {
   git rev-list --max-count=$1 HEAD
 }
 
+function git_new_branch {
+  if [ ! $1 ]
+  then
+    echo "Usage $0: Must provide a name for the new branch (and optional source branch)"
+    return
+  fi
+  current_branch=`cgb`
+  if [ $2 ]; then source=$2; else source=$current_branch; fi
+  git_checkout_safe_force $source
+  git checkout -b $1
+  git commit --allow-empty -m 'Branch initialization'
+  git push -u origin $1
+}
+alias gnb=git_new_branch
+
 function git_stash_apply_saved_stash {
-  if [ ! -n $1 ]; then
+  if [ ! $1 ]; then
     echo "Usage $0: Must enter a stash name"
   else
     git stash apply stash^{/"$1"}
@@ -176,29 +195,5 @@ function git_include_from_external_dir {
   cp -r $remote_path $local_path && git status
 }
 alias gifed=git_include_from_external_dir
-
-function was_successful {
-  echo "***** FUNCTION: $0"
-  if [ $# == 0 ]
-  then
-    return "Must pass in branches to check for"
-  fi
-
-  gfa
-  check=()
-  for branch_name in $1
-  do
-    check+=( $(gba | grep "$branch_name") )
-  done
-  if [ ${#check} == 0 ]
-  then
-    echo "\nSuccess!"
-    return 0
-  else
-    echo "\nUh-oh! :("
-    echo "\n$check"
-    return 1
-  fi
-}
 
 echo 'Sourced .git_functions'
