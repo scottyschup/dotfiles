@@ -10,9 +10,9 @@ function cd_ll {
 
 function args_test {
   last=${@: -1}
-  echo $@
-  echo $last
-  echo $#
+  echo "All agrs: $@"
+  echo "Last args: $last"
+  echo "Num of args: $#"
 }
 
 function bundle_rails_server_on_port {
