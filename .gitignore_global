@@ -54,7 +54,6 @@ Icon[\r]
 
 # Project generated files #
 ###########################
-aspera-license
 bower_components
 bundle.js*
 derby.log

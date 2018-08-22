@@ -12,15 +12,15 @@ source \"https://rubygems.org\""
 end
 
 # Add all the regular gems
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt"
 gem "figaro"
-gem "jbuilder", "~> 2.0"
+gem "jbuilder"
 gem "pg"
 gem "pry-rails"
 gem "puma"
-gem "rails", "4.2.5.1"
-gem "sass-rails", "~> 5.0"
-gem "sdoc", "~> 0.4.0", group: :doc
+gem "rails"
+gem "sass-rails"
+gem "sdoc", group: :doc
 
 gem_group :development, :test do
   gem "better_errors"

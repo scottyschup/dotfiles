@@ -13,12 +13,14 @@ function git_add_commit {
   git add $g_add
   git commit -m $g_msg
 }
+alias gac='git_add_commit'
 
 function git_add_commit_push {
   git_add_commit $1 $2
   g_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
   git push -u origin $g_branch
 }
+alias gacp='git_add_commit_push'
 
 function git_branch_delete {
   case $1 in
@@ -44,6 +46,7 @@ function git_branch_delete {
     ;;
   esac
 }
+alias gbd='git_branch_delete'
 
 function git_branch_delete_usage {
   echo "Usage: git_branch_delete: At least one flag is required:
@@ -123,22 +126,7 @@ function git_checkout_safe_force {
     echo $GRN"Success!"$NONE
   fi
 }
-
-function git_diff_file {
-  if [ $3 ]; then
-    commit2=$3
-  else
-    commit2="HEAD"
-  fi
-
-  if [ $2 ]; then
-    file=$1
-    commit1=$2
-    git diff $commit1 $commit2 $file
-  else
-    echo "Usage: git_diff_file COMMIT FILE_NAME" >&2; return 1
-  fi
-}
+alias gcosf='git_checkout_safe_force'
 
 function git_ignore_and_remove {
   for file in $@;
@@ -153,10 +141,12 @@ function git_ignore_and_remove {
   done
   printf "\n" >> ./.gitignore;
 }
+alias gigrm='git_ignore_and_remove'
 
 function git_lastnhashes {
   git rev-list --max-count=$1 HEAD
 }
+alias gln='git_lastnhashes'
 
 function git_new_branch {
   if [ ! $1 ]
@@ -180,6 +170,7 @@ function git_stash_apply_saved_stash {
     git stash apply stash^{/"$1"}
   fi
 }
+alias gstass=git_stash_apply_saved_stash
 
 function handle_git_resp {
   if [[ $line == "err*" ]]; then

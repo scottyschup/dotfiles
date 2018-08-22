@@ -71,6 +71,9 @@ brew install nvm npm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
+# Yarn
+brew install yarn
+
 # Ruby via rbenv
 brew install rbenv
 brew install openssl libyaml libffi # per ruby-build's recommended build env wiki https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
@@ -95,11 +98,9 @@ cd $AVANT
 
 ## avant-basic
 ### install avant-basic necessities
-brew install rabbitmq heroku-toolbelt qt55
+brew install qt55
 ### setup redis.conf
 cp /usr/local/etc/redis.conf.default /usr/local/etc/redis.conf
-### start rabbitmq
-brew services start rabbitmq
 ### link qt55
 brew link --force qt55
 
@@ -130,6 +131,3 @@ cp config/database.yml.sample.yaml config/database.yml
 ### install and start mailcatcher
 gem install mailcatcher
 mailcatcher # Daemonized by default; add -f flag to run in foreground
-
-### spin up the app
-/bin/start_development
