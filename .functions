@@ -169,10 +169,10 @@ function rails_new {
 alias rn='rails_new'
 
 function rails_server_on_port {
-  if [ $1 ]
+  if [ $1 ]; then
     rails server -p $1
     return 0
-  then
+  else
     echo 'Error: Enter port number to run server on'
     return 1
   fi

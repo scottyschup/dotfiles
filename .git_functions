@@ -8,13 +8,19 @@ function current_git_branch {
 alias cgb=current_git_branch
 
 function git_add_commit {
-  if [ $2 ]; then
-    g_add=$1
-    g_msg=$2
-  else
-    return "Enter a commit message"
-  fi
+  if [ $# -lt 2 ]; then return "Enter a commit message"; fi
+
+  g_add=()
+  while [ $# -gt 1 ]; do
+    g_add+="$1"
+    shift
+  done
+
+  g_msg=$1
+
+  echo "Adding: $g_add"
   git add $g_add
+  echo "With message: $g_msg"
   git commit -m $g_msg
 }
 alias gac='git_add_commit'
