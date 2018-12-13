@@ -88,10 +88,18 @@ alias gsts='git stash show'
 alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
-alias upgg="git config --global user.email 'ssschupbach@gmail.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
-alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
-alias upgl="git config user.email 'ssschupbach@gmail.com'; git config user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
-alias uwgl="git config user.email 'scott.schupbach@avant.com'; git config user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
+            git config --global user.name 'Scott Schupbach'; \
+            echo 'Switched to personal git user/email settings.\nRemember to set remote host to github.com.personal.'"
+alias upgl="git config user.email 'ssschupbach@gmail.com'; \
+            git config user.name 'Scott Schupbach'; \
+            echo 'Switched to personal git user/email settings.\nRemember to set remote host to github.com.personal.'"
+alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; \
+            git config --global user.name 'Scott Schupbach'; \
+            echo 'Switched to work git user/email settings.\nRemember to set remote host to github.com.'"
+alias uwgl="git config user.email 'scott.schupbach@avant.com'; \
+            git config user.name 'Scott Schupbach'; \
+            echo 'Switched to work git user/email settings.\nRemember to set remote host to github.com.'"
 
 # heroku
 alias hrc='heroku run rails console --app'
