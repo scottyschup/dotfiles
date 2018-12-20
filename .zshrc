@@ -1,4 +1,6 @@
 export DOTFILES=$HOME/.dotfiles
+export GITHUB_HOST=github.com
+export GITHUB_HOST_PERSONAL=github.com.personal
 export ZSH=~/.oh-my-zsh # or wherever your oh-my-zsh installation lives
 ZSH_THEME="robbyrussell"
 DISABLE_AUTO_UPDATE="true"
@@ -36,6 +38,8 @@ source $ZSH/oh-my-zsh.sh
 source $DOTFILES/.colors
 source $DOTFILES/.git_functions
 source $DOTFILES/.functions
+export PATH="$PATH:$DOTFILES/ruby_scripts"
+chmod +x "$DOTFILES/ruby_scripts" && echo 'Sourced ruby_scripts/* and appended dir to PATH'
 source $DOTFILES/.aliases
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global

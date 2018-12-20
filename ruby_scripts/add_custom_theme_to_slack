@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby -w
+
+require 'fileutils'
+
+slack_files = [
+  '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js',
+  '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/index.js'
+]
+# Change the next line to wherever you saved the new code
+theme_file = "#{ENV['DOTFILES']}/templates/custom_dark_slack_theme.js"
+
+# Make sure files exist
+(slack_files + [theme_file]).each do |file|
+  exists = File.exist?(file)
+  unless exists
+    puts "File does not exist: #{file}"
+    exit
+  end
+end
+
+# Open target and source files and get content
+source_lines = File.open(theme_file).readlines
+
+slack_files.each do |file|
+  # Change ownership so script can write to file
+  # This will require you to enter your password
+  `sudo chown $(whoami):staff #{file}`
+  target_file = File.open(file, 'a+')
+  target_lines = target_file.readlines
+
+  # Check if custom theme has already been added
+  if target_lines.last == source_lines.last
+    puts "Theme already added"
+    `sudo chown root:admin #{slack_file}`
+    exit
+  end
+
+  # Add new line between original code and custom theme code
+  # then write custom theme code to slack file
+  target_file.puts
+  source_lines.each { |line| target_file.print line }
+end
+
+
+
+# Change ownership back
+`sudo chown root:admin #{slack_file}`
+
+$stdout.puts "Theme updated from #{theme_file}"
+exit

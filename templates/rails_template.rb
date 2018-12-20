@@ -1,3 +1,6 @@
+# NOT IN USE
+# The contents of this were copied into .railsrc
+
 # template.rb
 # source: http://tonirib.github.io/personal-blog/jekyll/update/2016/02/15/rails-application-template.html
 
@@ -7,7 +10,7 @@
 add_file "Gemfile"
 
 prepend_to_file "Gemfile" do
-  "# This Gemfile generated from a template: $DOTFILES/rails_template.rb
+  "# This Gemfile generated from a template: $DOTFILES/templates/rails_template.rb
 source \"https://rubygems.org\""
 end
 
