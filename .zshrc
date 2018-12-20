@@ -36,6 +36,7 @@ source $ZSH/oh-my-zsh.sh
 source $DOTFILES/.colors
 source $DOTFILES/.git_functions
 source $DOTFILES/.functions
+source $DOTFILES/.ruby_functions
 source $DOTFILES/.aliases
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
