@@ -75,7 +75,8 @@ alias grpo='git remote prune origin' # removes dead branches from remote origin
 alias grr='git remote remove'
 alias grao='git remote add origin'
 alias grro='git remote remove origin'
-alias grv='git remote --verbose'
+alias grv='git remote -v'
+alias grsv='git remote -v show'
 alias gs='git status'
 alias gst='git stash'
 alias gsta='git stash apply'
@@ -88,10 +89,18 @@ alias gsts='git stash show'
 alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
-alias upgg="git config --global user.email 'ssschupbach@gmail.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
-alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; git config --global user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
-alias upgl="git config user.email 'ssschupbach@gmail.com'; git config user.name 'Scott Schupbach'; echo 'Switched to personal git user/email settings.'"
-alias uwgl="git config user.email 'scott.schupbach@avant.com'; git config user.name 'Scott Schupbach'; echo 'Switched to work git user/email settings.'"
+alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
+            git config --global user.name 'Scott Schupbach'; \
+            echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
+alias upgl="git config user.email 'ssschupbach@gmail.com'; \
+            git config user.name 'Scott Schupbach'; \
+            echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
+alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; \
+            git config --global user.name 'Scott Schupbach'; \
+            echo 'Switched to work git user/email settings.\nRemember to set remote host to $GITHUB_HOST.'"
+alias uwgl="git config user.email 'scott.schupbach@avant.com'; \
+            git config user.name 'Scott Schupbach'; \
+            echo 'Switched to work git user/email settings.\nRemember to set remote host to $GITHUB_HOST.'"
 
 # heroku
 alias hrc='heroku run rails console --app'
@@ -107,7 +116,7 @@ alias gtt='grunt test'
 alias gtrs='rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force'
 alias npme='PATH=$(npm bin):$PATH'
 alias react_install='npm install --save react react-dom'
-alias react_webpack="cp $DOTFILES/webpack.config.js ./webpack.config.js && npm install --save webpack"
+alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
 alias react_babel_install='npm install --save babel-core babel-loader babel-preset-env'
 alias wp='$(npm bin)/webpack'
 
