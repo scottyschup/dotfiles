@@ -24,6 +24,17 @@ source_lines = File.open(theme_file).readlines
 slack_files.each do |file|
   # Change ownership so script can write to file
   # This will require you to enter your password
+
+  # TODO: capture user:group info before chowning to determine whether
+  # it's actually necessary and to switch back to after change is made
+  # pseudocode
+  # user, group = get_user_and_group
+  # if user == `whoami`
+  #   skip
+  # else
+  #   chown to `whoami`:staff
+  # Then after if..else block, chown back only if necessary
+
   `sudo chown $(whoami):staff #{file}`
   target_file = File.open(file, 'a+')
   target_lines = target_file.readlines
@@ -31,20 +42,17 @@ slack_files.each do |file|
   # Check if custom theme has already been added
   if target_lines.last == source_lines.last
     puts "Theme already added"
-    `sudo chown root:admin #{slack_file}`
     exit
+  else
+    # Add new line between original code and custom theme code
+    # then write custom theme code to slack file
+    target_file.puts
+    source_lines.each { |line| target_file.print line }
   end
 
-  # Add new line between original code and custom theme code
-  # then write custom theme code to slack file
-  target_file.puts
-  source_lines.each { |line| target_file.print line }
+  # Change ownership back if necessary
+  `sudo chown root:admin #{file}` # unless user == `whoami`.strip
 end
-
-
-
-# Change ownership back
-`sudo chown root:admin #{slack_file}`
 
 $stdout.puts "Theme updated from #{theme_file}"
 exit
