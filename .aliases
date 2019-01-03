@@ -35,13 +35,13 @@ alias gbr='git branch -r' # list remote branches
 alias gca='git commit --amend'
 alias gcfm='git checkout --force master'
 alias gcm='git commit -m'
-alias gcp='git_commit_push'
-alias gco='LAST_GIT_BRANCH=${$(git symbolic-ref -q HEAD)##refs/heads/}; git checkout'
+alias gcmp='git_commit_push'
+alias gco='LAST_GIT_BRANCH=${$(git symbolic-ref -q HEAD)##refs/heads/} && git checkout'
 alias gcob='gco -b'
 alias gcof='gco --force'
 alias gcofm='gco --force master'
 alias gcog='gco gh-pages'
-alias gcol='CURRENT_GIT_BRANCH=$LAST_GIT_BRANCH; gco $CURRENT_GIT_BRANCH'
+alias gcolast='TARGET_GIT_BRANCH=$LAST_GIT_BRANCH; gco $TARGET_GIT_BRANCH'
 alias gcom='gco master'
 alias gconf='git config -l'
 alias gconfg='git config --global -l'
@@ -198,7 +198,9 @@ alias rbenv_new_versions='brew update; brew upgrade ruby-build'
 alias rnv=rbenv_new_versions
 
 # server
-alias pyss='python -m SimpleHTTPServer'
+alias pys='python -m SimpleHTTPServer'
+alias rbsp='ruby -run -e httpd . -p'
+alias rbs='ruby -run -e httpd .'
 
 # text editing
 ## atom

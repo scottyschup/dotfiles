@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 # To use personal git settings on work laptop:
 #   * upgl (use personal git local)
 #   * change git@github.com:scottyschup/repo.git to git@github.com.personal:scottyschup/repo.git
@@ -85,7 +86,7 @@ function git_branch_delete_local {
 function git_branch_delete_remote {
   for remote_branch in $@
   do
-    local remote_and_or_branch=( $(echo "$remote_branch" | tr "/" " ") )
+    remote_and_or_branch=( $(echo "$remote_branch" | tr "/" " ") )
 
     if [ ${#remote_and_or_branch[@]} -eq 2 ]; then
       remote=${remote_and_or_branch[1]}
