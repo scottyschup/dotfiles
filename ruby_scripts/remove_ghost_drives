@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby -w
+
+skip_these = ['.', '..', '.DS_Store']
+do_not_unmount = ['MobileBackups', 'Macintosh HD']
+
+unmount_flags = ['--unmount', '-u']
+unmount = ARGV.any? { |arg| unmount_flags.include?(arg) }
+
+Dir.foreach('/Volumes') do |file|
+  next if skip_these.include?(file)
+  puts file
+  next if file == do_not_unmount.include?(file)
+  `sudo rm -r "#{file}"`
+  puts "#{file} removed"
+end
