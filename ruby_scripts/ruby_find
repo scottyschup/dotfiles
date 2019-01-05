@@ -1,3 +1,122 @@
 #!/usr/bin/env ruby -w
 
-queue = []
+require 'colorize'
+
+start = Time.now
+# Helper functions
+def dir_contents(dir)
+  Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
+end
+
+def files_in_dir(dir)
+  dir_contents(dir)
+    .select { |el| File.file? el }
+    .compact
+end
+
+def dirs_in_dir(dir)
+  dir_contents(dir)
+    .select { |el| File.directory? el }
+    .compact
+end
+
+def found?(str, search_term)
+  _path, el = path_and_name_from_str(str)
+  !!(el =~ Regexp.new(search_term))
+end
+
+def print_result(str, search_term)
+  path, el = path_and_name_from_str(str)
+  puts "#{path.join('/')}/#{el.gsub(search_term, search_term.yellow)}"
+end
+
+def path_and_name_from_str(str)
+  path = str.split('/')
+  el = path.pop
+  [path, el]
+end
+
+def usage
+  msg = "ruby_find".light_white
+  msg += " syntax is similar to Bash "
+  msg += "find\n".light_white
+  msg += "Supported flags:\n"
+  msg += "\t-type      d|f (directory, file)\n"
+  msg += "\t-name      String\n"
+  msg += "\t-d (depth) Fixnum\n\n"
+  msg += "Example:\n"
+  msg += "\truby_find ./ -type f -name this\\ is\\ a\\ test -d 5".light_white
+end
+
+# Main
+help = ARGV.index('--help') || ARGV.index('-help') || ARGV.index('-h')
+if help
+  puts usage
+  exit
+end
+
+root = ARGV[0]
+unless (root && !root.start_with?('-'))
+  puts "No root specified"
+  exit
+end
+
+search_term_idx = ARGV.index('-name')
+search_term = search_term_idx ? ARGV[search_term_idx + 1] : nil
+ruby_search_term = search_term.gsub('*', '')
+unless ruby_search_term
+  puts "No search term specified"
+  exit
+end
+
+type_idx = ARGV.index('-type')
+type = type_idx ? ARGV[type_idx + 1] : nil
+if type && !%w(d f).include?(type)
+  puts "Invalid type"
+  exit
+end
+
+root = root[-1] == '/' ? root[0...-1] : root
+
+depth_idx = ARGV.index('-d') || ARGV.index('-depth')
+depth = depth_idx ? ARGV[depth_idx + 1].to_i : nil
+start_depth = root.count('/')
+
+queue = [root]
+i = 0
+found = 0
+
+while queue.length > 0
+  i += 1
+  current_dir = queue.shift
+  queue += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
+
+  if type
+    if type == 'f'
+      files_in_dir(current_dir).each do |file|
+        if found?(file, ruby_search_term)
+          found += 1
+          print_result(file, ruby_search_term)
+        end
+      end
+    else
+      dirs_in_dir(current_dir).each do |dir|
+        if found?(dir, ruby_search_term)
+          found += 1
+          print_result(dir, ruby_search_term)
+        end
+      end
+    end
+  else
+    dir_contents(current_dir).each do |el|
+      if found?(el, ruby_search_term)
+        found += 1
+        print_result(el, ruby_search_term)
+      end
+    end
+  end
+end
+
+puts "Searched #{i} directories"
+puts "Found #{found} matches"
+puts "Total time `ruby_find`: #{Time.now - start} seconds"

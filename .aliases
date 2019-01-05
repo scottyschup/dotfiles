@@ -124,10 +124,11 @@ alias wp='$(npm bin)/webpack'
 alias chrome='open -a "Google Chrome"'
 alias curli='curl -I'
 alias grepi='grep -i'
-alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
-alias rebuild_spotlight_index="sudo mdutil -i on /"
 alias grep_alias='alias | grep -i' # zsh only
 alias aliases_for=grep_alias
+alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
+alias rebuild_spotlight_index="sudo mdutil -i on /"
+alias rbfind=ruby_find
 
 # mysql/postgres
 alias msst='mysql.server start'
@@ -223,7 +224,6 @@ alias sbz='subl $DOTFILES/.zshrc'
 alias sa='source $DOTFILES/.aliases'
 alias sd='source ~/.zshrc'
 alias sf='source $DOTFILES/.functions'
-alias sz='source ~/.zshrc'
 
 ## vim
 alias v='vim'

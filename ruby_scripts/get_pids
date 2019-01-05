@@ -1,0 +1,13 @@
+#! /usr/bin/env ruby -w
+
+
+# function pids_for {
+#   psaux_with_grep $1 |
+#   grep -v grep |
+#   awk '{print $2}' |
+#   tr '\n' ' ' |
+#   sed 's/[[:space:]]*$//'
+# }
+
+pattern = ARGV[0]
+puts `parse_ps_aux $(ps aux | grep #{pattern})`

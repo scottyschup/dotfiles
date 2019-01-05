@@ -1,0 +1,26 @@
+#! /usr/bin/env ruby -w
+
+exit unless ARGV.length == 1
+
+count = 0
+target = ARGV[0]
+pids = `pids_for #{target}`
+
+pids.each do |pid|
+  begin
+    Process.kill(9, pid)
+  rescue Errno::ESRCH
+    puts "Pid #{pid} not running"
+    next
+  end
+  count += 1
+end
+
+puts case count
+when 1
+  "1 #{target} process terminated: #{pids}"
+when 0
+  "No #{target} processes found."
+else
+  "#{count} #{target} processes terminated: #{pids}"
+end

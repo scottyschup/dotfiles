@@ -1,0 +1,17 @@
+#! /usr/bin/env ruby -w
+
+# ✗ ps aux
+# USER               PID  %CPU %MEM      VSZ    RSS   TT  STAT STARTED      TIME COMMAND
+# sschup15          1601   9.9  1.6  3034556 266768   ??  R    Thu01PM   7:48.34 /Applications/iTerm.app/Contents/MacOS/iTerm2 -psn_0_36873
+# _windowserver      164   2.5  0.4  4011980  67448   ??  Ss   Thu01PM  43:59.84 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -d
+# sschup15         12269   1.7  3.5  4066648 589220   ??  S    Thu04PM  28:52.27 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+# root               254   1.2  2.6  3190324 437688   ??  Ss   Thu01PM  15:06.11 /Library/Bitdefender/AVP/BDLDaemon
+# root               342   1.0  0.1  2485928  15208   ??  Ss   Thu01PM  48:49.71 sysmond
+# sschup15         55607   0.7  2.3  3960736 387880   ??  S     2:54PM   8:23.28 /Applications/Spotify.app/Contents/Frameworks/Spotify Helper.app/Contents/MacO
+
+exit unless ARGV.length > 0
+
+ARGV.shift # Remove column headers
+ARGV.map do |process_str|
+
+end
