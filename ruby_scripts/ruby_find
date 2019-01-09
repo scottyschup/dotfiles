@@ -2,7 +2,7 @@
 
 require 'colorize'
 
-start = Time.now
+
 # Helper functions
 def dir_contents(dir)
   Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
@@ -49,6 +49,8 @@ def usage
 end
 
 # Main
+start = Time.now
+
 help = ARGV.index('--help') || ARGV.index('-help') || ARGV.index('-h')
 if help
   puts usage
@@ -72,7 +74,7 @@ end
 type_idx = ARGV.index('-type')
 type = type_idx ? ARGV[type_idx + 1] : nil
 if type && !%w(d f).include?(type)
-  puts "Invalid type"
+  puts "Invalid type: #{type}"
   exit
 end
 
@@ -91,28 +93,14 @@ while queue.length > 0
   current_dir = queue.shift
   queue += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
 
-  if type
-    if type == 'f'
-      files_in_dir(current_dir).each do |file|
-        if found?(file, ruby_search_term)
-          found += 1
-          print_result(file, ruby_search_term)
-        end
-      end
-    else
-      dirs_in_dir(current_dir).each do |dir|
-        if found?(dir, ruby_search_term)
-          found += 1
-          print_result(dir, ruby_search_term)
-        end
-      end
-    end
-  else
-    dir_contents(current_dir).each do |el|
-      if found?(el, ruby_search_term)
-        found += 1
-        print_result(el, ruby_search_term)
-      end
+  contents = type ?
+    type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
+    dir_contents(current_dir)
+
+  contents.each do |el|
+    if found?(el, ruby_search_term)
+      found += 1
+      print_result(el, ruby_search_term)
     end
   end
 end
