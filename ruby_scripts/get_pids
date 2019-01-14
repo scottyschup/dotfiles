@@ -9,5 +9,9 @@
 #   sed 's/[[:space:]]*$//'
 # }
 
+# TODO: make sure to only search commands
+# not the path to the command
+# and not the flags passed with the command
+
 pattern = ARGV[0]
 puts `parse_ps_aux $(ps aux | grep #{pattern})`
