@@ -2,11 +2,13 @@
 
 require 'fileutils'
 
+# Verify the following 3 file locations before running
 slack_files = [
   '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js',
   '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/index.js'
 ]
-# Change the next line to wherever you saved the new code
+# This file location is very specific to my system
+# Change the next line to wherever you saved the dark theme JS code
 theme_file = "#{ENV['DOTFILES']}/templates/custom_dark_slack_theme.js"
 
 # Make sure files exist
@@ -21,38 +23,36 @@ end
 # Open target and source files and get content
 source_lines = File.open(theme_file).readlines
 
+skipped = 0
 slack_files.each do |file|
-  # Change ownership so script can write to file
-  # This will require you to enter your password
+  # Change ownership (if necessary) so script can write to file
+  # This will prompt you to enter your system password
+  original_user = Etc.getpwuid(File.stat(file).uid).name
+  original_group = Etc.getgrgid(File.stat(file).gid).name
+  user = `whoami`.chomp
 
-  # TODO: capture user:group info before chowning to determine whether
-  # it's actually necessary and to switch back to after change is made
-  # pseudocode
-  # user, group = get_user_and_group
-  # if user == `whoami`
-  #   skip
-  # else
-  #   chown to `whoami`:staff
-  # Then after if..else block, chown back only if necessary
+  needs_chowned = user != original_user
+  `sudo chown #{user}:staff #{file}` if needs_chowned
 
-  `sudo chown $(whoami):staff #{file}`
   target_file = File.open(file, 'a+')
   target_lines = target_file.readlines
 
   # Check if custom theme has already been added
   if target_lines.last == source_lines.last
+    skipped += 1
     puts "Theme already added"
-    exit
+    next
   else
     # Add new line between original code and custom theme code
     # then write custom theme code to slack file
     target_file.puts
     source_lines.each { |line| target_file.print line }
+    puts "Theme added to #{file}"
   end
 
   # Change ownership back if necessary
-  `sudo chown root:admin #{file}` # unless user == `whoami`.strip
+  `sudo chown #{original_user}:#{original_group} #{file}` if needs_chowned
 end
 
-$stdout.puts "Theme updated from #{theme_file}"
+$stdout.puts "Theme updated from #{theme_file}" unless skipped == slack_files.length
 exit
