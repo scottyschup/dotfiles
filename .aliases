@@ -129,6 +129,8 @@ alias aliases_for=grep_alias
 alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
 alias rebuild_spotlight_index="sudo mdutil -i on /"
 alias rbfind=ruby_find
+alias clr=clear
+alias cls=clear
 
 # mysql/postgres
 alias msst='mysql.server start'
