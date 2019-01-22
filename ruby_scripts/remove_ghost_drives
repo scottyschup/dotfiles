@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby -w
 
+########
+# WIP! #
+########
+
 skip_these = ['.', '..', '.DS_Store']
 do_not_unmount = ['MobileBackups', 'Macintosh HD']
 
