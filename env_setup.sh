@@ -7,7 +7,7 @@ defaults write -g AppleShowAllFiles TRUE
 defaults write com.apple.dock autohide-time-modifier -float 1.0
 ## Add longer delay between dock show trigger and dock show event
 defaults write com.apple.Dock autohide-delay -float 2.0
-## Keep obnoxious "Try Safari" popup frmo popping up all the time (requires logout/login?)
+## Keep obnoxious "Try Safari" popup from popping up all the time (requires logout/login?)
 defaults write com.apple.coreservices.uiagent CSUIHasSafariBeenLaunched -bool YES
 defaults write com.apple.coreservices.uiagent CSUIRecommendSafariNextNotificationDate -date 2050-01-01T00:00:00Z
 defaults write com.apple.coreservices.uiagent CSUILastOSVersionWhereSafariRecommendationWasMade -float 10.99
@@ -121,7 +121,7 @@ rbenv install ${$(cat .ruby-version)#ruby-}
 
 ### gems
 gem update --system
-gem install bundler -v 1.14.6
+gem install bundler
 bundle install
 
 ### database

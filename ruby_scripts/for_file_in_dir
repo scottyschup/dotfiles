@@ -6,8 +6,9 @@ def usage(err = nil)
   puts "Usage:"
   puts "\tfor_file_in_dir DIR 'Ruby code string using `file` as the local variable name'"
   puts "\t Flags:"
-  puts "\t\t-h --help help   This usage message"
-  puts "\t\t-d --allow-dirs  Will process dirs as files (does not do this by default)"
+  puts "\t\t-h --help help       This usage message"
+  puts "\t\t-d --allow-dirs      Will process dirs as files (does not do this by default)"
+  puts "\t\t-f --file-name-only  Will use file name only in Proc#call statement (uses full path by default)"
   puts
   puts "Examples:"
   puts "\tfor_file_in_dir 'f = File.open(file, \"a+\"); f.puts \"Hello World\"'"
@@ -32,6 +33,13 @@ if flags_passed_in? allow_dirs_flags
   allow_dirs_flags.each { |flag| ARGV.delete flag }
 end
 
+file_name_only = false
+file_name_flags = %w(-f --file-name-only)
+if flags_passed_in? file_name_flags
+  file_name_only = true
+  file_name_flags.each { |flag| ARGV.delete flag }
+end
+
 if ARGV.length == 2
   dir = ARGV[0]
   code_str =ARGV[1]
@@ -51,5 +59,6 @@ prc = Proc.new { |file| eval(code_str) }
 files = Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
 files.each do |file|
   next unless allow_dirs || File.file?(file)
+  file = file.split("/").last if file_name_only
   prc.call(file)
 end

@@ -131,6 +131,10 @@ alias rebuild_spotlight_index="sudo mdutil -i on /"
 alias rbfind=ruby_find
 alias clr=clear
 alias cls=clear
+alias update_slack_theme=add_custom_theme_to_slack
+alias ust=update_slack_theme
+alias list_ruby_scripts="for_file_in_dir --file-name-only $DOTFILES/ruby_scripts 'puts file'"
+alias lrs=list_ruby_scripts
 
 # mysql/postgres
 alias msst='mysql.server start'
