@@ -1,5 +1,7 @@
-# all my aliases
-# For a full list of active aliases, run `alias`.
+#! /bin/zsh
+
+# All my aliases
+# If using zsh, for a full list of active aliases, run `alias`.
 # Most of the navigation aliases require k.sh to be installed
 # Some of the aliases below are for functions in the ./.functions file
 
@@ -27,7 +29,7 @@ alias dkm='docker-machine'
 # git
 alias g='git'
 alias ga='git add'
-alias gaa='git add .' # aka git add -A
+alias gaa='git add -A' # using `-A` instead of `.` to include deleted files
 alias garc='git add . && git rebase --continue'
 alias gb='git branch'
 alias gba='git branch -a' # list all branches
@@ -36,7 +38,7 @@ alias gca='git commit --amend'
 alias gcfm='git checkout --force master'
 alias gcm='git commit -m'
 alias gcmp='git_commit_push'
-alias gco='LAST_GIT_BRANCH=${$(git symbolic-ref -q HEAD)##refs/heads/} && git checkout'
+alias gco='LAST_GIT_BRANCH=${$(git symbolic-ref -q HEAD)##refs/heads/}; git checkout'
 alias gcob='gco -b'
 alias gcof='gco --force'
 alias gcofm='gco --force master'
@@ -45,6 +47,7 @@ alias gcolast='TARGET_GIT_BRANCH=$LAST_GIT_BRANCH; gco $TARGET_GIT_BRANCH'
 alias gcom='gco master'
 alias gconf='git config -l'
 alias gconfg='git config --global -l'
+alias gcp='git cherry-pick'
 alias gd='git diff'
 alias gds='git diff --stat'
 alias gdns='git diff --numstat'
