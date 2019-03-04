@@ -45,7 +45,7 @@ def usage
   msg += "\t-name      String\n"
   msg += "\t-d (depth) Fixnum\n\n"
   msg += "Example:\n"
-  msg += "\truby_find ./ -type f -name this\\ is\\ a\\ test -d 5".light_white
+  msg + "\truby_find ./ -type f -name this\\ is\\ a\\ test -d 5".light_white
 end
 
 # Main

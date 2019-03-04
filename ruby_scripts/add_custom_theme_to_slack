@@ -2,7 +2,7 @@
 
 require 'fileutils'
 
-# Verify the following 3 file locations before running
+# Verify the following file locations before running
 slack_files = [
   '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js',
   '/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/index.js'
@@ -12,7 +12,7 @@ slack_files = [
 theme_file = "#{ENV['DOTFILES']}/templates/custom_dark_slack_theme.js"
 
 # Make sure files exist
-(slack_files + [theme_file]).each do |file|
+(slack_files << theme_file).each do |file|
   exists = File.exist?(file)
   unless exists
     puts "File does not exist: #{file}"
