@@ -235,3 +235,31 @@ function z_ll {
 alias zl='z_ll'
 
 echo 'Sourced .functions'
+
+
+# Shareable die/omni_killer
+function kill_all {
+  # Usage:
+  # kill_all redis
+  # ^ will `kill -9` all process IDs with the word "redis" in the `ps aux` line
+  count=0
+  pids="$(ps aux |
+    grep $1 |
+    grep -v grep |
+    awk '{print $2}' |
+    tr '\n' ' ' |
+    sed 's/[[:space:]]*$//'
+  )"
+
+  for pid in $(echo $pids); do
+    (kill -9 $(($pid)) || kill -9 $pid) && ((count++))
+  done
+
+  if [ $count = 1 ]; then
+    echo "1 $1 process terminated: $pids."
+  elif [ $count -gt 0 ]; then
+    echo "$count $1 processes terminated: $pids."
+  else
+    echo "No $1 processes found."
+  fi
+}
