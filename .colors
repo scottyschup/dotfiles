@@ -1,3 +1,5 @@
+#! /bin/zsh
+
 # Regular Colors
 export BLK="\033[0;30m"  # Black
 export RED="\033[0;31m"  # Red

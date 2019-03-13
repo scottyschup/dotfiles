@@ -1,6 +1,10 @@
 #! /usr/bin/env ruby -w
 
-# ✗ ps aux
+########
+# WIP! #
+########
+
+# $ ps aux
 # USER               PID  %CPU %MEM      VSZ    RSS   TT  STAT STARTED      TIME COMMAND
 # sschup15          1601   9.9  1.6  3034556 266768   ??  R    Thu01PM   7:48.34 /Applications/iTerm.app/Contents/MacOS/iTerm2 -psn_0_36873
 # _windowserver      164   2.5  0.4  4011980  67448   ??  Ss   Thu01PM  43:59.84 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -d
