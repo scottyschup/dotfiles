@@ -39,11 +39,11 @@ source $DOTFILES/.colors
 source $DOTFILES/.git_functions
 source $DOTFILES/.functions
 # Source all Ruby scripts
-export PATH="$PATH:$DOTFILES/ruby_scripts"
-(for file in $(ls -A "$DOTFILES/ruby_scripts"); do
-  chmod +x "$DOTFILES/ruby_scripts/$file"
+export PATH="$PATH:$DOTFILES/scripts"
+(for file in $(ls -A "$DOTFILES/scripts"); do
+  chmod +x "$DOTFILES/scripts/$file"
 done &&
-  echo 'Sourced ruby_scripts/* and appended dir to PATH') ||
+  echo 'Sourced scripts/* and appended dir to PATH') ||
   echo 'Something happened :/ ^^^'
 
 source $DOTFILES/.aliases

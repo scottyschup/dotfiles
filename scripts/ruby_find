@@ -2,7 +2,6 @@
 
 require 'colorize'
 
-
 # Helper functions
 def dir_contents(dir)
   Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
