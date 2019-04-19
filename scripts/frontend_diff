@@ -7,22 +7,7 @@ class FrontendStylesDiff
 
   def initialize(git_dir: nil)
     @git_dir = git_dir || Dir.pwd
-    # set_root_dir!
-    # @themes = lookup_partners
   end
-
-  # def set_root_dir!
-  #   @git_dir.match(%r{.*/frontend/packages/styles}) do |m|
-  #     raise(InvalidDirectoryError, @git_dir) if m.nil?
-  #     @root_dir = m[0]
-  #   end
-  # end
-  #
-  # def lookup_partners
-  #   partner_dirs = `ls -d #{@root_dir}/src/styles/theme/*/`
-  #   raise(InvalidDirectoryError, @git_dir) if partner_dirs.empty?
-  #   partner_names = partner_dirs.split("\n")
-  # end
 
   def get_diff(initial_sha, new_sha, width: 1000)
     raise TypeError unless width.is_a? Integer
