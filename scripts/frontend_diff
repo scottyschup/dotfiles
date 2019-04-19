@@ -1,0 +1,50 @@
+#! /usr/bin/env ruby -w
+
+# A tool for seeing what changes you're pulling in by creating a new version
+class FrontendStylesDiff
+  class InvalidDirectoryError < StandardError; end
+  class ParserError < StandardError; end
+
+  def initialize(git_dir: nil)
+    @git_dir = git_dir || Dir.pwd
+    # set_root_dir!
+    # @themes = lookup_partners
+  end
+
+  # def set_root_dir!
+  #   @git_dir.match(%r{.*/frontend/packages/styles}) do |m|
+  #     raise(InvalidDirectoryError, @git_dir) if m.nil?
+  #     @root_dir = m[0]
+  #   end
+  # end
+  #
+  # def lookup_partners
+  #   partner_dirs = `ls -d #{@root_dir}/src/styles/theme/*/`
+  #   raise(InvalidDirectoryError, @git_dir) if partner_dirs.empty?
+  #   partner_names = partner_dirs.split("\n")
+  # end
+
+  def get_diff(initial_sha, new_sha, width: 1000)
+    raise TypeError unless width.is_a? Integer
+    `cd #{@git_dir}; git diff --stat=#{width} #{initial_sha} #{new_sha}`
+  end
+
+  def diff_str_to_hash(diff_str)
+    # Use Hash to store file names for O(1) lookup
+    diff_str.inject({}) do |line, agg|
+      raise(InvalidDirectoryError, line) if line == "Not a git repository"
+      begin
+        filename, = line.split(/\s+|\s/)
+        agg[filename] = true
+      rescue
+        iter = agg.length
+        msg = "There was a problem parsing line #{iter}:\n\t\"#{line}\""
+        raise ParserError, msg
+      end
+    end
+  end
+
+  def simple_analysis(diff_hash)
+    puts
+  end
+end
