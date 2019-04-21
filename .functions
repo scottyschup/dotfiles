@@ -1,15 +1,5 @@
 #! /bin/zsh
 
-function cd_atom {
-  cd $1 && atom .
-}
-alias cda='cd_atom'
-
-function cd_ll {
-  cd $1 && k -Ah
-}
-alias cdl='cd_ll'
-
 function args_test {
   last=${@: -1}
   echo "All agrs: $@"
@@ -27,8 +17,26 @@ function bundle_rails_server_on_port {
   fi
 }
 
+function cd_atom {
+  cd $1 && atom .
+}
+alias cda='cd_atom'
+
+function cd_ll {
+  cd $1 && k -Ah
+}
+alias cdl='cd_ll'
+
 function cd_subl {
   cd $1 && subl .
+}
+
+function cors_test {
+  if [ ! -n "$2" ]; then
+    echo "You must provide an origin URL AND an external URL"
+    return 1
+  fi
+  curl -H "Origin: $1" -I "$2"
 }
 
 function mkdir_cd {

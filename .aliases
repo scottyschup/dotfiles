@@ -43,7 +43,7 @@ alias gcob='gco -b'
 alias gcof='gco --force'
 alias gcofm='gco --force master'
 alias gcog='gco gh-pages'
-alias gcolast='TARGET_GIT_BRANCH=$LAST_GIT_BRANCH; gco $TARGET_GIT_BRANCH'
+alias gcol='TARGET_GIT_BRANCH=$LAST_GIT_BRANCH; gco $TARGET_GIT_BRANCH'
 alias gcom='gco master'
 alias gconf='git config -l'
 alias gconfg='git config --global -l'
@@ -56,6 +56,7 @@ alias gfp='git fetch --all --prune; git pull'
 alias ghl='cat .git/refs/heads/master' # full hash
 alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gin='git init'
+alias glb='echo $LAST_GIT_BRANCH'
 alias gm='git merge'
 alias gma='git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data."'
 alias gmdr='git merge --no-commit --no-ff'
@@ -138,8 +139,8 @@ alias clr=clear
 alias cls=clear
 alias update_slack_theme=add_custom_theme_to_slack
 alias ust=update_slack_theme
-alias list_ruby_scripts="for_file_in_dir --file-name-only $DOTFILES/ruby_scripts 'puts file'"
-alias lrs=list_ruby_scripts
+alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
+alias lss=list_scripts
 
 # mysql/postgres
 alias msst='mysql.server start'
