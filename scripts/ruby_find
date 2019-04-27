@@ -63,7 +63,7 @@ unless (root && !root.start_with?('-'))
 end
 
 search_term_idx = ARGV.index('-name')
-search_term = search_term_idx ? ARGV[search_term_idx + 1] : nil
+search_term = search_term_idx ? ARGV[search_term_idx + 1] : ''
 ruby_search_term = search_term.gsub('*', '')
 unless ruby_search_term
   puts "No search term specified"
