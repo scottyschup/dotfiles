@@ -1,5 +1,28 @@
 #! /bin/sh
 
+# # To be able to run this script you must first:
+# # Miscellaneous pre-install
+# ## Install Xcode through App Store and launch it once to accept agreement
+# sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+# # Homebrew
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+# # Git/Github setup
+# ## Probably need to setup new SSH key with Github
+# sshkeygen # save to ~/.ssh/id_rsa
+# chmod 400 ~/.ssh/id_rsa.pub # https://stackoverflow.com/a/37779390/3251463
+# cat ~/.ssh/id_rsa.pub | pbcopy
+# open https://github.com/settings/keys # Create new ssh key and paste id_rsa.pub contents
+# brew install git # system git would be fine for this, but might as well just do it now
+# git config --global user.name "Scott Schupbach"
+# git config --global user.email "scott.schupbach@amount.com"
+
+# # Dotfiles
+# git clone git@github.com:scottyschup/dotfiles.git
+# mv dotfiles ~/.dotfiles
+# export DOTFILES=~/.dotfiles
+
+
 # MAC OSX changes
 ## show hidden files everywhere
 defaults write -g AppleShowAllFiles TRUE
@@ -17,24 +40,7 @@ defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool no
 ## restart Dock and Finder
 killall Dock Finder
 
-# Git/Github setup
-## Probably need to setup new SSH key with Github
-sshkeygen
-cat ~/.ssh/id_rsa.pub | pbcopy
-open https://github.com/settings/keys
-brew install git # system git would be fine for this, but might as well just do it now
-git config --global --edit # edit name and email address
-
-
-# Dotfiles
-git clone git@github.com:scottyschup/dotfiles.git
-mv dotfiles ~/.dotfiles
-export DOTFILES=~/.dotfiles
-
 # Homebrew
-## install
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
 # install iTerm, spectacle, Sublime
 brew cask install iterm2
 brew cask install spectacle
@@ -108,9 +114,6 @@ brew link --force qt55
 brew install postgresql@9.4
 brew link postgresql@9.4 --force
 brew services start postgresql@9.4
-
-### Don't forget to install Xcode through App Store and launch it once to accept agreement.
-sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
 ### get the repo
 git clone git@github.com:avantcredit/avant-basic.git
