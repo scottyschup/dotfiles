@@ -1,11 +1,14 @@
 {
 	"always_show_minimap_viewport": true,
 	"auto_complete": false,
+	"binary_file_patterns":
+	[
+	],
 	"bold_folder_labels": true,
 	"color_scheme": "Packages/Predawn/predawn.tmTheme",
 	"drag_text": false,
 	"draw_white_space": "all",
-	"ensure_newline_at_eof_on-save": true,
+	"ensure_newline_at_eof_on_save": true,
 	"folder_exclude_patterns":
 	[
 		".git",
@@ -17,9 +20,7 @@
 	"font_size": 14,
 	"ignored_packages":
 	[
-		"Haml",
-		"SublimeLinter",
-		"SublimeLinter-haml"
+		"SublimeLinter-eslint"
 	],
 	"margin": 0,
 	"material_theme_accent_sky": true,
