@@ -49,7 +49,8 @@ brew cask install sublime-text
 ## also need to manually install theme through Subl's pkg installer
 brew tap caskroom/fonts
 brew cask install font-source-code-pro
-cp $DOTFILES/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings # will overwrite existing user preferences
+cp $DOTFILES/Sublime\ overrides/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Preferences.sublime-settings # will overwrite existing user preferences
+cp $DOTFILES/Sublime\ overrides/predawn.tmTheme ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/Predawn/predawn.tmTheme # Changes invisibles color to a more muted orange
 
 # install oh-my-zsh
 export ZSH=~/.oh-my-zsh
