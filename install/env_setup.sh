@@ -45,6 +45,28 @@ killall Dock Finder
 brew cask install iterm2
 brew cask install spectacle
 brew cask install sublime-text
+## Packages to install:
+# * Predawn
+# * Material Theme
+# * Material Theme - White Panels
+# * A File Icon
+# * Babel
+# * Babel Snippets
+# * Better CoffeeScript
+# * Dotfiles Syntax Highlighting
+# * Git
+# * Git Gutter
+# * Haml
+# * Jade
+# * Package Resource Viewer
+# * Sass
+# * SideBarEnhancements
+# * Stylus
+# * SublimeERB
+# * SublimeLinter
+# * SyntaxHighlightTools
+# * TypeScript
+# * VIM Navigation
 ## font for sublime theme - one dark
 ## also need to manually install theme through Subl's pkg installer
 brew tap caskroom/fonts
@@ -87,7 +109,7 @@ brew install openssl libyaml libffi # per ruby-build's recommended build env wik
 rbenv install 2.3.4
 rbenv global 2.3.4
 gem update --system # only if which ruby points to brew ruby, not system ruby; otherwise re-source dotfiles
-gem install bundler
+gem install bundler rubocop
 
 # Redis
 brew install redis
