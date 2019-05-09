@@ -125,7 +125,7 @@ eval "$(docker-machine env dev)"
 # Avant/Amount
 mkdir ~/avant
 export AVANT=~/avant
-cd $AVANT
+cd $AMOUNT
 
 ## avant-basic
 ### install postgres
