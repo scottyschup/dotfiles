@@ -42,6 +42,9 @@ defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool no
 ## restart Finder
 killall Finder
 
+## Turn off 2-finger swipe navigation in Chrome
+defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE
+
 # Homebrew
 # install iTerm, spectacle, Sublime
 brew cask install iterm2
