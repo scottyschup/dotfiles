@@ -23,7 +23,7 @@ plugins+=(k) # pimped out version of `l`; aliased as `l+` in the navigation sect
 # `git clone https://github.com/supercrabtree/k $ZSH/custom/plugins/k`
 
 # To get rid of "'numfmt' or 'gnumfmt' command not found..." error
-# brew install coreutils
+# brew install coreutils # Done in install/env_setup.sh
 
 plugins+=(z) # frecency based navigation; bundled with oh-my-zsh
 

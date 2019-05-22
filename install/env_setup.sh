@@ -51,8 +51,8 @@ defaults write com.apple.coreservices.uiagent CSUILastOSVersionWhereSafariRecomm
 ## Prevent power button from sleeping laptop immediately (still works after 2 seconds or so, I think)
 defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool no
 ## Turn off 2-finger swipe navigation in Chrome
-defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE
-
+# defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE # Doesn't work in Mojave
+defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool FALSE
 ## restart Dock
 killall Dock
 ## restart Finder
