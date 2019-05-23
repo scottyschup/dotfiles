@@ -62,9 +62,7 @@ killall Finder
 # Tools/apps #
 ##############
 # install iTerm, spectacle, Sublime
-brew cask install iterm2
-brew cask install spectacle
-brew cask install sublime-text
+brew cask install iterm2 spectacle sublime-text
 ## font for sublime theme: one dark
 ## Packages to install manually:
 # * Predawn
@@ -98,8 +96,7 @@ cp "$DOTFILES/Sublime overrides/predawn.tmTheme ~/Library/Application Support/Su
 ##############
 # Ruby/rbenv #
 ##############
-brew install rbenv
-brew install openssl libyaml libffi # per ruby-build's recommended build env wiki https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
+brew install rbenv openssl libyaml libffi # The last 3 per ruby-build's recommended build env wiki https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 if [[ `which ruby` =~ ".rbenv" ]]
 then
   gem update --system # Only if `which ruby` points to rbenv ruby, not system ruby
@@ -137,9 +134,8 @@ git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugi
 ## Useful terminal tools
 # First, go into the iTerm menu and select "Install Shell Integration"
 # This gets you `imgcat`, among other things
-brew install mdcat
+brew install mdcat tree
 brew install librsvg # Used by `mdcat` to support SVG rendering in iTerm
-brew install tree
 brew install duti # Allows you to set default document and URL handlers via command line
 
 ##############
@@ -173,7 +169,7 @@ mkdir "~/amount"
 export AMOUNT="~/amount"
 cd $AMOUNT
 
-## Get all the repo
+## Get all the repos
 git clone git@github.com:avantcredit/avant-basic.git
 git clone git@github.com:avantcredit/avant-apply.git
 git clone git@github.com:avantcredit/avant-views.git
