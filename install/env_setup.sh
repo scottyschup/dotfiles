@@ -1,5 +1,7 @@
 #! /bin/sh
 
+# See also (Avant/Amount employees only): https://avantinc.atlassian.net/wiki/spaces/DL/pages/313066820/Environment+Setup+Amount+Macbook
+
 #############################
 # Miscellaneous pre-install #
 #############################
