@@ -106,6 +106,7 @@ else
   echo "Default Ruby is not an rbenv Ruby: $(which ruby)"
 fi
 gem install bundler rubocop
+brew tap heroku/brew && brew install heroku
 
 ##########
 # Python #
