@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby -w
+
+require "colorize"
+
+output_str = `diff #{ARGV.join(" ")}`
+output_arr = output_str.split("\n")
+
+output_arr.each do |line|
+  color = line[0] == ">" ?
+    :green :
+    line[0] == "<" ?
+      :red :
+      ""
+  puts line.colorize color
+end
