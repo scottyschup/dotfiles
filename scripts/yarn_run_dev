@@ -1,0 +1,54 @@
+#! /usr/bin/env ruby -w
+
+args = ARGV.length == 1 ? ARGV[0].to_s : ""
+
+############################
+# Check node compatibility #
+############################
+child = Thread.new do
+  Thread.current[:res] = `yarn 2>&1`.split("\n")
+end
+
+# Thread used to timeout `yarn` command after 5 seconds (meaning no node incompatibility)
+timeout = Thread.new do
+  sleep 5
+end
+
+# Linear spinner
+i = 0
+dir = 0
+fpi = 100000
+
+while child.status && timeout.status do
+  if i % fpi == 0
+    system "clear"
+    puts "Checking node compatibility"
+    printf("*" * (i / fpi))
+  end
+  operators = [:+, :-]
+  i = i.send(operators[dir], 1) % (150 * fpi)
+  dir = i == 0 ? (dir + 1) % 2 : dir
+end
+
+# Once one of the threads finishes, make sure both are stopped
+child.kill if child.status
+timeout.kill if timeout.status
+
+puts
+child[:res].first(10).each do |line|
+  next unless line&.include? "The engine \"node\" is incompatible with this module. Expected version"
+
+  _, versions = line.split("Expected version \"")
+  expected_version, actual_version = versions.gsub(/[a-zA-Z\^"]|\.\s/, '').split(' ')
+  major_version = expected_version.split(".").first
+
+  puts "Expected: #{expected_version}; Actual: #{actual_version}"
+  puts "Run the following command and then re-yarn:"
+  puts "`nvm use #{major_version}`"
+  exit
+end
+
+system "clear"
+puts "Running node script"
+system("#{args} yarn run dev || #{args} yarn run develop") || puts(child[:res])
+

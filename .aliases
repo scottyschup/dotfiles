@@ -123,6 +123,7 @@ alias react_install='npm install --save react react-dom'
 alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
 alias react_babel_install='npm install --save babel-core babel-loader babel-preset-env'
 alias wp='$(npm bin)/webpack'
+alias yrd=yarn_run_dev
 
 # miscellany
 alias chrome='open -a "Google Chrome"'
