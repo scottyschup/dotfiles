@@ -33,30 +33,27 @@ plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
 # or
 # `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting`
 
-# Source
+##########
+#  INIT  #
+##########
+# ZSH
 source $ZSH/oh-my-zsh.sh
-source $DOTFILES/.colors
-source $DOTFILES/.git_functions
-source $DOTFILES/.functions
-# Source all Ruby scripts
-export PATH="$PATH:$DOTFILES/scripts"
-(for file in $(ls -A "$DOTFILES/scripts"); do
-  chmod +x "$DOTFILES/scripts/$file"
-done &&
-  echo 'Sourced scripts/* and appended dir to PATH') ||
-  echo 'Something happened :/ ^^^'
-
-source $DOTFILES/.aliases
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Definitions
+source $DOTFILES/.colors
+export LANG=en_US.UTF-8
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
-export LANG=en_US.UTF-8
+# Init language version managers
 if [[ `which rbenv` != *"not found" ]]; then
   eval "$(rbenv init -)"
 fi
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init -)"
 fi
+test -e "/usr/local/opt/nvm/nvm.sh" && source "/usr/local/opt/nvm/nvm.sh"
 
 # Use Keypad in terminal
 # 0 . Enter
@@ -81,7 +78,24 @@ bindkey -s "^[Om" "-"
 bindkey -s "^[Oj" "*"
 bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
-
 tabs -2
+
+# Functions
+source $DOTFILES/.git_functions
+source $DOTFILES/.functions
+
+# Scripts
+export PATH="$PATH:$DOTFILES/scripts"
+(for file in $(ls -A "$DOTFILES/scripts"); do
+  chmod +x "$DOTFILES/scripts/$file"
+done &&
+  echo 'Sourced scripts/* and appended dir to PATH') ||
+  echo 'Something happened :/ ^^^'
+
+# Aliases
+source $DOTFILES/.aliases
+
+# CLEAN UP PATH
+clean_path
 
 echo 'Sourced .zshrc'

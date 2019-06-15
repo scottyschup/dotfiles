@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby -w
+#!/usr/bin/env ruby -w
 
 def usage(err = nil)
   puts err if err

@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby -w
+#!/usr/bin/env ruby -w
 
 args = ARGV.length == 1 ? ARGV[0].to_s : ""
 

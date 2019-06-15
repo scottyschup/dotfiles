@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby -w
+
+# USAGE
+# new_script SCRIPT_NAME SHEBANG_LANG SHEBANG_FLAGS
+
+puts("Must provide a file name for the new file") and exit if ARGV.empty?
+
+scripts_dir = File.dirname(__FILE__)
+file_name = "#{scripts_dir}/#{ARGV.shift}"
+puts("File already exists") and exit if File.file?(file_name)
+
+language = ARGV.shift || "ruby"
+flags = ARGV.shift || ""
+
+f = File.open(file_name, "w")
+f.puts("#!/usr/bin/env #{language} #{flags}")
+f.close
+
+editor_cmd = !`which atom`.empty? ? "atom" : !`which subl`.empty? ? "subl" : "vim"
+`#{editor_cmd} #{file_name}`
