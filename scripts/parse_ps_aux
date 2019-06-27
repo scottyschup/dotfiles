@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby -w
 
 ########
-# WIP! #
+# MVP1 #
 ########
 
 # $ ps aux
@@ -13,9 +13,39 @@
 # root               342   1.0  0.1  2485928  15208   ??  Ss   Thu01PM  48:49.71 sysmond
 # sschup15         55607   0.7  2.3  3960736 387880   ??  S     2:54PM   8:23.28 /Applications/Spotify.app/Contents/Frameworks/Spotify Helper.app/Contents/MacO
 
-exit unless ARGV.length > 0
+verbose = ARGV.any? { |arg| arg == "-v" }
+ARGV.delete "-v" if verbose
 
-ARGV.shift # Remove column headers
-ARGV.map do |process_str|
-
+if ARGV.length == 0
+  puts "Specify the search term to use to filter processes."
+  exit
+elsif ARGV.length > 1
+  puts "Only one search term to filter processes allowed."
+  exit
+elsif ARGV[0].include?("grep")
+  puts "Can't filter `grep` commands."
+  exit
 end
+
+arg = ARGV.shift
+res = `ps aux | grep "#{arg}"`.split("\n")
+
+# Array mapping:
+# 0     1    2     3     4    5    6   7     8        9     10
+# USER  PID  %CPU  %MEM  VSZ  RSS  TT  STAT  STARTED  TIME  COMMAND
+
+res.shift # Remove column headers
+res.map! do |ps_line|
+  next if ps_line.include?("grep")
+  arr = ps_line.split(/\s+/)
+  user = arr[0]
+  pid = arr[1]
+  arr.shift(10)
+  command = arr.first
+  full_command = arr.join(" ")
+  res_arr = [user, pid, command]
+  res_arr << full_command if verbose
+  res_arr
+end.compact!
+
+puts res

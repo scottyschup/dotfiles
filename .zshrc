@@ -85,7 +85,7 @@ source $DOTFILES/.git_functions
 source $DOTFILES/.functions
 
 # Scripts
-export PATH="$PATH:$DOTFILES/scripts"
+export PATH="$DOTFILES/scripts:$PATH"
 (for file in $(ls -A "$DOTFILES/scripts"); do
   chmod +x "$DOTFILES/scripts/$file"
 done &&
