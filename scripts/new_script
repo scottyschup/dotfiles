@@ -2,15 +2,28 @@
 
 # USAGE
 # new_script SCRIPT_NAME SHEBANG_LANG SHEBANG_FLAGS
+def print_usage
+  puts "Usage: new_script SCRIPT_NAME [SHEBANG_LANG [SHEBANG_FLAGS]]"
+  puts "\tSCRIPT_NAME should be a unique string without spaces"
+  puts "\t\t`ls \"$DOTFILES/scripts\"` for list of existing scripts"
+  puts "\tSHEBANG_LANG defaults to 'ruby'"
+  puts "\tSHEBANG_FLAGS defaults to '-w'"
+end
 
-puts("Must provide a file name for the new file") and exit if ARGV.empty?
+if ARGV.empty?
+  print_usage
+  exit
+end
 
 scripts_dir = File.dirname(__FILE__)
 file_name = "#{scripts_dir}/#{ARGV.shift}"
-puts("File already exists") and exit if File.file?(file_name)
+if File.file?(file_name)
+  puts("File already exists")
+  exit
+end
 
 language = ARGV.shift || "ruby"
-flags = ARGV.shift || ""
+flags = ARGV.shift || "-w"
 
 f = File.open(file_name, "w")
 f.puts("#!/usr/bin/env #{language} #{flags}")

@@ -93,6 +93,7 @@ alias gsts='git stash show'
 alias gstsv='git stash save'
 alias gstu='git stash show -p | git apply -R' # git stash unapply
 alias gviz='git log --oneline --decorate --graph --all'
+alias gwb='git_working_branches'
 alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
             git config --global user.name 'Scott Schupbach'; \
             echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
