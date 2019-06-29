@@ -5,4 +5,4 @@
 #######
 # TODO figure out how to edit shell env vars where called
 uniq_paths = ENV['PATH'].split(":").uniq!
-ENV["PATH"] = uniq_paths.join(":")
+ENV["PATH"] = uniq_paths&.join(":")
