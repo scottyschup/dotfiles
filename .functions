@@ -187,7 +187,8 @@ function rails_server_on_port {
 alias rsop='rails_server_on_port'
 
 function rails_reset {
-  mysql.server restart &&
+  (mysql.server restart ||
+    brew services restart postgresql) &&
   bundle install &&
   rake db:drop &&
   rake db:create &&
@@ -244,8 +245,10 @@ alias zl='z_ll'
 
 echo 'Sourced .functions'
 
-
-# Shareable die/omni_killer
+#############
+# Shareable #
+#############
+## die/omni_killer
 function kill_all {
   # Usage:
   # kill_all redis

@@ -143,14 +143,17 @@ alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts fil
 alias lss=list_scripts
 
 # mysql/postgres
+# TODO: CLEAN UP
 alias msst='mysql.server start'
 alias mssp='mysql.server stop'
 alias msr='mysql.server restart'
 alias pg='postgres -D /usr/local/var/postgres'
 alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
 alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
-alias bpgst='brew services start postgresql@9.4'
-alias bpgsp='brew services stop postgresql@9.4'
+alias bsspg='brew services start postgresql@9.4'
+alias bsppg='brew services stop postgresql@9.4'
+alias start_pg='brew services start postgresql@9.4'
+alias stop_pg='brew services stop postgresql@9.4'
 
 # navigation
 alias back='cd ..'
@@ -161,10 +164,6 @@ alias up='cd ..'
 alias upl='cd .. && k -Ah'
 alias upp='cd ../..'
 alias uppl='cd ../.. && k -Ah'
-
-# postgres
-alias start_pg='brew services start postgresql@9.4'
-alias stop_pg='brew services stop postgresql@9.4'
 
 # python
 alias pi='pip install'
