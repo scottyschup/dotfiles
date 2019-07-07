@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby -w
+
+args = ARGV.length == 1 ? ARGV[0].to_s : ""
+if args.include?("PARTNER_ENV")
+  puts("PARTNER_ENV is not a valid env var. Did you mean TENANT?")
+  exit
+end
+
+############################
+# Check node compatibility #
+############################
+child = Thread.new do
+  Thread.current[:res] = `yarn 2>&1`.split("\n")
+end
+
+# Thread used to timeout `yarn` command after 5 seconds (meaning no node incompatibility)
+timeout = Thread.new do
+  sleep 20
+end
+
+# Linear spinner
+i = 0
+dir = 0
+fpi = 100000
+
+while child.status && timeout.status do
+  if i % fpi == 0
+    system "clear"
+    puts "Checking node compatibility"
+    printf("*" * (i / fpi))
+  end
+  operators = [:+, :-]
+  i = i.send(operators[dir], 1) % (150 * fpi)
+  dir = i == 0 ? (dir + 1) % 2 : dir
+end
+
+# Once one of the threads finishes, make sure both are stopped
+child.kill if child.status
+timeout.kill if timeout.status
+
+puts
+
+###########################################
+# See if node version needs to be changed #
+###########################################
+major_version = nil
+child[:res]&.first(10)&.each do |line|
+  next unless line&.include? "The engine \"node\" is incompatible with this module. Expected version"
+
+  _, versions = line.split("Expected version \"")
+  expected_version, actual_version = versions.gsub(/[a-zA-Z\^"]|\.\s/, '').split(' ')
+  major_version = expected_version.split(".").first
+
+  system "clear"
+  puts "Expected: #{expected_version}; Actual: #{actual_version}"
+  break
+end
+
+############################
+# Run `yarn run dev(elop)` #
+############################
+puts "Running `yarn run dev(elop)` script"
+cmd = "(#{args} yarn run dev || #{args} yarn run develop)"
+unless major_version.nil?
+  puts "Switching to Node v#{major_version}"
+  cmd = ". /usr/local/opt/nvm/nvm.sh && nvm use #{major_version} && yarn && " + cmd
+end
+system(cmd) || puts(child[:res])

@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby -w
+
+# USAGE
+# new_script SCRIPT_NAME SHEBANG_LANG SHEBANG_FLAGS
+def print_usage
+  puts "Usage: new_script SCRIPT_NAME [SHEBANG_LANG [SHEBANG_FLAGS]]"
+  puts "\tSCRIPT_NAME should be a unique string without spaces"
+  puts "\t\t`ls \"$DOTFILES/scripts\"` for list of existing scripts"
+  puts "\tSHEBANG_LANG defaults to 'ruby'"
+  puts "\tSHEBANG_FLAGS defaults to '-w'"
+end
+
+if ARGV.empty?
+  print_usage
+  exit
+end
+
+scripts_dir = File.dirname(__FILE__)
+file_name = "#{scripts_dir}/#{ARGV.shift}"
+if File.file?(file_name)
+  puts("File already exists")
+  exit
+end
+
+language = ARGV.shift || "ruby"
+flags = ARGV.shift || "-w"
+
+f = File.open(file_name, "w")
+f.puts("#!/usr/bin/env #{language} #{flags}")
+f.close
+
+editor_cmd = !`which atom`.empty? ? "atom" : !`which subl`.empty? ? "subl" : "vim"
+`#{editor_cmd} #{file_name}`

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -w
 
-require 'colorize'
+require "colorize"
 
 # Helper functions
 def dir_contents(dir)
