@@ -45,7 +45,7 @@ res.map! do |ps_line|
   full_command = arr.join(" ")
   res_arr = [user, pid, command]
   res_arr << full_command if verbose
-  res_arr
+  res_arr.join("\t")
 end.compact!
 
 puts res

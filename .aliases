@@ -144,15 +144,7 @@ alias ust=update_slack_theme
 alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
 alias lss=list_scripts
 
-# mysql/postgres
-alias msst='mysql.server start'
-alias mssp='mysql.server stop'
-alias msr='mysql.server restart'
-alias pg='postgres -D /usr/local/var/postgres'
-alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
-alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
-alias bpgst='brew services start postgresql@9.4'
-alias bpgsp='brew services stop postgresql@9.4'
+alias psaux=parse_ps_aux
 
 # navigation
 alias back='cd ..'
@@ -164,11 +156,7 @@ alias upl='cd .. && k -Ah'
 alias upp='cd ../..'
 alias uppl='cd ../.. && k -Ah'
 
-# postgres
-alias start_pg='brew services start postgresql@9.4'
-alias stop_pg='brew services stop postgresql@9.4'
-
-# python
+# Python
 alias pi='pip install'
 alias pu='pip install --upgrade pip'
 alias pe='pyenv'
@@ -180,12 +168,12 @@ alias peg='pyenv global'
 alias per='pyenv rehash' # run this after installing executables
 alias peh='pyenv help'
 
-# redis
+# Redis
 alias start_redis='brew services start redis'
 alias stop_redis='brew services stop redis'
 alias rcli='redis-cli'
 
-# bundle/ruby/rails/rbenv
+# Ruby and friends (bundle/rails/rbenv)
 alias bcg='bundle config --global'
 alias bcl='bundle config --local'
 alias bcd='bundle config --delete'
@@ -216,6 +204,18 @@ alias rnv=rbenv_new_versions
 alias pys='python -m SimpleHTTPServer'
 alias rbsp='ruby -run -e httpd . -p'
 alias rbs='ruby -run -e httpd .'
+
+# SQL (MySQL/PostgreSQL)
+alias msst='mysql.server start'
+alias mssp='mysql.server stop'
+alias msr='mysql.server restart'
+alias pg='postgres -D /usr/local/var/postgres'
+alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
+alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
+alias bpgst='brew services start postgresql@9.4'
+alias bpgsp='brew services stop postgresql@9.4'
+alias start_pg='brew services start postgresql@9.4'
+alias stop_pg='brew services stop postgresql@9.4'
 
 # text editing
 ## atom
