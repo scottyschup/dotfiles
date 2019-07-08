@@ -143,7 +143,6 @@ alias update_slack_theme=add_custom_theme_to_slack
 alias ust=update_slack_theme
 alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
 alias lss=list_scripts
-
 alias psaux=parse_ps_aux
 
 # navigation
