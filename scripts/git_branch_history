@@ -9,7 +9,9 @@ class GitBranchTracker
   def initialize(args:)
     @args = args
     @file_name = `git rev-parse --show-toplevel`.chomp.split('/')[-1]
+    @file_path = "#{DIR_NAME}/#{@file_name}"
     `mkdir #{DIR_NAME}` unless Dir.exist? DIR_NAME
+    `touch "#{@file_path}"`
   end
 
   def usage
@@ -30,7 +32,7 @@ class GitBranchTracker
 
   def branches_arr
     @branches ||= begin
-      file = File.open("#{DIR_NAME}/#{@file_name}", "r")
+      file = File.open("#{@file_path}", "r+")
       branches = file.readlines.map(&:strip)
       file.close
       branches
@@ -53,7 +55,7 @@ class GitBranchTracker
   end
 
   def update_file
-    file = File.open("#{DIR_NAME}/#{@file_name}", "w+")
+    file = File.open("#{@file_path}", "w+")
     branches_arr.each { |branch| file.puts branch }
     file.close
   end

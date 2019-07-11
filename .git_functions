@@ -113,15 +113,20 @@ function git_branch_delete_local_and_remote {
 }
 
 function git_checkout {
-  current=`git_branch_history current`
-  if [ "$current" == "$1" ]; then exit; fi
-
-  last=`git_branch_history last`
-  if [ "$last" == "$1" ]; then
-    git_branch_history add "$current"
+  if [ "$1" = "-b" ]; then
+    branch=$2
   else
+    branch=$1
   fi
-  git checkout $1
+
+  current=`git_branch_history current`
+  if [ "$current" = "$branch" ]; then
+    echo "$1 is already checked out"
+    return
+  fi
+
+  git_branch_history add "$current"
+  git checkout "$@"
 }
 
 function git_commit_push {
