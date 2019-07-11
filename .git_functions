@@ -112,6 +112,18 @@ function git_branch_delete_local_and_remote {
   git remote prune origin
 }
 
+function git_checkout {
+  current=`git_branch_history current`
+  if [ "$current" == "$1" ]; then exit; fi
+
+  last=`git_branch_history last`
+  if [ "$last" == "$1" ]; then
+    git_branch_history add "$current"
+  else
+  fi
+  git checkout $1
+}
+
 function git_commit_push {
   git commit -m $1 && git push
 }

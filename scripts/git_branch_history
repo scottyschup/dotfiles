@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby -w
+
+#########
+# SETUP #
+#########
+class GitBranchTracker
+  DIR_NAME = "#{ENV['HOME']}/.git_branch_history"
+
+  def initialize(args:)
+    @args = args
+    @file_name = `git rev-parse --show-toplevel`.chomp.split('/')[-1]
+    `mkdir #{DIR_NAME}` unless Dir.exist? DIR_NAME
+  end
+
+  def usage
+    puts "USAGE: git_branch_history CMD [ARGS]"
+    puts "CMD: add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set"
+    puts "\tpush/set/add:  add branch to history"
+    puts "\t\tARGS: branch_name (default: current branch)"
+    puts "\tlast/get:      get last (n) branch(es)"
+    puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)"
+    puts "\tls/list:          list all branches (optionally that match a grep)"
+    puts "\t\tARGS: (optional) string to grep"
+    puts "\tcsv:           list all branches, comma-separated (optionally that match a grep)"
+    puts "\t\tARGS: (optional) string to grep"
+    puts "\trm/remove/delete: delete specified branch from history"
+    puts "\t\tARGS: branch_name (required)"
+    puts "\thelp:          Print this message"
+  end
+
+  def branches_arr
+    @branches ||= begin
+      file = File.open("#{DIR_NAME}/#{@file_name}", "r")
+      branches = file.readlines.map(&:strip)
+      file.close
+      branches
+    end
+  end
+
+  def current_branch
+    @current_branch ||= ARGV.shift || `git symbolic-ref -q HEAD`.strip.gsub("refs/heads/", "")
+  end
+
+  def add_branch
+    branches_arr.delete(current_branch)
+    branches_arr << current_branch
+    update_file
+  end
+
+  def remove_branch
+    branches_arr.delete(current_branch)
+    update_file
+  end
+
+  def update_file
+    file = File.open("#{DIR_NAME}/#{@file_name}", "w+")
+    branches_arr.each { |branch| file.puts branch }
+    file.close
+  end
+
+  def main
+    if @args.length == 0 || @args[0] == "help"
+      usage
+      return
+    end
+
+    cmd = @args.shift
+
+    case cmd
+    when "push", "set", "add"
+      add_branch
+    when "last", "get"
+      branches = branches_arr
+      n = (@args.shift || 1).to_i
+      puts branches[-n..-1]
+    when "list", "all", "csv", "ls"
+      branches = branches_arr
+      grep = @args.shift
+      branches.select! { |branch| branch.include?(grep) } unless grep.nil?
+      puts(cmd == "csv" ? branches.join(", ") : branches)
+    when "remove", "delete", "rm"
+      if @args.empty?
+        puts "Must specify a branch to remove"
+        return
+      end
+      remove_branch
+    when "current"
+      puts current_branch
+    else
+      usage
+    end
+  end
+end
+
+tracker = GitBranchTracker.new args: ARGV
+tracker.main
