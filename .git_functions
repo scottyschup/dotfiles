@@ -113,6 +113,21 @@ function git_branch_delete_local_and_remote {
   git remote prune origin
 }
 
+function git_branch_set_upstream {
+  if [ $2 ]; then
+    branch=$2
+    remote=$1
+  elif [[ $1 == *\/* ]]; then
+    IFS='/' read -r remote origin <<< "$1"
+  else
+    remote=origin
+    branch=$1
+  fi
+
+  echo "Setting upstream branch to $CYN$remote/$branch$NONE"
+  git branch --set-upstream-to="$remote/$branch"
+}
+
 function git_checkout {
   if [ "$1" = "-b" ]; then
     branch=$2

@@ -37,6 +37,12 @@ alias gbh='git_branch_history'
 alias gbha='gbh list'
 alias gbhc='gbh csv'
 alias gbr='git branch -r' # list remote branches
+unalias gbs # git bisect
+unalias gbsb # git bisect bad
+unalias gbsg # git bisect good
+unalias gbsr # git bisect reset
+unalias gbss # git bisect start
+alias gbsu='git_branch_set_upstream'
 alias gca='git commit --amend'
 alias gcfm='git checkout --force master'
 alias gcm='git commit -m'
@@ -63,7 +69,6 @@ alias glb='echo `gbh last`'
 alias gm='git merge'
 alias gma='git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data."'
 alias gmdr='git merge --no-commit --no-ff'
-# alias gnb='git_new_branch' # Alias set in .git_functions
 alias gp='git push'
 alias gpf='git push --force'
 alias gpl='git pull'

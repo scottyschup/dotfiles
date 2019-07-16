@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby -w
+
+require 'colorize'
+
+map = {
+  "red" => "RED",
+  "yellow" => "YLW",
+  "green" => "GRN",
+  "cyan" => "CYN",
+  "blue" => "BLU",
+  "magenta" => "PPL",
+  "purple" => "PPL",
+  "black" => "BLK",
+  "white" => "WHT"
+}
+
+modifiers = %w(underline bold)
+
+case ARGV.length
+when 4
+  color, modifier, background, string = ARGV
+  exit unless modifier == "on"
+when 3
+  color, modifier, string = ARGV
+  exit unless modifiers.include? modifier
+
+when 2
+  color, string = ARGV
+when 1
+  exit unless %w(all list ls).include? ARGV[0]
+  map.each do
+end
