@@ -13,9 +13,9 @@ child = Thread.new do
   Thread.current[:res] = `yarn 2>&1`.split("\n")
 end
 
-# Thread used to timeout `yarn` command after 5 seconds (meaning no node incompatibility)
+# Thread used to timeout `yarn` command after 7 seconds (meaning no node incompatibility)
 timeout = Thread.new do
-  sleep 10
+  sleep 7
 end
 
 # Linear spinner
@@ -60,7 +60,7 @@ end
 # Run `yarn run dev(elop)` #
 ############################
 puts "Running `yarn run dev(elop)` script"
-cmd = "(#{args} yarn run dev || #{args} yarn run develop)"
+cmd = "(#{args} yarn run dev || #{args} yarn run develop || #{args} yarn run start)"
 unless major_version.nil?
   puts "Switching to Node v#{major_version}"
   cmd = ". /usr/local/opt/nvm/nvm.sh && nvm use #{major_version} && yarn && " + cmd

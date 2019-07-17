@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby -w
+
+delimiter = ARGV.pop
+string = ARGV.length > 1 ? ARGV.join(" ") : ARGV.first
+
+puts string.split(delimiter)

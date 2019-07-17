@@ -16,7 +16,7 @@ class GitBranchTracker
 
   def usage
     puts "USAGE: git_branch_history CMD [ARGS]"
-    puts "CMD: add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set"
+    puts "CMD: add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
     puts "\tpush/set/add:  add branch to history"
     puts "\t\tARGS: branch_name (default: current branch)"
     puts "\tlast/get:      get last (n) branch(es)"
@@ -28,6 +28,7 @@ class GitBranchTracker
     puts "\trm/remove/delete: delete specified branch from history"
     puts "\t\tARGS: branch_name (required)"
     puts "\thelp:          Print this message"
+    puts "\topen:          Open the branch history file"
   end
 
   def branches_arr
@@ -35,7 +36,7 @@ class GitBranchTracker
       file = File.open("#{@file_path}", "r+")
       branches = file.readlines.map(&:strip)
       file.close
-      branches
+      branches.compact
     end
   end
 
@@ -88,6 +89,14 @@ class GitBranchTracker
       remove_branch
     when "current"
       puts current_branch
+    when "open"
+      if !`which atom`.empty?
+        `atom #{@file_path}`
+      elsif !`which subl`.empty?
+        `subl #{@file_path}`
+      else
+        puts "Neither Atom nor Sublime available"
+      end
     else
       usage
     end
