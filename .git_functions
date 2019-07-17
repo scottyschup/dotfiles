@@ -3,10 +3,12 @@
 #   * upgl (use personal git local)
 #   * change git@github.com:scottyschup/repo.git to git@github.com.personal:scottyschup/repo.git
 
-function current_git_branch {
-  echo `git branch  --no-color | grep -E '^\*' | awk '{print $2}'`
+function git_current_branch {
+  git symbolic-ref HEAD 2>/dev/null | cut -d "/" -f 3
 }
-alias cgb=current_git_branch
+alias current_git_branch=git_current_branch
+alias gcb=git_current_branch
+alias cgb=git_current_branch
 
 function git_add_commit {
   if [ $# -lt 2 ]; then return "Enter a commit message"; fi
@@ -119,9 +121,12 @@ function git_branch_set_upstream {
     remote=$1
   elif [[ $1 == *\/* ]]; then
     IFS='/' read -r remote origin <<< "$1"
-  else
+  elif [ $1 ]; then
     remote=origin
     branch=$1
+  else
+    remote=origin
+    branch=`gcb`
   fi
 
   echo "Setting upstream branch to $CYN$remote/$branch$NONE"

@@ -44,6 +44,7 @@ unalias gbsr # git bisect reset
 unalias gbss # git bisect start
 alias gbsu='git_branch_set_upstream'
 alias gca='git commit --amend'
+alias gcb='git_current_branch'
 alias gcfm='git checkout --force master'
 alias gcm='git commit -m'
 alias gcmp='git_commit_push'

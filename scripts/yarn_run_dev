@@ -15,13 +15,14 @@ end
 
 # Thread used to timeout `yarn` command after 5 seconds (meaning no node incompatibility)
 timeout = Thread.new do
-  sleep 20
+  sleep 10
 end
 
 # Linear spinner
 i = 0
 dir = 0
-fpi = 100000
+fpi = 150000
+operators = [:+, :-]
 
 while child.status && timeout.status do
   if i % fpi == 0
@@ -29,8 +30,7 @@ while child.status && timeout.status do
     puts "Checking node compatibility"
     printf("*" * (i / fpi))
   end
-  operators = [:+, :-]
-  i = i.send(operators[dir], 1) % (150 * fpi)
+  i = i.send(operators[dir], 1) % (30 * fpi)
   dir = i == 0 ? (dir + 1) % 2 : dir
 end
 
