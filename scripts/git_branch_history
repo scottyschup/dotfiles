@@ -31,6 +31,14 @@ class GitBranchTracker
     puts "\topen:          Open the branch history file"
   end
 
+  def add_branch!
+    branch = @args.shift || current_branch
+    branches_arr.delete branch
+    branches_arr << branch
+    check_order
+    update_file!
+  end
+
   def branches_arr
     @branches ||= begin
       file = File.open("#{@file_path}", "r+")
@@ -38,24 +46,35 @@ class GitBranchTracker
       file.close
       branches.compact
     end
+    @branches
+  end
+
+  def check_order
+    # Make sure current branch isn't also last branch
+    if branches_arr.last == current_branch && branches_arr.length > 1
+      branches_arr[-1], branches_arr[-2] = branches_arr[-2], branches_arr[-1]
+      update_file!
+    end
   end
 
   def current_branch
-    @current_branch ||= ARGV.shift || `git symbolic-ref -q HEAD`.strip.gsub("refs/heads/", "")
+    @current_branch ||= `git symbolic-ref -q HEAD`.strip.gsub("refs/heads/", "")
   end
 
-  def add_branch
-    branches_arr.delete(current_branch)
-    branches_arr << current_branch
-    update_file
+  def last_branch
+    branches = branches_arr
+    n = (@args.shift || 1).to_i
+    branches[-n..-1]
   end
 
-  def remove_branch
-    branches_arr.delete(current_branch)
-    update_file
+  def remove_branch!
+    branch = @args.shift
+    branches_arr.delete branch
+    check_order
+    update_file!
   end
 
-  def update_file
+  def update_file!
     file = File.open("#{@file_path}", "w+")
     branches_arr.each { |branch| file.puts branch }
     file.close
@@ -71,12 +90,12 @@ class GitBranchTracker
 
     case cmd
     when "push", "set", "add"
-      add_branch
+      add_branch!
     when "last", "get"
-      branches = branches_arr
-      n = (@args.shift || 1).to_i
-      puts branches[-n..-1]
+      check_order
+      puts last_branch
     when "list", "all", "csv", "ls"
+      check_order
       branches = branches_arr
       grep = @args.shift
       branches.select! { |branch| branch.include?(grep) } unless grep.nil?
@@ -86,10 +105,11 @@ class GitBranchTracker
         puts "Must specify a branch to remove"
         return
       end
-      remove_branch
+      remove_branch!
     when "current"
       puts current_branch
     when "open"
+      check_order
       if !`which atom`.empty?
         `atom #{@file_path}`
       elsif !`which subl`.empty?

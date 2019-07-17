@@ -148,6 +148,7 @@ function git_checkout {
 
   git_branch_history add "$current"
   git checkout "$@"
+  echo "$(git_branch_history last) => $(git_branch_history current)"
 }
 
 function git_commit_push {
