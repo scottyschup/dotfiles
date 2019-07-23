@@ -2,8 +2,12 @@
 
 args = ARGV.length == 1 ? ARGV[0].to_s : ""
 if args.include?("PARTNER_ENV")
-  puts("PARTNER_ENV is not a valid env var. Did you mean TENANT?")
-  exit
+  puts("PARTNER_ENV is not a valid env var. Did you mean TENANT? (y/n)")
+  resp = gets.chomp[0]
+  unless %(y Y).include? resp
+    exit
+  end
+  args.gsub!("PARTNER_ENV", "TENANT")
 end
 
 ############################
@@ -59,10 +63,10 @@ end
 ############################
 # Run `yarn run dev(elop)` #
 ############################
-puts "Running `yarn run dev(elop)` script"
-cmd = "(#{args} yarn run dev || #{args} yarn run develop || #{args} yarn run start)"
+puts "Running `yarn && yarn run dev|develop|start`"
+cmd = "#{args} (yarn && (yarn run dev || yarn run develop || yarn run start))"
 unless major_version.nil?
   puts "Switching to Node v#{major_version}"
-  cmd = ". /usr/local/opt/nvm/nvm.sh && nvm use #{major_version} && yarn && " + cmd
+  cmd = ". /usr/local/opt/nvm/nvm.sh && nvm use #{major_version} && " + cmd
 end
 system(cmd) || puts(child[:res])
