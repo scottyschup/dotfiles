@@ -146,9 +146,10 @@ function git_checkout {
     return
   fi
 
-  git_branch_history add "$current"
   git checkout "$@"
-  echo "$(git_branch_history last) => $(git_branch_history current)"
+  if [ $1 != '--' ]; then
+    echo "$(git_branch_history last) => $(git_branch_history current)"
+  fi
 }
 
 function git_commit_push {
