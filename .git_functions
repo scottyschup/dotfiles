@@ -134,6 +134,7 @@ function git_branch_set_upstream {
 }
 
 function git_checkout {
+  git_branch_history add
   if [ "$1" = "-b" ]; then
     branch=$2
   else
@@ -147,6 +148,7 @@ function git_checkout {
   fi
 
   git checkout "$@"
+  git_branch_history add
   if [ $1 != '--' ]; then
     echo "$(git_branch_history last) => $(git_branch_history current)"
   fi

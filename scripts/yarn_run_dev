@@ -22,20 +22,46 @@ timeout = Thread.new do
   sleep 7
 end
 
-# Linear spinner
+##################
+# Linear spinner #
+##################
+# i = 0
+# dir = 0
+# fpi = 150000
+# operators = [:+, :-]
+#
+# while child.status && timeout.status do
+#   if i % fpi == 0
+#     system "clear"
+#     puts "Checking node compatibility"
+#     printf("*" * (i / fpi))
+#   end
+#   i = i.send(operators[dir], 1) % (30 * fpi)
+#   dir = i == 0 ? (dir + 1) % 2 : dir
+# end
+
+###################
+# Diamond spinner #
+###################
 i = 0
 dir = 0
-fpi = 150000
-operators = [:+, :-]
+fpi = 250000
+curr_pos = 0
+positions = [
+  ["\t\t👇", "\t  \t ", "\t\t "],
+  ["\t\t ", "\t\t\t👈", "\t\t "],
+  ["\t\t ", "\t\t\t  ", "\t\t👆"],
+  ["\t\t ", "\t👉 \t ", "\t\t "]
+]
 
 while child.status && timeout.status do
   if i % fpi == 0
     system "clear"
     puts "Checking node compatibility"
-    printf("*" * (i / fpi))
+    puts positions[curr_pos]
+    curr_pos = (curr_pos + 1) % 4
   end
-  i = i.send(operators[dir], 1) % (30 * fpi)
-  dir = i == 0 ? (dir + 1) % 2 : dir
+  i += 1
 end
 
 # Once one of the threads finishes, make sure both are stopped
@@ -52,8 +78,9 @@ child[:res]&.first(10)&.each do |line|
   next unless line&.include? "The engine \"node\" is incompatible with this module. Expected version"
 
   _, versions = line.split("Expected version \"")
-  expected_version, actual_version = versions.gsub(/[a-zA-Z\^"]|\.\s/, '').split(' ')
-  major_version = expected_version.split(".").first
+  # expected_version, actual_version = versions.gsub(/[a-zA-Z\^"]|\.\s/, '').split(' ')
+  expected_version, actual_version = versions.split("\". Got \"")
+  major_version = expected_version.split(' ').last.split('.').first.gsub(/[a-zA-Z\^"]|\.\s/, '')
 
   system "clear"
   puts "Expected: #{expected_version}; Actual: #{actual_version}"

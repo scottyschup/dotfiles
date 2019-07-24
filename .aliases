@@ -59,6 +59,8 @@ alias gconf='git config -l'
 alias gconfg='git config --global -l'
 alias gcp='git cherry-pick'
 alias gd='git diff'
+alias gdh='git log -p' # git diff history
+alias gdhf='git log -p --follow' # git diff history including renames
 alias gds='git diff --stat'
 alias gdns='git diff --numstat'
 alias gf='git fetch'
@@ -67,6 +69,8 @@ alias ghl='cat .git/refs/heads/master' # full hash
 alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
 alias gin='git init'
 alias glb='echo `gbh last`'
+alias glp='git log -p' # also `gdh`
+alias glpf='git log -p --follow' # also `gdhf`
 alias gm='git merge'
 alias gma='git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data."'
 alias gmdr='git merge --no-commit --no-ff'

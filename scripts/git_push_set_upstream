@@ -4,7 +4,7 @@ def usage
   puts "Usage: `git_push_set_upstream [-h, --help] [[REMOTE] BRANCH]`"
 end
 
-if ARGV[0].include?("-h")
+if ARGV[0]&.include?("-h")
   usage
   exit
 end

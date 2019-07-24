@@ -1,5 +1,13 @@
 #!/usr/bin/env ruby -w
 
+begin
+  require 'colorize'
+rescue LoadError => err
+  dependency = err.message.split(" -- ").last
+  puts "Missing dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
+  exit
+end
+
 #########
 # SETUP #
 #########
@@ -16,17 +24,17 @@ class GitBranchTracker
 
   def usage
     puts "USAGE: git_branch_history CMD [ARGS]"
-    puts "CMD: add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
+    puts "CMDs:  add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
     puts "\tpush/set/add:  add branch to history"
-    puts "\t\tARGS: branch_name (default: current branch)"
+    puts "\t\tARGS: branch_name (default: current branch)\n\n"
     puts "\tlast/get:      get last (n) branch(es)"
-    puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)"
+    puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)\n\n"
     puts "\tls/list:          list all branches (optionally that match a grep)"
-    puts "\t\tARGS: (optional) string to grep"
+    puts "\t\tARGS: (optional) string to grep\n\n"
     puts "\tcsv:           list all branches, comma-separated (optionally that match a grep)"
-    puts "\t\tARGS: (optional) string to grep"
+    puts "\t\tARGS: (optional) string to grep\n\n"
     puts "\trm/remove/delete: delete specified branch from history"
-    puts "\t\tARGS: branch_name (required)"
+    puts "\t\tARGS: branch_name (required)\n\n"
     puts "\thelp:          Print this message"
     puts "\topen:          Open the branch history file"
   end
@@ -35,7 +43,6 @@ class GitBranchTracker
     branch = @args.shift || current_branch
     branches_arr.delete branch
     branches_arr << branch
-    check_order
     update_file!
   end
 
@@ -62,8 +69,12 @@ class GitBranchTracker
   end
 
   def last_branch
-    branches = branches_arr
+    branches = branches_arr.dup
+    branches.delete current_branch
     n = (@args.shift || 1).to_i
+    if branches.length < n
+      raise "Cannot return last #{n} branches. Only #{branches.length} branches available."
+    end
     branches[-n..-1]
   end
 
@@ -99,7 +110,12 @@ class GitBranchTracker
       branches = branches_arr
       grep = @args.shift
       branches.select! { |branch| branch.include?(grep) } unless grep.nil?
-      puts(cmd == "csv" ? branches.join(", ") : branches)
+      if cmd == "csv"
+        branches = branches.join(", ")
+      else
+        branches[-2] = "#{branches[-2]} (current)".cyan
+      end
+      puts branches
     when "remove", "delete", "rm"
       if @args.empty?
         puts "Must specify a branch to remove"
