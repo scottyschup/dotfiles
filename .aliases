@@ -6,108 +6,108 @@
 # Some of the aliases below are for functions in the ./.functions file
 
 # brew
-alias bri='brew install'
-alias brs='brew search'
-alias brsl='brew services list'
-alias brsp='brew services stop'
-alias brsr='brew services restart'
-alias brss='brew services start'
-alias brci='brew cask install'
-alias brcs='brew cask search'
+alias bri="brew install"
+alias brs="brew search"
+alias brsl="brew services list"
+alias brsp="brew services stop"
+alias brsr="brew services restart"
+alias brss="brew services start"
+alias brci="brew cask install"
+alias brcs="brew cask search"
 
 # bundle => ruby/rails
 
 # colorize
-alias catc='colorize'
+alias catc="colorize"
 
 # docker
-alias dk='docker'
-alias dkc='docker-compose'
-alias dke='docker exec -it'
-alias dkm='docker-machine'
+alias dk="docker"
+alias dkc="docker-compose"
+alias dke="docker exec -it"
+alias dkm="docker-machine"
 
 # git
-alias g='git'
-alias ga='git add'
-alias gaa='git add -A' # using `-A` instead of `.` to include deleted files
-alias garc='git add . && git rebase --continue'
-alias gb='git branch'
-alias gba='git branch -a' # list all branches
-alias gbh='git_branch_history'
-alias gbha='gbh list'
-alias gbhc='gbh csv'
-alias gbr='git branch -r' # list remote branches
+alias g="git"
+alias ga="git add"
+alias gaa="git add -A" # using `-A` instead of `.` to include deleted files
+alias garc="git add . && git rebase --continue"
+alias gb="git branch"
+alias gba="git branch -a" # list all branches
+alias gbh="git_branch_history"
+alias gbha="gbh list"
+alias gbhc="gbh csv"
+alias gbr="git branch -r" # list remote branches
 unalias gbs # git bisect
 unalias gbsb # git bisect bad
 unalias gbsg # git bisect good
 unalias gbsr # git bisect reset
 unalias gbss # git bisect start
-alias gbsu='git_branch_set_upstream'
-alias gca='git commit --amend'
-alias gcb='git_current_branch'
-alias gcfm='git checkout --force master'
-alias gcm='git commit -m'
-alias gcmp='git_commit_push'
-alias gco='git_checkout'
-alias gcob='gco -b'
-alias gcof='gco --force'
-alias gcofm='gco --force master'
-alias gcog='gco gh-pages'
-alias gcol='GBHL=`gbh last`; gco "$GBHL"'
-alias gcom='gco master'
-alias gconf='git config -l'
-alias gconfg='git config --global -l'
-alias gcp='git cherry-pick'
-alias gd='git diff'
-alias gdh='git log -p' # git diff history
-alias gdhf='git log -p --follow' # git diff history including renames
-alias gds='git diff --stat'
-alias gdns='git diff --numstat'
-alias gf='git fetch'
-alias gfp='git fetch --all --prune; git pull'
-alias ghl='cat .git/refs/heads/master' # full hash
-alias ghs='git log --pretty=format:"%h" -n 1 | cat' # short hash
-alias gin='git init'
-alias glb='echo `gbh last`'
-alias glp='git log -p' # also `gdh`
-alias glpf='git log -p --follow' # also `gdhf`
-alias gm='git merge'
-alias gma='git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data."'
-alias gmdr='git merge --no-commit --no-ff'
-alias gp='git push'
-alias gpf='git push --force'
-alias gpl='git pull'
-alias gplu='git pull -u'
-alias gpluo='git pull -u origin'
-alias gpsu='git_push_set_upstream'
-alias gpu='git push -u'
-alias gpuo='git push -u origin'
-alias gra='git remote add'
-alias grb='git rebase'
-alias grbc='git rebase --continue'
-alias grbm='git rebase master'
-alias grbs='git rebase --skip'
-alias grollback='git reset HEAD~1'
-alias grp='git remote prune'
-alias grpo='git remote prune origin' # removes dead branches from remote origin
-alias grr='git remote remove'
-alias grao='git remote add origin'
-alias grro='git remote remove origin'
-alias grv='git remote -v'
-alias grsv='git remote -v show'
-alias gs='git status'
-alias gst='git stash'
-alias gsta='git stash apply'
+alias gbsu="git_branch_set_upstream"
+alias gca="git commit --amend"
+alias gcb="git_current_branch"
+alias gcfm="git checkout --force master"
+alias gcm="git commit -m"
+alias gcmp="git_commit_push"
+alias gco="git_checkout"
+alias gcob="gco -b"
+alias gcof="gco --force"
+alias gcofm="gco --force master"
+alias gcog="gco gh-pages"
+alias gcol="GBHL=`gbh last`; gco $GBHL"
+alias gcom="gco master"
+alias gconf="git config -l"
+alias gconfg="git config --global -l"
+alias gcp="git cherry-pick"
+alias gd="git diff"
+alias gdh="git log -p" # git diff history
+alias gdhf="git log -p --follow" # git diff history including renames
+alias gds="git diff --stat"
+alias gdns="git diff --numstat"
+alias gf="git fetch"
+alias gfp="git fetch --all --prune; git pull"
+alias ghl="cat .git/refs/heads/master" # full hash
+alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
+alias gin="git init"
+alias glb="echo `gbh last`"
+alias glp="git log -p" # also `gdh`
+alias glpf="git log -p --follow" # also `gdhf`
+alias gm="git merge"
+alias gma="git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data.""
+alias gmdr="git merge --no-commit --no-ff"
+alias gp="git push"
+alias gpf="git push --force"
+alias gpl="git pull"
+alias gplu="git pull -u"
+alias gpluo="git pull -u origin"
+alias gpsu="git_push_set_upstream"
+alias gpu="git push -u"
+alias gpuo="git push -u origin"
+alias gra="git remote add"
+alias grb="git rebase"
+alias grbc="git rebase --continue"
+alias grbm="git rebase master"
+alias grbs="git rebase --skip"
+alias grollback="git reset HEAD~1"
+alias grp="git remote prune"
+alias grpo="git remote prune origin" # removes dead branches from remote origin
+alias grr="git remote remove"
+alias grao="git remote add origin"
+alias grro="git remote remove origin"
+alias grv="git remote -v"
+alias grsv="git remote -v show"
+alias gs="git status"
+alias gst="git stash"
+alias gsta="git stash apply"
 unalias gstaa # not sure where this one is coming from
-alias gstai='git stash apply --index'
-alias gstb='git stash branch'
-alias gstl='git stash list'
-alias gstsd='git stash show --text' # git stash show diff
-alias gsts='git stash show'
-alias gstsv='git stash save'
-alias gstu='git stash show -p | git apply -R' # git stash unapply
-alias gviz='git log --oneline --decorate --graph --all'
-alias gwb='git_working_branches'
+alias gstai="git stash apply --index"
+alias gstb="git stash branch"
+alias gstl="git stash list"
+alias gstsd="git stash show --text" # git stash show diff
+alias gsts="git stash show"
+alias gstsv="git stash save"
+alias gstu="git stash show -p | git apply -R" # git stash unapply
+alias gviz="git log --oneline --decorate --graph --all"
+alias gwb="git_working_branches"
 alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
             git config --global user.name 'Scott Schupbach'; \
             echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
@@ -122,142 +122,144 @@ alias uwgl="git config user.email 'scott.schupbach@avant.com'; \
             echo 'Switched to work git user/email settings.\nRemember to set remote host to $GITHUB_HOST.'"
 
 # heroku
-alias hrc='heroku run rails console --app'
+alias hrc="heroku run rails console --app"
 
 # javascript/npm/nvm/gulp/grunt/react
-alias gl='gulp'
-alias gls='gulp serve'
-alias glr='rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve'
-alias gt='grunt'
-alias gts='grunt serve'
-alias gtsf='grunt serve --force'
-alias gtt='grunt test'
-alias gtrs='rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force'
-alias npme='PATH=$(npm bin):$PATH'
-alias react_install='npm install --save react react-dom'
+alias gl="gulp"
+alias gls="gulp serve"
+alias glr="rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve"
+alias gt="grunt"
+alias gts="grunt serve"
+alias gtsf="grunt serve --force"
+alias gtt="grunt test"
+alias gtrs="rm -rf bower_components; rm -rf node_modules; npm cache clean; npm install; grunt serve --force"
+alias npme="PATH=$(npm bin):$PATH"
+alias react_install="npm install --save react react-dom"
 alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
-alias react_babel_install='npm install --save babel-core babel-loader babel-preset-env'
-alias wp='$(npm bin)/webpack'
-alias yrd=yarn_run_dev
+alias react_babel_install="npm install --save babel-core babel-loader babel-preset-env"
+alias wp="$(npm bin)/webpack"
+alias yrd="yarn_run_dev"
 
 # miscellany
-alias chrome='open -a "Google Chrome"'
-alias curli='curl -I'
-alias grepi='grep -i'
-alias grep_alias='alias | grep -i' # zsh only
-alias aliases_for=grep_alias
-alias rebuild_open_with_index='/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder'
+alias chrome="open -a 'Google Chrome'"
+alias curli="curl -I"
+alias grepi="grep -i"
+alias grep_alias="alias | grep -i' # zsh onl"
+alias aliases_for="grep_alias"
+alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"
-alias rebuild_indices='rebuild_open_with_index && rebuild_spotlight_index'
-alias rbi=rebuild_indices
-alias rbfind=ruby_find
-alias clr=clear
-alias cls=clear
-alias update_slack_theme=add_custom_theme_to_slack
-alias ust=update_slack_theme
+alias rebuild_indices"rebuild_open_with_index && rebuild_spotlight_index"
+alias rbi="rebuild_indices"
+alias rbfind="ruby_find"
+alias clr="clear"
+alias cls="clear"
+alias update_slack_theme="add_custom_theme_to_slack"
+alias ust="update_slack_theme"
 alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
-alias lss=list_scripts
-alias psaux=parse_ps_aux
+alias lss="list_scripts"
+alias psaux="parse_ps_aux"
 
 # navigation
-alias back='cd ..'
-alias la='k -A'
-alias ll='k -Ah'
-alias lt='k -Ah *'
-alias up='cd ..'
-alias upl='cd .. && k -Ah'
-alias upp='cd ../..'
-alias uppl='cd ../.. && k -Ah'
+alias back"cd .."
+alias la"k -A"
+alias ll"k -Ah"
+alias lt"k -Ah *"
+alias up"cd .."
+alias upl"cd .. && k -Ah"
+alias upp"cd ../.."
+alias uppl"cd ../.. && k -Ah"
 
 # Python
-alias pi='pip install'
-alias pu='pip install --upgrade pip'
-alias pe='pyenv'
-alias pev='pyenv versions'
-alias pei='pyenv install'
-alias pel='pyenv local'
-alias peu='pyenv local'
-alias peg='pyenv global'
-alias per='pyenv rehash' # run this after installing executables
-alias peh='pyenv help'
+alias pi"pip install"
+alias pu"pip install --upgrade pip"
+alias pe"pyenv"
+alias pev"pyenv versions"
+alias pei"pyenv install"
+alias pel"pyenv local"
+alias peu"pyenv local"
+alias peg"pyenv global"
+alias per"pyenv rehash' # run this after installing executable"
+alias peh"pyenv help"
 
 # Redis
-alias start_redis='brew services start redis'
-alias stop_redis='brew services stop redis'
-alias rcli='redis-cli'
+alias start_redis"brew services start redis"
+alias stop_redis"brew services stop redis"
+alias rcli"redis-cli"
 
 # Ruby and friends (bundle/rails/rbenv)
-alias bcg='bundle config --global'
-alias bcl='bundle config --local'
-alias bcd='bundle config --delete'
-alias be='bundle exec'
-alias berk='bundle exec rake'
-alias bers='bundle exec rspec'
-alias bersop='bundle_rails_server_on_port'
-alias bi='bundle install'
-alias bo='bundle open'
-alias bu='bundle update'
-alias gi='gem install'
-alias r=rails
+alias bcg"bundle config --global"
+alias bcl"bundle config --local"
+alias bcd"bundle config --delete"
+alias be"bundle exec"
+alias berk"bundle exec rake"
+alias bers"bundle exec rspec"
+alias bersop"bundle_rails_server_on_port"
+alias bi"bundle install"
+alias bo"bundle open"
+alias bu"bundle update"
+alias gi"gem install"
+alias r="rails"
 alias rc="rails console"
-alias rcdev="RAILS_ENV='development'; rails console"
-alias rdbd='rake db:drop'
-alias rdbm='rake db:migrate'
-alias rdbr='rake db:reset'
-alias rdbsd='rake db:seed'
-alias rdbsu='rake db:setup'
-alias rdbrb='rake db:rollback'
-alias rdbms='rake db:migrate:status'
-alias rs='rails server'
-alias tbers='time bundle exec rspec'
-alias rbenv_new_versions='brew update; brew upgrade ruby-build'
-alias rnv=rbenv_new_versions
+alias rcdev="RAILS_ENV'development'; rails console"
+alias rdbd"rake db:drop"
+alias rdbm"rake db:migrate"
+alias rdbr"rake db:reset"
+alias rdbsd"rake db:seed"
+alias rdbsu"rake db:setup"
+alias rdbrb"rake db:rollback"
+alias rdbms"rake db:migrate:status"
+alias rs"rails server"
+alias tbers"time bundle exec rspec"
+alias rbenv_new_versions"brew update; brew upgrade ruby-build"
+alias rnv="rbenv_new_versions"
 
 # server
-alias pys='python -m SimpleHTTPServer'
-alias rbsp='ruby -run -e httpd . -p'
-alias rbs='ruby -run -e httpd .'
+alias pys="python -m SimpleHTTPServer"
+alias rbsp="ruby -run -e httpd . -p"
+alias rbs="ruby -run -e httpd ."
 
 # SQL (MySQL/PostgreSQL)
-alias msst='mysql.server start'
-alias mssp='mysql.server stop'
-alias msr='mysql.server restart'
-alias pg='postgres -D /usr/local/var/postgres'
-alias pgst='pg_ctl -D /usr/local/var/postgres -l logfile start'
-alias pgsp='pg_ctl -D /usr/local/var/postgres -l logfile stop'
-alias bpgst='brew services start postgresql@9.4'
-alias bpgsp='brew services stop postgresql@9.4'
-alias start_pg='brew services start postgresql@9.4'
-alias stop_pg='brew services stop postgresql@9.4'
+alias bpgst="brew services start postgresql@9.4"
+alias bpgsp="brew services stop postgresql@9.4"
+alias msst="mysql.server start"
+alias mssp="mysql.server stop"
+alias msr="mysql.server restart"
+alias pg="postgres -D /usr/local/var/postgres"
+alias pgst="pg_ctl -D /usr/local/var/postgres -l logfile start"
+alias pgsp="pg_ctl -D /usr/local/var/postgres -l logfile stop"
+alias restart_psql="rm /usr/local/var/postgresql@9.4/postmaster.pid; brew services restart postgresql@9.4"
+alias rspsql="restart_psql"
+alias start_pg="brew services start postgresql@9.4"
+alias stop_pg="brew services stop postgresql@9.4"
 
 # text editing
 ## atom
-alias a='atom'
-alias ad='atom $DOTFILES' # opens atom with navigation pane for all dotfiles
-alias aa='atom $DOTFILES/.aliases'
-alias af='atom $DOTFILES/.functions'
-alias av='atom $DOTFILES/.vimrc'
-alias az='atom $DOTFILES/.zshrc'
+alias a="atom"
+alias ad="atom $DOTFILES' # opens atom with navigation pane for all dotfile"
+alias aa="atom $DOTFILES/.aliases"
+alias af="atom $DOTFILES/.functions"
+alias av="atom $DOTFILES/.vimrc"
+alias az="atom $DOTFILES/.zshrc"
 
 ## sublime
-alias s='subl'
-alias sba='subl $DOTFILES/.aliases'
-alias sbd='subl $DOTFILES' # opens subl with navigation pane for all dotfiles
-alias sbf='subl $DOTFILES/.functions'
-alias sbv='subl $DOTFILES/.vimrc'
-alias sbz='subl $DOTFILES/.zshrc'
+alias s="subl"
+alias sba="subl $DOTFILES/.aliases"
+alias sbd="subl $DOTFILES' # opens subl with navigation pane for all dotfile"
+alias sbf="subl $DOTFILES/.functions"
+alias sbv="subl $DOTFILES/.vimrc"
+alias sbz="subl $DOTFILES/.zshrc"
 
 ## dotfiles
-alias sa='source $DOTFILES/.aliases'
-alias sd='source ~/.zshrc'
-alias sf='source $DOTFILES/.functions'
+alias sa="source $DOTFILES/.aliases"
+alias sd="source ~/.zshrc"
+alias sf="source $DOTFILES/.functions"
 
 ## vim
-alias v='vim'
-alias va='vim $DOTFILES/.aliases'
-alias vf='vim $DOTFILES/.functions'
-alias vgig='vim ~/.gitignore_global'
-alias vv='vim $DOTFILES/.vimrc'
-alias vz='vim $DOTFILES/.zshrc'
+alias v="vim"
+alias va="vim $DOTFILES/.aliases"
+alias vf="vim $DOTFILES/.functions"
+alias vgig="vim ~/.gitignore_global"
+alias vv="vim $DOTFILES/.vimrc"
+alias vz="vim $DOTFILES/.zshrc"
 
-echo 'Sourced .aliases'
+echo "Sourced .aliases"
