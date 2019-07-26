@@ -42,7 +42,7 @@ class GitBranchTracker
   def add_branch!
     branch = @args.shift || current_branch
     branches_arr.delete branch
-    branches_arr << branch
+    branch == current_branch ? branches_arr << branch : branches_arr.unshift(branch)
     update_file!
   end
 

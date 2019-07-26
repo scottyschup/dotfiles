@@ -23,35 +23,17 @@ timeout = Thread.new do
 end
 
 ##################
-# Linear spinner #
+# Finger spinner #
 ##################
-# i = 0
-# dir = 0
-# fpi = 150000
-# operators = [:+, :-]
-#
-# while child.status && timeout.status do
-#   if i % fpi == 0
-#     system "clear"
-#     puts "Checking node compatibility"
-#     printf("*" * (i / fpi))
-#   end
-#   i = i.send(operators[dir], 1) % (30 * fpi)
-#   dir = i == 0 ? (dir + 1) % 2 : dir
-# end
-
-###################
-# Diamond spinner #
-###################
 i = 0
 dir = 0
 fpi = 250000
 curr_pos = 0
 positions = [
-  ["\t\t👇", "\t  \t ", "\t\t "],
-  ["\t\t ", "\t\t\t👈", "\t\t "],
-  ["\t\t ", "\t\t\t  ", "\t\t👆"],
-  ["\t\t ", "\t👉 \t ", "\t\t "]
+  ["", "\t\t\t👇", "\t\t  \t ", "\t\t\t "],
+  ["", "\t\t\t ", "\t\t\t\t👈", "\t\t\t "],
+  ["", "\t\t\t ", "\t\t\t\t ", "\t\t\t👆"],
+  ["", "\t\t\t ", "\t\t👉\t ", "\t\t\t "]
 ]
 
 while child.status && timeout.status do
