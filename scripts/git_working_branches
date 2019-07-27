@@ -8,20 +8,20 @@
 def ls_branches
   working_branches = get_branches
   if working_branches.empty?
-    puts "No branches"
+   $stdout.puts "No branches"
     exit
   end
   working_branches.map.with_index { |branch, idx| "#{idx}. #{branch}" }
 end
 
 def print_branches
-  puts "Working git branches:"
-  puts ls_branches.join("\n")
+ $stdout.puts "Working git branches:"
+ $stdout.puts ls_branches.join("\n")
 end
 
 def print_branch(idx)
   working_branches = get_branches
-  puts working_branches[idx]
+ $stdout.puts working_branches[idx]
 end
 
 def get_branches
@@ -43,7 +43,7 @@ end
 working_branches = get_branches
 
 if ARGV.length > 2
-  puts "Too many arguments: #{ARGV.join(', ')}"
+ $stdout.puts "Too many arguments: #{ARGV.join(', ')}"
 elsif ARGV.length == 2
   cmd = ARGV.shift
   arg = ARGV.shift
@@ -57,7 +57,7 @@ elsif ARGV.length == 2
   when 'del'
     deleted = is_index ? working_branches.delete_at(arg) : working_branches.delete(arg)
     set_branches working_branches
-    puts "Branch #{deleted} deleted"
+   $stdout.puts "Branch #{deleted} deleted"
     print_branches
   when 'shift'
     working_branches.push(arg)
@@ -68,10 +68,10 @@ elsif ARGV.length == 2
   when 'drop'
     deleted = working_branches.drop
     set_branches working_branches
-    puts "Branch #{deleted} deleted"
+   $stdout.puts "Branch #{deleted} deleted"
     print_branches
   else
-    puts "Unknown command: #{cmd}"
+   $stdout.puts "Unknown command: #{cmd}"
   end
 elsif ARGV.length == 1
   idx_str = ARGV.shift
@@ -79,10 +79,10 @@ elsif ARGV.length == 1
     print_branches
     exit
   elsif stringified_number?(idx_str)
-    puts working_branches[idx_str.to_i]
+   $stdout.puts working_branches[idx_str.to_i]
     exit
   end
-  puts "Invalid index: #{idx_str}"
+ $stdout.puts "Invalid index: #{idx_str}"
 elsif ARGV.length == 0
   print_branches
   exit

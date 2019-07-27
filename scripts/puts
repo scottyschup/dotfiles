@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby -w
+
+# require 'pry'
+# binding.pry
+
+if ARGV[0]
+  if File.exist?(ARGV[0])
+    input = ARGF.read
+    $stdout.puts(input.join("\n"))
+  else
+    $stdout.puts(ARGV.join(" "))
+  end
+else
+  input = gets
+  $stdout.puts input
+end
+
+
+# begin
+# rescue Errno::ENOENT
+# end
+
+# unless ARGV.empty? do
+#   puts "From arguments: #{ARGV.shift}"
+# end
+#
+# a = gets
+# puts "From stdin: #{a}"
+
+
+# begin
+#   if ARGV[0] && File.exist?(ARGV[0])
+#     $stdout.puts ARGF.read
+#   else
+#     $stdout.puts ARGV.join(" ")
+#   end
+# rescue Errno::EPIPE
+#   exit(74)
+# end
+
+
+# begin
+#
+#   if ARGV[0]
+#     $stdout.puts ARGV.join(" ")
+#   else
+#     input = $stdin.read
+#     $stdout.puts input
+#   end
+#
+#   $stdout.puts ARGF.read
+# rescue Errno::ENOENT
+# end
+#
+# unless ARGV.empty? do
+#   puts "From arguments: #{ARGV.shift}"
+# end
+#
+# a = gets
+# puts "From stdin: #{a}"

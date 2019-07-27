@@ -12,8 +12,8 @@ unmount = ARGV.any? { |arg| unmount_flags.include?(arg) }
 
 Dir.foreach('/Volumes') do |file|
   next if skip_these.include?(file)
-  puts file
+ $stdout.puts file
   next if file == do_not_unmount.include?(file)
   `sudo rm -r "#{file}"`
-  puts "#{file} removed"
+ $stdout.puts "#{file} removed"
 end

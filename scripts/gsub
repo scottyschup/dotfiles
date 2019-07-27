@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby -w
 
 unless ARGV.length > 1
-  puts "Must provide 2 or 3 args\n\tSTRING PATTERN [REPLACEMENT]\n\tDefault replacement: ''"
+ $stdout.puts "Must provide 2 or 3 args\n\tSTRING PATTERN [REPLACEMENT]\n\tDefault replacement: ''"
   exit
 end
 
@@ -9,5 +9,4 @@ string = ARGV.shift
 pattern, replacement = ARGV
 pattern = Regexp.new(pattern.gsub("/", "")) if pattern.start_with? "/"
 replacement ||= ""
-
-puts string.gsub(pattern, replacement)
+$stdout.puts string.gsub(pattern, replacement)

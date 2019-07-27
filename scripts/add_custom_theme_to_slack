@@ -15,7 +15,7 @@ theme_file = "#{ENV['DOTFILES']}/templates/custom_dark_slack_theme.js"
 (slack_files << theme_file).each do |file|
   exists = File.exist?(file)
   unless exists
-    puts "File does not exist: #{file}"
+   $stdout.puts "File does not exist: #{file}"
     exit
   end
 end
@@ -40,14 +40,14 @@ slack_files.each do |file|
   # Check if custom theme has already been added
   if target_lines.last == source_lines.last
     skipped += 1
-    puts "Theme already added"
+   $stdout.puts "Theme already added"
     next
   else
     # Add new line between original code and custom theme code
     # then write custom theme code to slack file
     target_file.puts
     source_lines.each { |line| target_file.print line }
-    puts "Theme added to #{file}"
+   $stdout.puts "Theme added to #{file}"
   end
 
   # Change ownership back if necessary

@@ -13,5 +13,5 @@ output_arr.each do |line|
     line[0] == "<" ?
       :red :
       ""
-  puts line.colorize color
+ $stdout.puts line.colorize color
 end
