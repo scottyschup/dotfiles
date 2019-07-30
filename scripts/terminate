@@ -10,13 +10,12 @@ pids.each do |pid|
   begin
     Process.kill(9, pid)
   rescue Errno::ESRCH
-    puts "Pid #{pid} not running"
+    $stdout.puts "Pid #{pid} not running"
     next
   end
   count += 1
 end
-
-puts case count
+$stdout.puts case count
 when 1
   "1 #{target} process terminated: #{pids}"
 when 0

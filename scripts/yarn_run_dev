@@ -2,7 +2,7 @@
 
 args = ARGV.length == 1 ? ARGV[0].to_s : ""
 if args.include?("PARTNER_ENV")
-  puts("PARTNER_ENV is not a valid env var. Did you mean TENANT? (y/n)")
+  $stdout.puts("PARTNER_ENV is not a valid env var. Did you mean TENANT? (y/n)")
   resp = gets.chomp[0]
   unless %(y Y).include? resp
     exit
@@ -39,8 +39,8 @@ positions = [
 while child.status && timeout.status do
   if i % fpi == 0
     system "clear"
-    puts "Checking node compatibility"
-    puts positions[curr_pos]
+    $stdout.puts "Checking node compatibility"
+    $stdout.puts positions[curr_pos]
     curr_pos = (curr_pos + 1) % 4
   end
   i += 1
@@ -49,8 +49,7 @@ end
 # Once one of the threads finishes, make sure both are stopped
 child.kill if child.status
 timeout.kill if timeout.status
-
-puts
+$stdout.puts
 
 ###########################################
 # See if node version needs to be changed #
