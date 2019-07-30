@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby -w
+
+# WIP; getting errors when requiring valid gems
+if ARGV.length < 1
+  $stdout.puts "Please enter the name(s) of the gem(s) you want to load."
+  $stdout.puts "If more than one, separate them with a space."
+  $stdout.puts "Press <enter> when finished."
+  gems = gets.chomp.split(" ")
+  exit unless gems.length > 0
+else
+  gems = ARGV.dup
+end
+
+gems.each do |jem|
+  begin
+    "Requiring #{jem}"
+    require jem
+  rescue LoadError
+    $stderr.puts "ERROR: could not require #{jem}; attempting to `gem install #{jem}`"
+    res = `gem install #{jem}`
+    $stderr.puts(res) unless res&.empty?
+  rescue StandardError => err
+    puts err.message
+  end
+end
