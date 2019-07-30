@@ -154,6 +154,11 @@ function git_checkout {
   fi
 }
 
+function git_checkout_last {
+  branch=`git_branch_history last`
+  git_checkout $branch
+}
+
 function git_commit_push {
   git commit -m $1 && git push
 }
