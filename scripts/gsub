@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby -w
 
 unless ARGV.length > 1
- $stdout.puts "Must provide 2 or 3 args\n\tSTRING PATTERN [REPLACEMENT]\n\tDefault replacement: ''"
+  $stdout.puts "Must provide 2 or 3 args\n\tSTRING PATTERN [REPLACEMENT]\n\tDefault replacement: ''"
   exit
 end
 

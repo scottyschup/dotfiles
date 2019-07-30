@@ -17,13 +17,13 @@ verbose = ARGV.any? { |arg| arg == "-v" }
 ARGV.delete "-v" if verbose
 
 if ARGV.length == 0
- $stdout.puts "Specify the search term to use to filter processes."
+  $stdout.puts "Specify the search term to use to filter processes."
   exit
 elsif ARGV.length > 1
- $stdout.puts "Only one search term to filter processes allowed."
+  $stdout.puts "Only one search term to filter processes allowed."
   exit
 elsif ARGV[0].include?("grep")
- $stdout.puts "Can't filter `grep` commands."
+  $stdout.puts "Can't filter `grep` commands."
   exit
 end
 

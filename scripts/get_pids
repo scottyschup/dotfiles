@@ -17,4 +17,4 @@
 # and not the flags passed with the command
 
 pattern = ARGV[0]
-puts `parse_ps_aux $(ps aux | grep #{pattern})`
+$stdout.puts `parse_ps_aux $(ps aux | grep #{pattern})`

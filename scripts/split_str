@@ -3,4 +3,4 @@
 delimiter = ARGV.pop
 string = ARGV.length > 1 ? ARGV.join(" ") : ARGV.first
 
-puts string.split(delimiter)
+$stdout.puts string.split(delimiter)

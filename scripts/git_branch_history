@@ -4,7 +4,7 @@ begin
   require 'colorize'
 rescue LoadError => err
   dependency = err.message.split(" -- ").last
- $stdout.puts "Missing dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
+  $stdout.puts "Missing dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
   exit
 end
 
@@ -23,20 +23,20 @@ class GitBranchTracker
   end
 
   def usage
-   $stdout.puts "USAGE: git_branch_history CMD [ARGS]"
-   $stdout.puts "CMDs:  add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
-   $stdout.puts "\tpush/set/add:  add branch to history"
-   $stdout.puts "\t\tARGS: branch_name (default: current branch)\n\n"
-   $stdout.puts "\tlast/get:      get last (n) branch(es)"
-   $stdout.puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)\n\n"
-   $stdout.puts "\tls/list:          list all branches (optionally that match a grep)"
-   $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
-   $stdout.puts "\tcsv:           list all branches, comma-separated (optionally that match a grep)"
-   $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
-   $stdout.puts "\trm/remove/delete: delete specified branch from history"
-   $stdout.puts "\t\tARGS: branch_name (required)\n\n"
-   $stdout.puts "\thelp:          Print this message"
-   $stdout.puts "\topen:          Open the branch history file"
+    $stdout.puts "USAGE: git_branch_history CMD [ARGS]"
+    $stdout.puts "CMDs:  add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
+    $stdout.puts "\tpush/set/add:  add branch to history"
+    $stdout.puts "\t\tARGS: branch_name (default: current branch)\n\n"
+    $stdout.puts "\tlast/get:      get last (n) branch(es)"
+    $stdout.puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)\n\n"
+    $stdout.puts "\tls/list:          list all branches (optionally that match a grep)"
+    $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
+    $stdout.puts "\tcsv:           list all branches, comma-separated (optionally that match a grep)"
+    $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
+    $stdout.puts "\trm/remove/delete: delete specified branch from history"
+    $stdout.puts "\t\tARGS: branch_name (required)\n\n"
+    $stdout.puts "\thelp:          Print this message"
+    $stdout.puts "\topen:          Open the branch history file"
   end
 
   def add_branch!
@@ -104,7 +104,7 @@ class GitBranchTracker
       add_branch!
     when "last", "get"
       check_order
-     $stdout.puts last_branch
+      $stdout.puts last_branch
     when "list", "all", "csv", "ls"
       check_order
       branches = branches_arr
@@ -115,15 +115,15 @@ class GitBranchTracker
       else
         branches[-2] = "#{branches[-2]} (current)".cyan
       end
-     $stdout.puts branches
+      $stdout.puts branches
     when "remove", "delete", "rm"
       if @args.empty?
-       $stdout.puts "Must specify a branch to remove"
+        $stdout.puts "Must specify a branch to remove"
         return
       end
       remove_branch!
     when "current"
-     $stdout.puts current_branch
+      $stdout.puts current_branch
     when "open"
       check_order
       if !`which atom`.empty?
@@ -131,7 +131,7 @@ class GitBranchTracker
       elsif !`which subl`.empty?
         `subl #{@file_path}`
       else
-       $stdout.puts "Neither Atom nor Sublime available"
+        $stdout.puts "Neither Atom nor Sublime available"
       end
     else
       usage

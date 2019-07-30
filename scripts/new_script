@@ -3,11 +3,11 @@
 # USAGE
 # new_script SCRIPT_NAME SHEBANG_LANG SHEBANG_FLAGS
 def print_usage
- $stdout.puts "Usage: new_script SCRIPT_NAME [SHEBANG_LANG [SHEBANG_FLAGS]]"
- $stdout.puts "\tSCRIPT_NAME should be a unique string without spaces"
- $stdout.puts "\t\t`ls \"$DOTFILES/scripts\"` for list of existing scripts"
- $stdout.puts "\tSHEBANG_LANG defaults to 'ruby'"
- $stdout.puts "\tSHEBANG_FLAGS defaults to '-w'"
+  $stdout.puts "Usage: new_script SCRIPT_NAME [SHEBANG_LANG [SHEBANG_FLAGS]]"
+  $stdout.puts "\tSCRIPT_NAME should be a unique string without spaces"
+  $stdout.puts "\t\t`ls \"$DOTFILES/scripts\"` for list of existing scripts"
+  $stdout.puts "\tSHEBANG_LANG defaults to 'ruby'"
+  $stdout.puts "\tSHEBANG_FLAGS defaults to '-w'"
 end
 
 if ARGV.empty?
@@ -18,7 +18,7 @@ end
 scripts_dir = File.dirname(__FILE__)
 file_name = "#{scripts_dir}/#{ARGV.shift}"
 if File.file?(file_name)
- $stdout.puts("File already exists")
+  $stdout.puts("File already exists")
   exit
 end
 
