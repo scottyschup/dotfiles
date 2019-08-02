@@ -224,6 +224,7 @@ function git_merge_push {
   fi
   git push -u origin
 }
+alias gmp=git_merge_push
 
 function git_new_branch {
   if [ ! $1 ]
