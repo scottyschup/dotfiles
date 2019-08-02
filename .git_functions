@@ -224,11 +224,12 @@ function git_merge_push {
     echo "There are conflicts that need resolved."
     return
   elif [[ $curr_status == *"nothing to commit"* ]]; then
-    echo "Nothing to commit."
+    echo "$curr_status"
     return
+  else
+    git add -A
+    git commit -m "Backmerge $1 into $(gbh current)"
   fi
-  git add -A
-  git commit -m "Backmerge $1 into $(gbh current)"
   git push -u origin
 }
 alias gmpu=git_merge_push
