@@ -218,10 +218,17 @@ function git_merge_push {
   fi
 
   git merge $1
-  if [[ `git status` != *"nothing to commit"* ]]; then
-    git add -A
-    git commit -m "Backmerge $1 into $(gbh current)"
+  curr_status=`git status`
+
+  if [[ $curr_atatus == *"CONFLICT"* ]]; then
+    echo "There are conflicts that need resolved."
+    return
+  elif [[ $curr_status == *"nothing to commit"* ]]; then
+    echo "Nothing to commit."
+    return
   fi
+  git add -A
+  git commit -m "Backmerge $1 into $(gbh current)"
   git push -u origin
 }
 alias gmp=git_merge_push
