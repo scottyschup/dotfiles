@@ -34,9 +34,9 @@ alias garc="git add . && git rebase --continue"
 alias gb="git branch"
 alias gba="git branch -a" # list all branches
 alias gbh="git_branch_history"
-alias gbha="gbh list"
+alias gbhl="gbh list"
 alias gbhc="gbh csv"
-alias gblc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
+alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbr="git branch -r" # list remote branches
 unalias gbs # git bisect
 unalias gbsb # git bisect bad
@@ -74,7 +74,9 @@ alias glp="git log -p" # also `gdh`
 alias glpf="git log -p --follow" # also `gdhf`
 alias gm="git merge"
 alias gma="git merge --abort; git add .; git stash; git checkout -- .; echo "Check stash if missing data.""
+alias gmlc='gacp . "Merge $(gbh last) into $(gbh current)"'
 alias gmdr="git merge --no-commit --no-ff"
+alias gmp="git_merge_push"
 alias gp="git push"
 alias gpf="git push --force"
 alias gpl="git pull"

@@ -29,7 +29,7 @@ function git_add_commit {
 alias gac='git_add_commit'
 
 function git_add_commit_push {
-  git_add_commit $1 $2
+  git_add_commit $@
   g_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
   git push -u origin $g_branch
 }
@@ -205,6 +205,25 @@ function git_lastnhashes {
   git rev-list --max-count=$1 HEAD
 }
 alias gln='git_lastnhashes'
+
+function git_merge_push {
+  if [ $2 ]; then
+    echo "Only one argument allowed (name of branch to merge); commit message is supplied automatically"
+    return
+  fi
+
+  if [ ! $1 ]; then
+    echo "Must supply name of branch to be merged into the current branch"
+    return
+  fi
+
+  git merge $1
+  if [[ `git status` != *"nothing to commit"* ]]; then
+    git add -A
+    git commit -m "Backmerge $1 into $(gbh current)"
+  fi
+  git push -u origin
+}
 
 function git_new_branch {
   if [ ! $1 ]
