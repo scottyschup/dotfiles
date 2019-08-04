@@ -122,10 +122,10 @@ class GitBranchTracker
       branches.select! { |branch| branch.include?(grep) } unless grep.nil?
       if cmd == "csv"
         branches = branches.join(", ")
-      elsif branches.length > 1
-        branches[-2] = "#{branches[-2]} (current)".cyan
       else
-        branches = "#{branches[0]} (current)".cyan
+        branches.map! do |branch|
+          current_branch == branch ? "#{branch} (current)".cyan : branch
+        end
       end
       $stdout.puts branches
     when "remove", "delete", "rm"
