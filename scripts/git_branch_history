@@ -4,8 +4,15 @@ begin
   require 'colorize'
 rescue LoadError => err
   dependency = err.message.split(" -- ").last
-  $stdout.puts "Missing dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
-  exit
+  begin
+    $stderr.puts "Attempting to install #{dependency}"
+    `gem install #{dependency}`
+  rescue StandardError => err
+    $stderr.puts "Error attempting to install #{dependency}"
+    $stderr.puts err
+    $stderr.puts "Git Branch History is missing a dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
+    exit
+  end
 end
 
 #########
@@ -115,10 +122,10 @@ class GitBranchTracker
       branches.select! { |branch| branch.include?(grep) } unless grep.nil?
       if cmd == "csv"
         branches = branches.join(", ")
-      elsif branches.length > 1
-        branches[-2] = "#{branches[-2]} (current)".cyan
       else
-        branches = "#{branches[0]} (current)".cyan
+        branches.map! do |branch|
+          current_branch == branch ? "#{branch} (current)".cyan : branch
+        end
       end
       $stdout.puts branches
     when "remove", "delete", "rm"

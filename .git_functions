@@ -3,6 +3,34 @@
 #   * upgl (use personal git local)
 #   * change git@github.com:scottyschup/repo.git to git@github.com.personal:scottyschup/repo.git
 
+####################
+# Git autocomplete #
+####################
+# from: https://stackoverflow.com/a/46696505
+# our handler that returns choices by populating Bash array COMPREPLY
+# (filtered by the currently entered word ($2) via compgen builtin)
+
+# _git_branch_autocomplete() {
+#     branches=$(git branch -l | cut -c3-)
+#     COMPREPLY=($(compgen -W "$branches" -- "$2"))
+# }
+
+# we now register our handler to provide completion hints for the "gitpull" command
+
+# _zsh_complete -F git_branch_delete _git_branch_autocomplete
+# _zsh_complete -F git_branch_delete_usage _git_branch_autocomplete
+# _zsh_complete -F git_branch_delete_local _git_branch_autocomplete
+# _zsh_complete -F git_branch_delete_remote _git_branch_autocomplete
+# _zsh_complete -F git_branch_delete_local_and_remote _git_branch_autocomplete
+# _zsh_complete -F git_branch_set_upstream _git_branch_autocomplete
+# _zsh_complete -F git_checkout _git_branch_autocomplete
+# _zsh_complete -F git_checkout_last _git_branch_autocomplete
+# _zsh_complete -F git_checkout_safe_force _git_branch_autocomplete
+
+########################
+# Custom Git functions #
+########################
+
 function git_current_branch {
   git symbolic-ref HEAD 2>/dev/null | cut -d "/" -f 3
 }
