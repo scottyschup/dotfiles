@@ -220,15 +220,14 @@ function git_merge_push {
   git merge $1
   curr_status=`git status`
 
-  if [[ $curr_atatus == *"CONFLICT"* ]]; then
+  if [[ $curr_status == *"CONFLICT"* ]]; then
     echo "There are conflicts that need resolved."
     return
-  elif [[ $curr_status == *"nothing to commit"* ]]; then
-    echo "$curr_status"
-    return
-  else
+  elif [[ $curr_status != *"nothing to commit"* ]]; then
     git add -A
     git commit -m "Backmerge $1 into $(gbh current)"
+  else
+    echo "$curr_status"
   fi
   git push -u origin
 }
