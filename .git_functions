@@ -17,15 +17,15 @@
 
 # we now register our handler to provide completion hints for the "gitpull" command
 
-# _zsh_complete -F git_branch_delete _git_branch_autocomplete
-# _zsh_complete -F git_branch_delete_usage _git_branch_autocomplete
-# _zsh_complete -F git_branch_delete_local _git_branch_autocomplete
-# _zsh_complete -F git_branch_delete_remote _git_branch_autocomplete
-# _zsh_complete -F git_branch_delete_local_and_remote _git_branch_autocomplete
-# _zsh_complete -F git_branch_set_upstream _git_branch_autocomplete
-# _zsh_complete -F git_checkout _git_branch_autocomplete
-# _zsh_complete -F git_checkout_last _git_branch_autocomplete
-# _zsh_complete -F git_checkout_safe_force _git_branch_autocomplete
+# complete -F git_branch_delete _git_branch_autocomplete
+# complete -F git_branch_delete_usage _git_branch_autocomplete
+# complete -F git_branch_delete_local _git_branch_autocomplete
+# complete -F git_branch_delete_remote _git_branch_autocomplete
+# complete -F git_branch_delete_local_and_remote _git_branch_autocomplete
+# complete -F git_branch_set_upstream _git_branch_autocomplete
+# complete -F git_checkout _git_branch_autocomplete
+# complete -F git_checkout_last _git_branch_autocomplete
+# complete -F git_checkout_safe_force _git_branch_autocomplete
 
 ########################
 # Custom Git functions #

@@ -1,0 +1,101 @@
+#!/usr/bin/env ruby -w
+
+# WIP! Needs lots of testing/UAT
+
+require "colorize"
+
+push_merged_branch = ARGV.any? { |arg| arg == "push" }
+
+results = {}
+working_branch = `git_branch_history current`
+exit unless working_branch
+
+# Stash unstaged changes
+cmd = "git stash"
+$stdout.print "#{cmd}..."
+results[:stash] = system cmd
+unless results[:stash]
+  $stderr.puts "❌\nAction `stash` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Checkout master
+cmd = "git checkout --force master"
+$stdout.print "#{cmd}..."
+results[:checkout] = system cmd
+unless results[:checkout]
+  $stderr.puts "❌\nAction `checkout` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Fetch and pull latest
+cmd = "git fetch origin; git pull"
+$stdout.print "#{cmd}..."
+results[:pull] = system cmd
+unless results[:pull]
+  $stderr.puts "❌\nAction `pull` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Checkout working branch
+cmd = "git checkout #{working_branch}"
+$stdout.print "#{cmd}..."
+results[:switch_back] = system cmd
+unless results[:switch_back]
+  $stderr.puts "❌\nAction `switch_back` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Merge
+cmd = "git merge master --no-commit --no-ff"
+$stdout.print "#{cmd}..."
+results[:merge] = system cmd
+unless results[:merge]
+  $stderr.puts "❌\nAction `merge` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Stage and commit changes after merge
+cmd = "git_add_commit 'Backmerge master into #{working_branch}'"
+$stdout.print "#{cmd}..."
+results[:add_commit] = system cmd
+unless results[:add_commit]
+  $stderr.puts "❌\nAction `add_commit` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end
+
+# Push (conditionally based on args)
+if push_merged_branch
+  cmd = "git push"
+  $stdout.print "#{cmd}..."
+  results[:push] = system cmd
+  unless results[:push]
+    $stderr.puts "❌\nAction `push` failed; check output above for more details".red
+    exit
+  else
+    $stdout.puts ✅
+  end
+end
+
+# Applied previously stashed changes
+cmd = "git stash pop"
+$stdout.print "#{cmd}..."
+results[:stash_apply] = system cmd
+unless results[:stash_apply]
+  $stderr.puts "❌\nAction `stash_apply` failed; check output above for more details".red
+  exit
+else
+  $stdout.puts ✅
+end

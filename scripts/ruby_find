@@ -103,4 +103,6 @@ while queue.length > 0
     end
   end
 end
-$stdout.puts "Searched #{i} directories"$stdout.puts "Found #{found} matches"$stdout.puts "Total time `ruby_find`: #{Time.now - start} seconds"
+$stdout.puts "Searched #{i} directories"
+$stdout.puts "Found #{found} matches"
+$stdout.puts "Total time `ruby_find`: #{Time.now - start} seconds"

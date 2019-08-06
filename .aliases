@@ -36,6 +36,7 @@ alias gba="git branch -a" # list all branches
 alias gbh="git_branch_history"
 alias gbhl="gbh list"
 alias gbhc="gbh csv"
+alias gbml="git_backmerge_latest_master"
 alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbr="git branch -r" # list remote branches
 unalias gbs # git bisect

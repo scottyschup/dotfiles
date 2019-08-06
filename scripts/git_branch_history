@@ -54,6 +54,10 @@ class GitBranchTracker
   end
 
   def branches_arr
+    unless File.file? @file_path
+      $stderr.puts "WARN: #{@file_path} is not a file.".yellow
+      exit
+    end
     @branches ||= begin
       file = File.open("#{@file_path}", "r+")
       branches = file.readlines.map(&:strip)

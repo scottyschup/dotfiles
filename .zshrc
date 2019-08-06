@@ -1,3 +1,5 @@
+#!/usr/bin/zsh -w
+
 export DOTFILES=$HOME/.dotfiles
 export GITHUB_HOST=github.com
 export GITHUB_HOST_PERSONAL=github.com.personal
@@ -81,6 +83,7 @@ bindkey -s "^[OX" "="
 tabs -2
 
 # Functions
+# source $DOTFILES/.git_completion
 source $DOTFILES/.git_functions
 source $DOTFILES/.functions
 
