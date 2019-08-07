@@ -66,7 +66,7 @@ else
 end
 
 # Stage and commit changes after merge
-cmd = "git_add_commit 'Backmerge master into #{working_branch}'"
+cmd = "git add -A; git commit -m 'Backmerge master into #{working_branch}'"
 $stdout.print "#{cmd}..."
 results[:add_commit] = system cmd
 unless results[:add_commit]
