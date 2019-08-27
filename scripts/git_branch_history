@@ -60,9 +60,9 @@ class GitBranchTracker
     end
     @branches ||= begin
       file = File.open("#{@file_path}", "r+")
-      branches = file.readlines.map(&:strip)
+      branches = file.readlines.map(&:strip).compact
       file.close
-      branches.compact
+      branches
     end
     @branches
   end
@@ -92,16 +92,33 @@ class GitBranchTracker
     branches[-n..-1]
   end
 
+  def list_branches(cmd)
+    check_order
+    branches = branches_arr.dup
+    grep = @args.shift
+    branches.select! { |branch| branch.include?(grep) } unless grep.nil?
+    return branches.join(", ") if cmd == "csv"
+    branches.map! do |branch|
+      current_branch == branch ? "#{branch} (current)".cyan : branch
+    end
+  end
+
   def remove_branch!
-    branch = @args.shift
-    branches_arr.delete branch
+    str = @args.shift
+    old_branches = branches_arr.dup
+    branches_arr.select! { |branch| !branch.include?(str) }
+    deleted_branches = old_branches - branches_arr
+    $stdout.puts "Deleted branches:\n\t#{deleted_branches.join("\n\t")}"
     check_order
     update_file!
   end
 
   def update_file!
     file = File.open("#{@file_path}", "w+")
-    branches_arr.each { |branch| file.puts branch }
+    branches_arr.each do |branch|
+      next if branch.empty?
+      file.puts branch
+    end
     file.close
   end
 
@@ -120,18 +137,7 @@ class GitBranchTracker
       check_order
       $stdout.puts last_branch
     when "list", "all", "csv", "ls"
-      check_order
-      branches = branches_arr
-      grep = @args.shift
-      branches.select! { |branch| branch.include?(grep) } unless grep.nil?
-      if cmd == "csv"
-        branches = branches.join(", ")
-      else
-        branches.map! do |branch|
-          current_branch == branch ? "#{branch} (current)".cyan : branch
-        end
-      end
-      $stdout.puts branches
+      $stdout.puts list_branches(cmd)
     when "remove", "delete", "rm"
       if @args.empty?
         $stdout.puts "Must specify a branch to remove"
