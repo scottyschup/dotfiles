@@ -1,5 +1,8 @@
 # Don't include `.zshrc_VARIANT`s in git repo, because secrets
 
 .zshrc_*
-is_valid_partner
 .tmp/
+
+# blacklisted scripts
+is_valid_partner
+yarn_run_dev

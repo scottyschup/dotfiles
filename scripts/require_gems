@@ -13,13 +13,17 @@ end
 
 gems.each do |jem|
   begin
-    "Requiring #{jem}"
+    $stdout.puts "Requiring #{jem}"
     require jem
   rescue LoadError
     $stderr.puts "ERROR: could not require #{jem}; attempting to `gem install #{jem}`"
-    res = `gem install #{jem}`
-    $stderr.puts(res) unless res&.empty?
-  rescue StandardError => err
-    puts err.message
+    res = `gem install #{jem} 2>&1`
+    if res.start_with? "ERROR:"
+      $stderr.puts(res)
+      exit
+    elsif res.start_with? "Successfully installed"
+      $stdout.puts(res)
+      next
+    end
   end
 end

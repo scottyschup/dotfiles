@@ -86,5 +86,6 @@ end
 ############################
 # Run `yarn run dev(elop)` #
 ############################
-$stdout.puts "Switching to node v#{expected_major_version} and running `yarn && yarn run dev|develop|start`"
-system("#{args} #{switch_cmd if switch} && #{cmd}") || puts(child[:res])
+$stdout.puts "Switching to node v#{expected_major_version}" if switch && expected_major_version
+$stdout.puts "Running `yarn && yarn run dev|develop|start`"
+system("#{args} #{(switch_cmd + ' && ') if switch} #{cmd}") || puts(child[:res])

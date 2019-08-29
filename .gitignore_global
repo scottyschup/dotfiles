@@ -52,7 +52,7 @@ Thumbs.db
 # http://stackoverflow.com/questions/17556250/how-to-ignore-icon-in-git
 Icon[\r]
 
-# Project generated files #
+# Commonly generated files #
 ###########################
 bower_components
 bundle.js*
@@ -62,3 +62,5 @@ logs
 metastore_db
 node_modules
 **/*.tmp
+.tmp
+tmp

@@ -266,4 +266,5 @@ alias vgig="vim ~/.gitignore_global"
 alias vv="vim $DOTFILES/.vimrc"
 alias vz="vim $DOTFILES/.zshrc"
 
+alias hurls=handy_urls
 echo "Sourced .aliases"

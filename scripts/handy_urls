@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby -w
+
+class HandyURLMapper
+  def initialize
+    @dir = "#{ENV['HOME']}/.hurlmap"
+    @file = "#{dir}/index"
+    @urls = {}
+    `mkdir #{dir}` unless Dir.exist? dir
+    `touch #{file}` unless File.exist? file
+    read_file!
+  end
+
+  def main
+    read_file!
+    if ARGV.length == 0
+      list_all
+      return
+    end
+    cmd = ARGV.shift
+    case cmd.to_sym
+    when :list, :ls, :all
+      list_all
+    when :add
+      add ARGV.shift
+    when :delete, :del, :remove, :rm
+      delete ARGV.shift
+    end
+  end
+
+  def read_file!
+    File.readlines("~/.hurlmap/index").each do |line|
+      key, val = line.chomp.split(" *** ")
+      @urls[key] = val
+    end
+  end
+
+  def write_to_file!
+    file = File.open(@file)
+    @urls.each do |key, val|
+      file.puts "#{key} *** #{val}"
+    end
+  end
+
+  def add(url)
+
+  end
+
+  def list_all
+    column_width = @urls.keys.map(&:length).max
+    @urls.each do |key, url|
+      $stdout.puts "#{key.ljust(column_width)} => #{url}"
+    end
+  end
+end

@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby -w
+
+res = `require_gems asdf colorize 2>&1`
+
+$stdout.puts res
+
+puts("TEST".green)
