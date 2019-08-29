@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby -w
+
+require 'colorize'
+
+partners_hash = {
+  basic: %w(avant avantcredituk regions eloan td hsbc pnc bbva synovus),
+  default: %w(avant avantcredituk regions eloan td hsbc pnc),
+}
+
+partner = ARGV.shift
+partners = partners_hash[:default]
+if partners_hash.keys.include? ARGV[0]&.to_sym
+  repo = ARGV.pop.to_sym
+  partners = partners_hash[repo]
+end
+
+if partners.include?(partner)
+  $stdout.puts "#{partner} is a valid partner name.".green.bold
+else
+  $stderr.puts "Invalid partner name: #{partner}".red.bold
+  exit 1
+end
+
+`#{ARGV.join " "}` if ARGV.length > 0

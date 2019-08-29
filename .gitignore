@@ -2,7 +2,5 @@
 
 .zshrc_*
 .tmp/
-
-# blacklisted scripts
-is_valid_partner
-yarn_run_dev
+.gitignore_*
+!.gitignore_global
