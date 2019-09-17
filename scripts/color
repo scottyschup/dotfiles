@@ -2,31 +2,31 @@
 
 require 'colorize'
 
-map = {
-  "red" => "RED",
-  "yellow" => "YLW",
-  "green" => "GRN",
-  "cyan" => "CYN",
-  "blue" => "BLU",
-  "magenta" => "PPL",
-  "purple" => "PPL",
-  "black" => "BLK",
-  "white" => "WHT"
-}
-
 modifiers = %w(underline bold)
 
-case ARGV.length
+str = case ARGV.length
+when 5
+  color, modifier, mod2, background, string = ARGV
+  exit unless mod2 == "on"
+  string.send(color.to_sym).send(modifier.to_sym).send(:"on_#{background}")
 when 4
   color, modifier, background, string = ARGV
   exit unless modifier == "on"
+  string.send(color.to_sym).send(:"on_#{background}")
 when 3
   color, modifier, string = ARGV
   exit unless modifiers.include? modifier
-
+  string.send(color.to_sym).send(modifier.to_sym)
 when 2
   color, string = ARGV
-when 1
-  exit unless %w(all list ls).include? ARGV[0]
-  map.each do
+  string.send(color.to_sym)
+else
+  String.colors.each do |key|
+    next if key == :default # This one isn't actually a valid method :/
+    $stdout.print(key.to_s.send(key) + " ")
+  end
+  $stdout.puts
+  exit
 end
+
+$stdout.puts(str)

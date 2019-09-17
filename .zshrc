@@ -96,6 +96,7 @@ done &&
   echo 'Something happened :/ ^^^'
 
 # Aliases
+alias hurl=handy_urls
 source $DOTFILES/.aliases
 
 # CLEAN UP PATH

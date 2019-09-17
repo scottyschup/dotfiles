@@ -21,28 +21,27 @@ class HandyURLMapper
     when :list, :ls, :all
       list_all
     when :add
-      add ARGV.shift
+      add(*ARGV.shift(2))
     when :delete, :del, :remove, :rm
       delete ARGV.shift
+    else
+      usage
     end
   end
 
-  def read_file!
-    File.readlines("~/.hurlmap/index").each do |line|
-      key, val = line.chomp.split(" *** ")
-      @urls[key] = val
+  def add(key, url)
+    unless valid_url? url
+      $stderr.puts("#{url} is not a valid URL.")
+      return
     end
+    @urls[key] = url
+    res = write_to_file!
+    res ? [key, url] : $stderr.puts("URL for #{key} not added.")
   end
 
-  def write_to_file!
-    file = File.open(@file)
-    @urls.each do |key, val|
-      file.puts "#{key} *** #{val}"
-    end
-  end
-
-  def add(url)
-
+  def delete(key)
+    res = @urls.delete key
+    res || $stdout.puts("404 #{key} not found.")
   end
 
   def list_all
@@ -50,5 +49,34 @@ class HandyURLMapper
     @urls.each do |key, url|
       $stdout.puts "#{key.ljust(column_width)} => #{url}"
     end
+    @urls
+  end
+
+  def read_file!
+    File.readlines("~/.hurlmap/index").each do |line|
+      key, val = line.chomp.split(" *** ")
+      @urls[key] = val
+    end
+    @urls
+  end
+
+  def usage
+    $stdout.puts ""
+  end
+
+  def valid_url?(url)
+    url =~ %r(^https?://\w*\.\w*$)
+  end
+
+  def write_to_file!
+    file = File.open(@file, "w")
+    @urls.each do |key, val|
+      file.puts "#{key} *** #{val}"
+    end
+    file.close
+    true
+  rescue StandardError => e
+    $stderr.puts e
+    false
   end
 end
