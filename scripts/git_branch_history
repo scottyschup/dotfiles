@@ -23,7 +23,7 @@ class GitBranchTracker
 
   def initialize(args:)
     @args = args
-    @file_name = `git rev-parse --show-toplevel`.chomp.split('/')[-1]
+    @file_name = `2> /dev/null git rev-parse --show-toplevel`.chomp.split('/')[-1]
     @file_path = "#{DIR_NAME}/#{@file_name}"
     `mkdir #{DIR_NAME}` unless Dir.exist? DIR_NAME
     `touch "#{@file_path}"`
@@ -55,7 +55,11 @@ class GitBranchTracker
 
   def branches_arr
     unless File.file? @file_path
-      $stderr.puts "WARN: #{@file_path} is not a file.".yellow
+      if @file_path == "#{DIR_NAME}/"
+        $stderr.puts "WARN: This does not appear to be a git repo.".yellow
+      else
+        $stderr.puts "WARN: #{@file_path} is not a file.".yellow
+      end
       exit
     end
     @branches ||= begin
