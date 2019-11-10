@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby -w
 
 require "colorize"
+require "timeout"
 
 # Helper functions
 def dir_contents(dir)
@@ -85,18 +86,19 @@ depth_idx = ARGV.index('-d') || ARGV.index('-depth')
 depth = depth_idx ? ARGV[depth_idx + 1].to_i : nil
 start_depth = root.count('/')
 
-queue = [root]
+stack = [root]
 i = 0
 found = 0
 
-while queue.length > 0
+while stack.length > 0
   i += 1
-  current_dir = queue.shift
-  queue += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
+  current_dir = stack.pop
+  puts("\tCurrent location: #{current_dir} (iter: #{i})".cyan) if i % 500 == 0
+  stack += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
 
   contents = type ?
-    type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
-    dir_contents(current_dir)
+  type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
+  dir_contents(current_dir)
 
   contents.each do |el|
     if found?(el, ruby_search_term)

@@ -105,6 +105,8 @@ if push_merged_branch
     exit
   end
   $stdout.puts "✅ Action `push` done!"
+else
+  $stdout.puts "Not pushing to remote. To include pushing, add `push` to the end of the command."
 end
 
 # Applied previously stashed changes
@@ -117,4 +119,6 @@ if stashed_changes
     exit
   end
   $stdout.puts "✅ Action `stash_apply` done!"
+else
+  $stdout.puts "Nothing stashed."
 end
