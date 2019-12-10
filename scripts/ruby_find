@@ -18,6 +18,8 @@ def dirs_in_dir(dir)
   dir_contents(dir)
     .select { |el| File.directory? el }
     .compact
+  rescue StandardError => e
+    puts "Rescued Exception: #{e.exception}"
 end
 
 def found?(str, search_term)
