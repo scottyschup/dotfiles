@@ -5,7 +5,7 @@ class HashCompare
   def compare(a, b, lvl: [], stop: false, verbose: false)
     @verbose = verbose
     @stop = stop
-  broken = false
+    broken = false
     [a, b].each do |obj|
       unless obj.respond_to? :keys
         err = "ERR: Not a hash: #{obj}"
@@ -21,7 +21,7 @@ class HashCompare
       err = "ERR: Keys do not match for #{label}".red
       err += "\n\tExpected: #{a.keys}".yellow
       err += "\n\tGot:      #{b.keys}".yellow
-      puts err.red
+      puts err
       broken = true
     end
     return false if broken && @stop

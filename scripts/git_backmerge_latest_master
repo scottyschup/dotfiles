@@ -65,18 +65,6 @@ $stdout.puts "Running command: '#{cmd}'"
 results[:merge] = `#{cmd}`
 if results[:merge].include?("Already up to date.")
   $stdout.puts "✅ Action `merge` done!"
-  if stashed_changes
-    cmd = "git stash pop"
-    $stdout.puts "Running command: '#{cmd}'"
-    results[:stash_apply] = system cmd
-    unless results[:stash_apply]
-      $stderr.puts "❌\nAction `stash_apply` failed; check output above for more details".red
-      exit
-    end
-    $stdout.puts "✅ Action `stash_apply` done!"
-  else
-    $stdout.puts "\nNothing more to do."
-  end
   exit
 elsif $?.exitstatus > 0
   $stderr.puts "❌\nAction `merge` failed; check output above for more details".red

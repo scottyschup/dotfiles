@@ -3,8 +3,8 @@
 require 'colorize'
 
 partners_hash = {
-  basic: %w(avant avantcredituk regions eloan td hsbc pnc bbva synovus),
-  default: %w(avant avantcredituk regions eloan td hsbc pnc),
+  basic: %w(amount amount_bank avant avantcredituk regions eloan td hsbc pnc bbva synovus),
+  default: %w(amount amount_bank avant avantcredituk regions eloan td hsbc pnc),
 }
 
 partner = ARGV.shift
@@ -18,7 +18,6 @@ if partners.include?(partner)
   $stdout.puts "#{partner} is a valid partner name.".green.bold
 else
   $stderr.puts "Invalid partner name: #{partner}".red.bold
-  exit 1
 end
 
 `#{ARGV.join " "}` if ARGV.length > 0

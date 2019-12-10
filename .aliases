@@ -145,6 +145,7 @@ alias wp="$(npm bin)/webpack"
 alias yrd="yarn_run_dev"
 
 # miscellany
+alias bks=buildkite_state
 alias chrome="open -a 'Google Chrome'"
 alias curli="curl -I"
 alias grepi="grep -i"
@@ -198,6 +199,7 @@ alias be="bundle exec"
 alias berk="bundle exec rake"
 alias bers="bundle exec rspec"
 alias bersop="bundle_rails_server_on_port"
+alias bersp="bundle_rails_server_on_port"
 alias bi="bundle install"
 alias bo="bundle open"
 alias bu="bundle update"

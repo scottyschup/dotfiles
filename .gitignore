@@ -4,3 +4,7 @@
 .tmp/
 .gitignore_*
 !.gitignore_global
+
+# Blacklisted scripts
+scripts/is_valid_partner
+scripts/yarn_run_dev

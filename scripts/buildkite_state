@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby -w
+
+token = ENV['BK_TOKEN']
+unless token
+  $stderr.puts "Missing Buildkite API token"
+  $stderr.puts "Tokens can be generated here: https://buildkite.com/user/api-access-tokens"
+  $stderr.puts "API token must be set to env var `BK_TOKEN`"
+  exit
+end
+
+require 'faraday'
+require 'json'
+
+def convert_state(state)
+  case state
+  when "RUNNING"
+    "🏃‍"
+  when "FAILED"
+    "❌"
+  when "PASSED"
+    "✅"
+  else
+    "⁉️"
+  end
+end
+
+conn = Faraday.new url: "https://graphql.buildkite.com"
+unit_resp = conn.post do |req|
+  req.url "/v1"
+  req.headers['Authorization'] = "Bearer #{token}"
+  req.body = {
+    query: "{ pipeline(slug: \"amount/avant-basic\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+  }.to_json
+end
+acc_resp = conn.post do |req|
+  req.url "/v1"
+  req.headers['Authorization'] = "Bearer #{token}"
+  req.body = {
+    query: "{ pipeline(slug: \"amount/avant-basic-acceptance\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+  }.to_json
+end
+docker_resp = conn.post do |req|
+  req.url "/v1"
+  req.headers['Authorization'] = "Bearer #{token}"
+  req.body = {
+    query: "{ pipeline(slug: \"amount/basic-build\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+  }.to_json
+end
+
+unit_resp_hsh = JSON.parse(unit_resp.body)
+acc_resp_hsh = JSON.parse(acc_resp.body)
+docker_resp_hsh = JSON.parse(docker_resp.body)
+
+unit_builds = unit_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
+  state = node.dig(*%w(node state))
+  convert_state(state)
+end
+acc_builds = acc_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
+  state = node.dig(*%w(node state))
+  convert_state(state)
+end
+docker_builds = docker_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
+  state = node.dig(*%w(node state))
+  convert_state(state)
+end
+
+$stdout.puts("Last 10 completed builds (from least to most recent)")
+$stdout.puts("  docker:    #{docker_builds.reverse.join(' ')}")
+$stdout.puts("  unit:      #{unit_builds.reverse.join(' ')}")
+$stdout.puts("  acceptance:#{acc_builds.reverse.join(' ')}")
+$stdout.puts("https://buildkite.com/amount")
