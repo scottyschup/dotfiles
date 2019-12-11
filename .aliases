@@ -150,6 +150,7 @@ alias chrome="open -a 'Google Chrome'"
 alias curli="curl -I"
 alias grepi="grep -i"
 alias grep_alias="alias | grep -i" # zsh only
+alias hurls=handy_urls
 alias aliases_for="grep_alias"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"
@@ -241,7 +242,7 @@ alias stop_pg="brew services stop postgresql@9.4"
 # text editing
 ## atom
 alias a="atom"
-alias ad="atom $DOTFILES' # opens atom with navigation pane for all dotfile"
+alias ad="atom $DOTFILES"
 alias aa="atom $DOTFILES/.aliases"
 alias af="atom $DOTFILES/.functions"
 alias av="atom $DOTFILES/.vimrc"
@@ -255,11 +256,6 @@ alias sbf="subl $DOTFILES/.functions"
 alias sbv="subl $DOTFILES/.vimrc"
 alias sbz="subl $DOTFILES/.zshrc"
 
-## dotfiles
-alias sa="source $DOTFILES/.aliases"
-alias sd="source ~/.zshrc"
-alias sf="source $DOTFILES/.functions"
-
 ## vim
 alias v="vim"
 alias va="vim $DOTFILES/.aliases"
@@ -268,5 +264,14 @@ alias vgig="vim ~/.gitignore_global"
 alias vv="vim $DOTFILES/.vimrc"
 alias vz="vim $DOTFILES/.zshrc"
 
-alias hurls=handy_urls
+## vscode
+alias c="code"
+alias cdf="code $DOTFILES"
+alias cz="code $DOTFILES/.zshrc"
+
+## dotfiles
+alias sa="source $DOTFILES/.aliases"
+alias sd="source ~/.zshrc"
+alias sf="source $DOTFILES/.functions"
+
 echo "Sourced .aliases"
