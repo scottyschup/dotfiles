@@ -128,7 +128,7 @@ alias uwgl="git config user.email 'scott.schupbach@avant.com'; \
 # heroku
 alias hrc="heroku run rails console --app"
 
-# javascript/npm/nvm/gulp/grunt/react
+# javascript/npm/nvm/gulp/grunt/react/yarn
 alias gl="gulp"
 alias gls="gulp serve"
 alias glr="rm -rf node_modules; rm -rf bower_components; npm cache clean; npm install; gulp serve"
@@ -142,7 +142,7 @@ alias react_install="npm install --save react react-dom"
 alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
 alias react_babel_install="npm install --save babel-core babel-loader babel-preset-env"
 alias wp="$(npm bin)/webpack"
-alias yrd="yarn_run_dev"
+alias yrd="yrn run dev"
 
 # miscellany
 alias bks=buildkite_state

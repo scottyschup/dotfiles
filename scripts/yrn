@@ -1,13 +1,8 @@
 #!/usr/bin/env ruby -w
 
-args = ARGV.length == 1 ? ARGV[0].to_s : ""
-if args.include?("PARTNER_ENV")
-  $stdout.puts("PARTNER_ENV is not a valid env var. Did you mean TENANT? (y/n)")
-  resp = gets.chomp[0]
-  unless %(y Y).include? resp
-    exit
-  end
-  args.gsub!("PARTNER_ENV", "TENANT")
+args = ARGV.join(" ") if ARGV.length >= 1
+if args&.include?("run dev")
+  args.gsub!("run dev", "run dev || yarn run develop || yarn run start")
 end
 
 ############################
@@ -17,7 +12,7 @@ child = Thread.new do
   Thread.current[:res] = `yarn 2>&1`.split("\n")
 end
 
-# Thread used to timeout `yarn` command after 7 seconds (meaning no node incompatibility)
+# Thread used to timeout `yarn` command after N seconds (meaning no node incompatibility)
 timeout = Thread.new do
   sleep 10
 end
@@ -28,18 +23,19 @@ end
 i = 0
 fpi = 250000
 curr_pos = 0
-positions = [
-  ["", "\t\t\t👇", "\t\t  \t ", "\t\t\t "],
-  ["", "\t\t\t ", "\t\t\t\t👈", "\t\t\t "],
-  ["", "\t\t\t ", "\t\t\t\t ", "\t\t\t👆"],
-  ["", "\t\t\t ", "\t\t👉\t ", "\t\t\t "]
-]
+# positions = [
+#   ["", "\t\t\t👇", "\t\t  \t ", "\t\t\t "],
+#   ["", "\t\t\t ", "\t\t\t\t👈", "\t\t\t "],
+#   ["", "\t\t\t ", "\t\t\t\t ", "\t\t\t👆"],
+#   ["", "\t\t\t ", "\t\t👉\t ", "\t\t\t "]
+# ]
+
+positions = ["👉", "👇", "👈", "👆"]
 
 while child.status && timeout.status do
   if i % fpi == 0
-    system "clear"
-    $stdout.puts "Checking node compatibility"
-    $stdout.puts positions[curr_pos]
+    $stdout.print "\rChecking node compatibility "
+    $stdout.print positions[curr_pos]
     curr_pos = (curr_pos + 1) % 4
   end
   i += 1
@@ -56,7 +52,7 @@ $stdout.puts
 switch = nil
 install = nil
 expected_major_version = nil
-cmd = "yarn && (yarn run dev || yarn run develop || yarn run start)"
+cmd = "yarn #{(' && (yarn ' + args + ')') if args}"
 
 child[:res]&.first(10)&.each do |line|
   next unless line&.include? "The engine \"node\" is incompatible with this module. Expected version"
@@ -83,9 +79,9 @@ if switch
   end
 end
 
-############################
-# Run `yarn run dev(elop)` #
-############################
+#############
+# Run `yarn #
+#############
 $stdout.puts "Switching to node v#{expected_major_version}" if switch && expected_major_version
-$stdout.puts "Running `yarn && yarn run dev|develop|start`"
-system("#{args} #{(switch_cmd + ' && ') if switch} #{cmd}") || puts(child[:res])
+$stdout.puts "Running #{cmd}"
+system("#{(switch_cmd + ' && ') if switch} #{cmd}") || puts(child[:res])
