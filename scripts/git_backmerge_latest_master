@@ -20,7 +20,7 @@ exit unless working_branch
 
 # Stash unstaged changes
 cmd = "git stash"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:stash] = `#{cmd}` # This one I need the actual message, not just the boolean for success/failure
 unless results[:stash]
   $stderr.puts "❌\nAction `stash` failed; check output above for more details".red
@@ -31,7 +31,7 @@ $stdout.puts "✅ Action `stash` done!"
 
 # Checkout master
 cmd = "git checkout --force master"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:checkout] = system cmd
 unless results[:checkout]
   $stderr.puts "❌\nAction `checkout` failed; check output above for more details".red
@@ -41,7 +41,7 @@ $stdout.puts "✅ Action `checkout` done!"
 
 # Fetch and pull latest
 cmd = "git fetch --all; git pull"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:pull] = system cmd
 unless results[:pull]
   $stderr.puts "❌\nAction `pull` failed; check output above for more details".red
@@ -51,7 +51,7 @@ $stdout.puts "✅ Action `pull` done!"
 
 # Checkout working branch
 cmd = "git checkout #{working_branch}"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:switch_back] = system cmd
 unless results[:switch_back]
   $stderr.puts "❌\nAction `switch_back` failed; check output above for more details".red
@@ -61,7 +61,7 @@ $stdout.puts "✅ Action `switch_back` done!"
 
 # Merge
 cmd = "git merge master --no-commit --no-ff"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:merge] = `#{cmd}`
 if results[:merge].include?("Already up to date.")
   $stdout.puts "✅ Action `merge` done!"
@@ -74,7 +74,7 @@ $stdout.puts "✅ Action `merge` done!"
 
 # Stage and commit changes after merge
 cmd = "git add -A; git commit -m 'Backmerge master into #{working_branch}'"
-$stdout.puts "Running command: '#{cmd}'"
+$stdout.puts "\nRunning command: '#{cmd}'"
 results[:add_commit] = system cmd
 unless results[:add_commit]
   $stderr.puts "❌\nAction `add_commit` failed; check output above for more details".red
@@ -86,7 +86,7 @@ $stdout.puts "✅ Action `add_commit` done!"
 # Push (conditionally based on args)
 if push_merged_branch
   cmd = "git push"
-  $stdout.puts "Running command: '#{cmd}'"
+  $stdout.puts "\nRunning command: '#{cmd}'"
   results[:push] = system cmd
   unless results[:push]
     $stderr.puts "❌\nAction `push` failed; check output above for more details".red
@@ -100,7 +100,7 @@ end
 # Applied previously stashed changes
 if stashed_changes
   cmd = "git stash pop"
-  $stdout.puts "Running command: '#{cmd}'"
+  $stdout.puts "\nRunning command: '#{cmd}'"
   results[:stash_apply] = system cmd
   unless results[:stash_apply]
     $stderr.puts "❌\nAction `stash_apply` failed; check output above for more details".red

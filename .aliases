@@ -142,7 +142,6 @@ alias react_install="npm install --save react react-dom"
 alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
 alias react_babel_install="npm install --save babel-core babel-loader babel-preset-env"
 alias wp="$(npm bin)/webpack"
-alias yrd="yrn run dev"
 
 # miscellany
 alias bks=buildkite_state
@@ -200,7 +199,6 @@ alias be="bundle exec"
 alias berk="bundle exec rake"
 alias bersp="bundle exec rspec"
 alias bersop="bundle_rails_server_on_port"
-alias bersp="bundle_rails_server_on_port"
 alias bi="bundle install"
 alias bo="bundle open"
 alias bu="bundle update"
