@@ -164,6 +164,10 @@ alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts fil
 alias lss="list_scripts"
 alias psaux="parse_ps_aux"
 
+# networking
+alias remoteip="curl ifconfig.me/all"
+alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1"
+
 # navigation
 alias back="cd .."
 alias la="k -A"
