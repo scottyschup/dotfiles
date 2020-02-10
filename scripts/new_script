@@ -29,5 +29,8 @@ f = File.open(file_name, "w")
 f.puts("#!/usr/bin/env #{language} #{flags}")
 f.close
 
-editor_cmd = !`which atom`.empty? ? "atom" : !`which subl`.empty? ? "subl" : "vim"
+editor_cmd = !`which code`.empty? ?
+  "code" : !`which atom`.empty? ?
+    "atom" : !`which subl`.empty? ?
+      "subl" : "vim"
 `#{editor_cmd} #{file_name}`

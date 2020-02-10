@@ -2,6 +2,7 @@
 
 require "colorize"
 require "timeout"
+require "pry"
 
 # Helper functions
 def dir_contents(dir)
@@ -18,8 +19,9 @@ def dirs_in_dir(dir)
   dir_contents(dir)
     .select { |el| File.directory? el }
     .compact
-  rescue StandardError => e
-    puts "Rescued Exception: #{e.exception}"
+rescue StandardError => e
+  puts "Rescued Exception: #{e.exception}"
+  return []
 end
 
 def found?(str, search_term)
@@ -87,26 +89,38 @@ depth = depth_idx ? ARGV[depth_idx + 1].to_i : nil
 start_depth = root.count('/')
 
 stack = [root]
+matches = []
 i = 0
 found = 0
 
-while stack.length > 0
-  i += 1
-  current_dir = stack.pop
-  puts("\tCurrent location: #{current_dir} (iter: #{i})".cyan) if i % 500 == 0
-  stack += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
+begin
+  while stack.length > 0
+    i += 1
+    current_dir = stack.pop
+    puts("\tCurrent location: #{current_dir} (iter: #{i})".cyan) if i % 500 == 0
+    stack += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
 
-  contents = type ?
-  type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
-  dir_contents(current_dir)
+    contents = type ?
+      type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
+      dir_contents(current_dir)
 
-  contents.each do |el|
-    if found?(el, ruby_search_term)
-      found += 1
-      print_result(el, ruby_search_term)
+    contents.each do |el|
+      if found?(el, ruby_search_term)
+        found += 1
+        matches << el
+        print_result(el, ruby_search_term)
+      end
     end
   end
+rescue StandardError => e
+  $stderr.puts e.inspect.red
+  $stderr.puts e.backtrace.join("\n").red.bold
+  $stderr.puts "current_dir: #{current_dir.yellow}"
+  $stderr.puts "stack: #{stack.join("\n").magenta}"
+  $stderr.puts "contents: #{contents.to_s.cyan}"
+  exit 2
 end
 $stdout.puts "Searched #{i} directories"
 $stdout.puts "Found #{found} matches"
+$stdout.puts(matches.map{ |el| el.green }.join("\n")) unless matches.empty?
 $stdout.puts "Total time `ruby_find`: #{Time.now - start} seconds"
