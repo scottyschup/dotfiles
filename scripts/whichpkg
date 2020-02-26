@@ -3,8 +3,8 @@
 require 'colorize'
 
 map = {
-  styles: "#{ENV['AMOUNT']}/avant-apply/node_modules/@avant/frontend-styles",
-  :"frontend-styles" => "#{ENV['AMOUNT']}/avant-apply/node_modules/@avant/frontend-styles",
+  styles: "#{ENV['AMOUNT']}/avant-apply/node_modules/@amount/frontend-styles",
+  :"frontend-styles" => "#{ENV['AMOUNT']}/avant-apply/node_modules/@amount/frontend-styles",
   fec: "#{ENV['AMOUNT']}/customer-dashboard/node_modules/@amount/frontend-components",
   :"frontend-components" => "#{ENV['AMOUNT']}/customer-dashboard/node_modules/@amount/frontend-components",
 }
