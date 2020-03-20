@@ -3,21 +3,28 @@
 require 'colorize'
 
 partners_hash = {
-  basic: %w(amount amount_bank avant avantcredituk regions eloan td hsbc pnc bbva synovus),
-  default: %w(amount amount_bank avant avantcredituk regions eloan td hsbc pnc),
+  basic: %w(amount amount_bank avant avantcredituk regions eloan td td-pos hsbc pnc bbva synovus),
+  default: %w(amount amount_bank avant avantcredituk regions eloan td td-pos hsbc pnc),
 }
 
+# First arg is partner
 partner = ARGV.shift
-partners = partners_hash[:default]
+
+# Second arg is repo name (optional)
 if partners_hash.keys.include? ARGV[0]&.to_sym
   repo = ARGV.pop.to_sym
   partners = partners_hash[repo]
+else
+  # If not second arg, or invalid, use default partners list
+  partners = partners_hash[:default]
 end
 
 if partners.include?(partner)
   $stdout.puts "#{partner} is a valid partner name.".green.bold
-else
-  $stderr.puts "Invalid partner name: #{partner}".red.bold
+  exit 0
 end
 
-`#{ARGV.join " "}` if ARGV.length > 0
+$stderr.puts "Invalid partner name: #{partner}".red
+$stderr.puts "Must be one of:".red
+partners.each { |prtnr| $stderr.puts "  #{prtnr.red}" }
+exit 1

@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby -w
+
+require 'colorize'
+
+map = {
+  styles: "#{ENV['AMOUNT']}/avant-apply/node_modules/@amount/frontend-styles",
+  :"frontend-styles" => "#{ENV['AMOUNT']}/avant-apply/node_modules/@amount/frontend-styles",
+  fec: "#{ENV['AMOUNT']}/customer-dashboard/node_modules/@amount/frontend-components",
+  :"frontend-components" => "#{ENV['AMOUNT']}/customer-dashboard/node_modules/@amount/frontend-components",
+}
+
+if ARGV.length == 0
+  $stderr.puts("No package identifier provided".red)
+  $stderr.puts("Choose from:\n\t#{map.keys.join("\n\t").bold}".red)
+  exit 1
+end
+
+ARGV.each do |pkg|
+  path = map[pkg.to_sym]
+  if path.nil?
+    $stderr.puts "#{pkg} is not a known package identifier"
+    $stderr.puts "Choose from:\n\t#{map.keys.join("\n\t")}"
+    exit 2
+  elsif !File.exist?(path)
+    $stderr.puts "Scott you fucked up. #{path} doesn't exist."
+    exit 3
+  end
+  sym = File.symlink? path
+  $stdout.print(path.split('/').last(2).join("/").cyan)
+  sym ?
+    $stdout.puts(" is a " +  "local package".bold) :
+    $stdout.puts(" is an " + "installed package".bold)
+end
