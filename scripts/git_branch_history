@@ -19,11 +19,17 @@ end
 # SETUP #
 #########
 class GitBranchTracker
+  class NotGitRepoError < StandardError; end
+
   DIR_NAME = "#{ENV['HOME']}/.git_branch_history"
 
   def initialize(args:)
-    @args = args
     @file_name = `2> /dev/null git rev-parse --show-toplevel`.chomp.split('/')[-1]
+    if @file_name&.include?("Not a git repository")
+      raise NotGitRepoError, "#{Dir.pwd} is not a git repository"
+    end
+
+    @args = args
     @file_path = "#{DIR_NAME}/#{@file_name}"
     `mkdir #{DIR_NAME}` unless Dir.exist? DIR_NAME
     `touch "#{@file_path}"`
@@ -165,5 +171,10 @@ class GitBranchTracker
   end
 end
 
-tracker = GitBranchTracker.new args: ARGV
-tracker.main
+begin
+  tracker = GitBranchTracker.new args: ARGV
+  tracker.main
+rescue GitBranchTracker::NotGitRepoError => e
+  warn e
+  exit 1
+end
