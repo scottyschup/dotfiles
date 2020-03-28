@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby -w
+
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+  # add requires here
+rescue LoadError => e
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = e.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn "Make sure the following command completes successfully before using this script."
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+class RailsLauncher
+  def initialize
+    if ARGV.length > 1
+      raise ArgumentError.new("Only one argument expected but got: #{ARGV.join(', ')}")
+    end
+    @args = ARGV
+  end
+
+  def run; end
+end
+
+################
+# Shell script #
+################
+def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.banner = usage
+
+    opts.on("-v", "--verbose", "More verbose") do
+      options[:verbose] = true
+    end
+
+    opts.on("-p", "--port", "Specify a port to use (default: 3000") do |p|
+      options[:port] = p
+    end
+
+    opts.on("")
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+  end.parse!
+end

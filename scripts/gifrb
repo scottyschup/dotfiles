@@ -1,0 +1,121 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require "optparse"
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  $stderr.puts("Missing dependency: #{dependency}")
+  $stderr.puts("Make sure the following command completes successfully before using this script.")
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+class GifsicleRB
+  class FileNotFoundError < StandardError; end
+
+  def initialize(options)
+    puts options
+    # @image = options[:image]
+    # raise FileNotFoundError.new("#{@image} could not be found.") unless File.file?(@image)
+
+    # @output = options[:output] || @image.gsub(".gif", "_edited.gif")
+    # start_x, start_y = `convert ${@image} -print "%w %h"`.split(" ").map(&:to_i)
+  end
+
+  def crop
+    # convert example.gif -print "%w %h" /dev/null #=> 150 200
+  end
+
+  def run
+    puts Dir.pwd
+  end
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  crop_msg = <<~CROP
+    Crop gif by desired dimensions (required) and offsets (if applicable)
+          Dimensions can be pixels or percentages
+          Offsets can be pixels, percentages, or alignment keywords
+
+          Usage examples:
+            Dimensions only in pixels [WxH,]:   `--crop 200x250` #=> Default offset is center-align
+            Dimensions only in percentages:     `--crop 80%` #=> Removes 10% from all 4 sides
+            With offsets [WxH,∆W:∆H]:           `--crop 200x250,20:0`
+                                                  #=> Removes 20px from left side and anything over W=220, H=250
+            Align: [W: left|right|center,       `--crop 50%x70%,center`
+                    H: top|bottom|center]         #=> Removes 25% from both sides and 15% from top and bottom
+            Mixed values:                       `--crop 200x80%,center:10
+          If `--crop` and `--squared` are both used, squaring will happen after cropping
+  CROP
+
+  quality_msg = <<~QUALITY
+    Quality of the output image.
+          Options are: [highest|high|low|emoji]; default is high
+  QUALITY
+
+  squared_msg = <<~SQUARED
+    Ensure that Width == Height in the output image
+          If mismatched, the shortest side will be used to square the image
+  SQUARED
+
+  ARGV << "-h" if ARGV.empty?
+  options = {}
+
+  parser = OptionParser.new do |opts|
+    opts.banner = "GifsicleRB -- a Ruby wrapper for gifsicle\n  Usage: `gifrb INPUT [OPTIONS][OUTPUT]`\n  Options:"
+    opts.on("-cDIMENSIONS,OFFSETS", "--crop=DIMENSIONS,OFFSETS", Array, crop_msg) do |vals|
+      options[:dimensions], options[:offsets] = vals
+    end
+    opts.on_tail("-h", "--help", "Show this message") do
+      # on_tail just ensures this is at the end of the summary
+      puts opts
+      exit
+    end
+    opts.on("-iFILE_NAME", "--image=FILE_NAME", "Input image path/name") do |f|
+      options[:image] = f
+    end
+    opts.on("-oFILE_NAME", "--output=FILE_NAME", "Output image path/name; defaults to {INPUT_NAME}_edited.gif") do |f|
+      options[:output] = f
+    end
+    opts.on("-qQUALITY", "--quality=QUALITY", quality_msg) { |q| options[:quality] = q }
+    opts.on("-s", "--squared", squared_msg) { |s| options[:square] = s }
+    opts.on("-tKB", "--target-file-size=KB") { |t| options[:target_file_size] = t }
+    opts.on("-v", "--verbose", "More loquacious") { options[:verbose] = true }
+  end
+
+  parser.parse!
+
+  if ARGV.empty?
+    ARGV << "-h"
+    parser.parse!
+  end
+  options[:image] = ARGV.shift
+  options[:output] = ARGV.shift unless ARGV.empty?
+  unless ARGV.empty?
+    $stderr.puts("Unknown options error:\n  #{ARGV.join('  \n')}")
+    exit 1
+  end
+
+  grb = GifsicleRB.new(options)
+  grb.run
+end
