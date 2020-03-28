@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -w
+
+require 'coinbase/exchange'
+require 'eventmachine'
+
+KEY=ENV['COINBASE_API_KEY']
+SECRET=ENV['COINBASE_API_SECRET']
+rest_api = Coinbase::Exchange::AsyncClient.new(<api key>, <api secret>, <api pass>)
+
+order = nil
+rest_api.bid(10, 250) do |resp|
+  order = resp
+end
