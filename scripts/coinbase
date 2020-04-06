@@ -1,13 +1,149 @@
 #!/usr/bin/env ruby -w
 
-require 'coinbase/exchange'
-require 'eventmachine'
+# ############################
+# # STOP-LOSS ORDER EXAMPLE #
+# ############################
+# To demonstrate how easy it is to use our API, we’ll show how to use our gem to
+# write a program that simulates a stop-loss trade. Let’s assume the price of
+# 1 bitcoin is $250. We’re going to buy 10 bitcoin, and close our position
+# immediately if the price drops below $245.
 
-KEY=ENV['COINBASE_API_KEY']
-SECRET=ENV['COINBASE_API_SECRET']
-rest_api = Coinbase::Exchange::AsyncClient.new(<api key>, <api secret>, <api pass>)
+# # REST Client
+# # Next, let’s initialize our API client and place our initial trade. The gem
+# # provides both a synchronous client that’s based on Net::HTTP, as well as an
+# # asynchronous client that’s based on EM-HTTP. We’ll use the asynchronous client
+# # since we want to react to websocket messages as we receive them.
 
-order = nil
-rest_api.bid(10, 250) do |resp|
-  order = resp
+# require 'coinbase/exchange'
+# require 'eventmachine'
+
+# rest_api = Coinbase::Exchange::AsyncClient.new(<api key>, <api secret>, <api pass>)
+
+# order = nil
+# rest_api.bid(10, 250) do |resp|
+#   order = resp
+# end
+
+# # Websocket Client
+# # The Websocket feed provides a real-time feed of all activity on the exchange.
+# # This is most frequently used for building a real-time orderbook, but can also be
+# # used to track the spot rate or changes to your own orders. We’ll need to listen
+# # to the Websocket feed to know as soon as the price drops below $245. Closing our
+# # position will require selling 10 bitcoin. We’re going to set the ask price
+# # comfortably below $245 to ensure it fills immediately. In this case, we’ll set
+# # the ask price to $125.
+
+# websocket = Coinbase::Exchange::Websocket.new(keepalive: true)
+
+# spot_rate = 0
+# websocket.match do |msg|
+#   spot_rate = msg.price
+#   if spot_rate <= 245
+#     rest_api.ask(10, 125) do
+#       EM.stop
+#     end
+#   end
+# end
+
+# EM.run { websocket.start! }
+
+# # Health Monitor
+# # It’s important that we monitor the health of the websocket to ensure that we
+# # don’t realize an unintended loss. If the feed stops responding, we’ll need to
+# # close our position immediately. We can accomplish this by pinging the websocket
+# # periodically.
+
+# EM.run do
+#   websocket.start!
+
+#   websocket_ping = Time.now
+#   EM::PeriodicTimer.new(1) do
+#     # The Websocket missed 3 consecutive pings
+#     if Time.now - websocket_ping > 30
+#       rest_api.ask(10, 125) do
+#         EM.stop
+#       end
+#     end
+#   end
+
+#   EM::PeriodicTimer.new(10) do
+#     websocket.ping { websocket_ping = Time.now }
+#   end
+# end
+
+# # Conclusion
+# # That’s it. Now you can develop algorithmic trading software using the same
+# # interface we offer to professional traders. Please refer to our Github
+# # repository and official documentation to learn about what else you can do.
+# # We’re excited to see what you build!
+
+# require 'coinbase/exchange'
+# require 'eventmachine'
+
+# rest_api = Coinbase::Exchange::AsyncClient.new(<api key>, <api secret>, <api pass>)
+# websocket = Coinbase::Exchange::Websocket.new(keepalive: true)
+
+# spot_rate = nil
+# websocket.match do |msg|
+#   spot_rate = msg.price
+#   if spot_rate <= 245
+#     rest_api.ask(10, 125) do
+#       EM.stop
+#     end
+#   end
+# end
+
+# order = nil
+# rest_api.bid(10, 250) do |resp|
+#   order = resp
+# end
+
+# EM.run do
+#   websocket.start!
+
+#   websocket_ping = Time.now
+#   EM::PeriodicTimer.new(1) do
+#     if Time.now - websocket_ping > 30
+#       rest_api.ask(10, 125) do
+#         EM.stop
+#       end
+#     end
+#   end
+
+#   EM::PeriodicTimer.new(10) do
+#     websocket.ping { websocket_ping = Time.now }
+#   end
+# end
+
+require "coinbase/exchange"
+require "eventmachine"
+require "base64"
+require "openssl"
+require "json"
+
+class CoinbaseClient
+  KEY = ENV["CB_API_KEY"].freeze
+  SECRET = ENV["CB_API_SECRET"].freeze
+  PASSPHRASE = ENV["CB_API_PASSPHRASE"].freeze
+
+  def signature(request_path="", body="", timestamp=nil, method="GET")
+    body = body.to_json if body.is_a?(Hash)
+    timestamp = Time.now.to_i if !timestamp
+
+    what = "#{timestamp}#{method}#{request_path}#{body}";
+
+      # create a sha256 hmac with the secret
+      secret = Base64.decode64(SECRET)
+      hash  = OpenSSL::HMAC.digest("sha256", secret, what)
+      Base64.strict_encode64(hash)
+    end
+  end
+
+  def client
+    @client ||= Coinbase::Exchange::AsyncClient.new(KEY, SECRET, PASSPHRASE)
+  end
+
+  def bid()
+    client.bid(btc_amt, usd_amt) { |resp| @order = resp }
+  end
 end

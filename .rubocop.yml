@@ -13,6 +13,11 @@ Style/HashTransformValues:
   Enabled: true
 Style/StderrPuts:
   Enabled: false
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
 
 ###############
 # Some common custom settings

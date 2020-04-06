@@ -1,0 +1,253 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require "optparse"
+  require "net/ping"
+  require "colorize"
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn "Make sure the following command completes successfully before using this script."
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+class PingRb
+  include Net
+  class UnreachableUrlError < StandardError; end
+
+  attr_reader :name, :url, :color, :count
+
+  def initialize(url:, count:, name: nil, color: nil)
+    @url = url
+    raise UnreachableUrlError.new("#{@url} is not responding") unless pingable?
+
+    @color = color || random_color
+    @count = count
+    @name = name || url
+    @history = Hash.new { |k, v| k[v] = [] }
+  end
+
+  def add_to_history
+    raise NotImplementedError.new("`PingRb#add_to_history` has not been implemented")
+  end
+
+  def full_ping(count: nil)
+    curr_count = count || @count
+    output = `ping #{@url} -c #{curr_count.to_s}`
+    add_to_history(:full_ping, curr_count, output)
+  end
+
+  # TODO
+  def full_ping_data
+    raise NotImplementedError.new("`PingRb#full_ping_data` has not been implemented")
+  end
+
+  def single_ping
+    full_ping(count: 1).split("\n")[1]
+  end
+
+  def single_ping_data
+    time = single_ping.split(" ")[6]
+    time = "LOST" if !time
+    time.gsub!("time=", "")
+    { url: url, time: time }
+  end
+
+  # summary_ping returns last three lines; ex:
+  # --- google.com ping statistics ---
+  # 3 packets transmitted, 3 packets received, 0.0% packet loss
+  # round-trip min/avg/max/stddev = 43.535/59.527/74.010/12.487 ms
+  def summary_ping
+    full_ping
+      .split("\n")
+      .last(3)
+      .join("\n")
+  end
+
+  def summary_data
+    packets, rtt = summary_ping
+      .split("\n")
+      .last(2)
+    tx, rx, loss_perc = unpack packets
+    min, avg, max, stddev = unpack rtt
+
+    {
+      tx: tx,
+      rx: rx,
+      loss_perc: loss_perc,
+      min: min,
+      max: max,
+      avg: avg,
+      stddev: stddev,
+    }
+  end
+
+  private
+
+  def random_color
+    %i[red yellow green blue cyan magenta].sample
+  end
+
+  def pingable?
+    Net::Ping::External.new(@url).ping
+  end
+
+  def unpack(resp)
+    # If resp is a packets line, return an Array with 3 elements [tx, rx, loss]
+    if resp.include?("packets")
+      # rubocop:disable Layout/MultilineMethodCallIndentation
+      resp                               # "3 packets transmitted, 3 packets received, 0.0% packet loss"
+        .split(", ")                     # ["3 packets transmitted", "3 packets received", "0.0% packet loss"]
+        .map { |el| el.split(" ").first } # ["3", "3", "0.0%"]
+      # rubocop:enable Layout/MultilineMethodCallIndentation
+    elsif resp.include?("stddev")
+      resp            # "round-trip min/avg/max/stddev = 43.535/59.527/74.010/12.487 ms"
+        .split(" = ") # ["round-trip min/avg/max/stddev", "43.535/59.527/74.010/12.487 ms"]
+        .last         # "43.535/59.527/74.010/12.487 ms"
+        .split(" ")   # ["43.535/59.527/74.010/12.487", "ms"]
+        .first         # "43.535/59.527/74.010/12.487"
+        .split("/")   # ["43.535", "59.527", "74.010", "12.487"]
+    end
+  end
+end
+
+class PingTracker
+  def initialize(args_for_pings = [{ url: "google.com", count: 10, color: :white }])
+    @pings = []
+    args_for_pings.each { |args| add_ping(**args) }
+  end
+
+  def ping_all(summary: false)
+    @pings.inject([]) do |threads, ping|
+      threads << Thread.new do
+        Thread.current[:res] = ping.send(summary ? :summary_ping : :full_ping)
+      end
+    end.each(&:join)
+  end
+
+  def pretty_ping_all(summary: false)
+    @pings.each do |p|
+      $stdout.puts("Pinging #{p.name} @ #{p.url} #{p.count} times".colorize(p.color))
+    end
+    ping_all(summary: summary).each_with_index do |thread, idx|
+      $stdout.puts("\n#{@pings[idx].name}:\n#{thread[:res]}".colorize(@pings[idx].color))
+    end
+  end
+
+  def add_ping(**args)
+    @pings << PingRb.new(args)
+  end
+
+  def run
+    i = 1
+    while true
+      $stdout.puts("\nIteration #{i}")
+      curr_pings = []
+      @pings.each { |p| curr_pings << [p, p.single_ping_data] }
+      $stdout.puts table(curr_pings)
+      i += 1
+      sleep 1
+    end
+  end
+
+  def table(ping_responses)
+    table_data = Hash.new { |h, k| h[k] = [] }
+    ping_responses.each do |(p, resp)|
+      table_data[:name] << p.name
+      table_data[:url] << resp[:url]
+      table_data[:time] << resp[:time]
+    end
+
+    num_rows = table_data[:name].length
+    col_widths = {}
+    table_data.each do |(k, arr)|
+      col_widths[k] = ([k.to_s] + arr).map(&:length).max
+    end
+
+    table = ""
+    header = table_data.keys.map { |k| k.to_s.upcase.ljust(col_widths[k]) }.join(" | ")
+    hr = "-" * header.length
+
+    table += "#{header}\n#{hr}\n"
+
+    num_rows.times do |i|
+      row = []
+      table_data.each_key do |k|
+        row << table_data[k][i].ljust(col_widths[k])
+      end
+      table += "#{row.join(' | ')}\n"
+    end
+
+    table
+  end
+end
+
+################
+# Shell script #
+################
+def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    # opts.banner = usage
+    opts.on("-nX,Y,Z", "--named-sets=X,Y,Z", Array, "Use named sets") do |named|
+      options[:named_sets] = named
+    end
+
+    opts.on("-i", "--interactive") { options[:interactive] = true }
+    opts.on("-r", "--run") { options[:run] = true }
+    opts.on("-s", "--summary") { options[:summary] = true }
+
+    opts.on_tail("-h", "--help", "Show this help message") do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  named_sets = {
+    sonos: [
+      { url: "192.168.1.65", count: 5, name: "Bathroom", color: :blue },
+      { url: "192.168.1.67", count: 5, name: "Living room", color: :cyan },
+      { url: "192.168.1.69", count: 5, name: "Library", color: :magenta },
+    ],
+    router: [{ url: "192.168.1.254", count: 5, name: "Router", color: :white }],
+    google: [{ url: "google.com", count: 5, name: "Google", color: :yellow }],
+    netflix: [{ url: "netflix.com", count: 5, name: "Netflix", color: :red }],
+    spotify: [{ url: "spotify.com", count: 5, name: "Spotify", color: :green }],
+  }
+
+  if options[:named_sets].nil?
+    ping_args = nil
+  else
+    ping_args = []
+    options[:named_sets].each do |named|
+      ping_args << named_sets[named.to_sym]
+    end
+  end
+
+  pt = PingTracker.new(ping_args.flatten!)
+  if options[:run]
+    pt.run
+  else
+    pt.pretty_ping_all(summary: options[:summary])
+  end
+end
