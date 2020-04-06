@@ -4,6 +4,4 @@
 .tmp/
 .gitignore_*
 !.gitignore_global
-
-# Blacklisted scripts
-scripts/is_valid_partner
+.ruby-version
