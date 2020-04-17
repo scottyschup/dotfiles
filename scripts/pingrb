@@ -51,8 +51,9 @@ class PingRb
 
   def full_ping(count: nil)
     curr_count = count || @count
-    output = `ping #{@url} -c #{curr_count.to_s}`
-    add_to_history(:full_ping, curr_count, output)
+    `ping #{@url} -c #{curr_count.to_s}`
+    # output = `ping #{@url} -c #{curr_count.to_s}`
+    # add_to_history(:full_ping, curr_count, output)
   end
 
   # TODO
@@ -135,9 +136,41 @@ class PingTracker
     args_for_pings.each { |args| add_ping(**args) }
   end
 
+  def add_ping(**args)
+    @pings << PingRb.new(args)
+  end
+
+  def format_time_val(val, key = nil)
+    return val.red if val.include?("LOST")
+    return val if val.count(".") > 1
+    return val if val.to_i.zero?
+
+    if key == :lost
+      # Color based on loss percentage
+      return case val.to_i
+      when 0..1
+        val
+      when 2..4
+        val.yellow
+      when 5..100
+        val.red
+      end
+    end
+
+    # Color based on RTT in ms
+    case val.to_i
+    when 1..49
+      val.green
+    when 50..99
+      val.yellow
+    when 100..100000
+      val.red
+    end
+  end
+
   def ping_all(summary: false)
-    @pings.inject([]) do |threads, ping|
-      threads << Thread.new do
+    @pings.inject([]) do |_q, ping|
+      _q << Thread.new do
         Thread.current[:res] = ping.send(summary ? :summary_ping : :full_ping)
       end
     end.each(&:join)
@@ -152,34 +185,89 @@ class PingTracker
     end
   end
 
-  def add_ping(**args)
-    @pings << PingRb.new(args)
+  def process_q
+    new_q = []
+    pending = []
+
+    until @thr_q.empty?
+      curr_thr = @thr_q.shift
+
+      if !curr_thr.status
+        curr_thr.join
+        $stdout.puts curr_thr[:output]
+        next
+      end
+
+      pending << "PENDING: iteration #{curr_thr[:idx]} -- #{Time.now.to_i - curr_thr[:time_epoch]}s".cyan
+      new_q << curr_thr
+    end
+
+    puts("\n#{pending.join("\n")}")
+    @thr_q += new_q
   end
 
   def run
+    @thr_q = []
+    @avg_times_and_losses = nil
     i = 1
-    while true
-      $stdout.puts("\nIteration #{i}")
-      curr_pings = []
-      @pings.each { |p| curr_pings << [p, p.single_ping_data] }
-      $stdout.puts table(curr_pings)
+    curr_time_epoch = 0
+
+    loop do
+      next unless Time.now.to_i > curr_time_epoch
+
+      system "clear"
+      process_q
+
+      curr_time_epoch = Time.now.to_i
+      @thr_q << Thread.new(curr_time_epoch, i) do |time_epoch, idx|
+        Thread.current[:time_epoch] = time_epoch
+        Thread.current[:idx] = idx
+
+        curr_pings = []
+        @pings.each { |ping| curr_pings << [ping, ping.single_ping_data] }
+        time_pretty = Time.at(time_epoch).to_s.split[1]
+        Thread.current[:output] = "\nIteration #{idx} -- #{time_pretty}\n".magenta
+        Thread.current[:output] += table(curr_pings)
+      end
+
+      sleep 0.5
+
       i += 1
-      sleep 1
     end
   end
 
   def table(ping_responses)
     table_data = Hash.new { |h, k| h[k] = [] }
-    ping_responses.each do |(p, resp)|
-      table_data[:name] << p.name
+    @avg_times_and_losses ||= Hash.new do |h, k|
+      h[k] = Hash.new { |h2, k2| h2[k2] = 0 }
+    end
+    ping_responses.each do |(ping, resp)|
+      table_data[:name] << ping.name
       table_data[:url] << resp[:url]
       table_data[:time] << resp[:time]
+
+      if resp[:time] == "LOST"
+        table_data[:average] << @avg_times_and_losses[ping.name][:average]
+        @avg_times_and_losses[ping.name][:lost] += 1
+      else
+        curr_count = @avg_times_and_losses[ping.name][:count] += 1
+        prev_avg = @avg_times_and_losses[ping.name][:average]
+        # Rather than re-average each time, add weighted difference to previous average
+        curr_avg = (prev_avg + ((resp[:time].to_f - prev_avg) * 1.0 / curr_count)).round(4)
+        table_data[:average] << @avg_times_and_losses[ping.name][:average] = curr_avg
+      end
+      lost_count = @avg_times_and_losses[ping.name][:lost]
+      lost_perc = (lost_count.to_f / (@avg_times_and_losses[ping.name][:count] + lost_count) * 100).round(2)
+      table_data[:lost] << "#{lost_perc}% (#{lost_count})"
     end
 
     num_rows = table_data[:name].length
     col_widths = {}
     table_data.each do |(k, arr)|
-      col_widths[k] = ([k.to_s] + arr).map(&:length).max
+      # p k
+      # p arr
+      # puts
+      col_widths[k] = ([k.to_s] + arr).map { |el| el.to_s.length }.max
     end
 
     table = ""
@@ -191,7 +279,9 @@ class PingTracker
     num_rows.times do |i|
       row = []
       table_data.each_key do |k|
-        row << table_data[k][i].ljust(col_widths[k])
+        cell_val = table_data[k][i]
+        cell_val = format_time_val(cell_val.to_s.rjust(col_widths[k]), k)
+        row << cell_val.ljust(col_widths[k])
       end
       table += "#{row.join(' | ')}\n"
     end
@@ -231,8 +321,8 @@ if $PROGRAM_NAME == __FILE__
     ],
     router: [{ url: "192.168.1.254", count: 5, name: "Router", color: :white }],
     google: [{ url: "google.com", count: 5, name: "Google", color: :yellow }],
-    netflix: [{ url: "netflix.com", count: 5, name: "Netflix", color: :red }],
     spotify: [{ url: "spotify.com", count: 5, name: "Spotify", color: :green }],
+    github: [{ url: "github.com", count: 5, name: "Gitub", color: :red }],
   }
 
   if options[:named_sets].nil?
