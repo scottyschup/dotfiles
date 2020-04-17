@@ -206,11 +206,11 @@ class PingTracker
       end
 
       pending_str = pending.map do |(idx, time)|
-        "#{idx}: #{time}s"
+        "iteration #{idx}: #{time}s"
       end.join("; ")
 
       if pending.length > 0
-        print("\rPENDING: iteration#{pending.length > 1 ? 's' : ''} -- #{pending_str}".cyan)
+        print("\rPENDING: #{pending_str}".cyan)
       end
       sleep 0.4
     end
