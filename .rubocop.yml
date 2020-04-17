@@ -18,6 +18,10 @@ Layout/MultilineMethodCallIndentation:
 Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: consistent_comma
+Lint/StructNewOverride:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: true
 
 ###############
 # Some common custom settings
