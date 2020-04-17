@@ -241,7 +241,7 @@ class PingTracker
         Thread.current[:output] += table(curr_pings)
       end
 
-      sleep 0.1
+      sleep 0.2
       i += 1
     end
   end
