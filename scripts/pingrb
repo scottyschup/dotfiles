@@ -18,9 +18,13 @@ rescue LoadError => err
   #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
   dependency = err.message.split(" -- ").last
   # Remove "/with/path" from the gem name; noop for all others
-  dependency = dependency.split("/").first
-  warn "Missing dependency: #{dependency}"
-  warn "Make sure the following command completes successfully before using this script."
+  dep_map = {
+    "net/ping" => "net-ping",
+  }
+  pretty_dep = dep_map[dependency] || dependency
+  $stderr.puts "Missing dependency: #{pretty_dep}"
+  $stderr.puts "Make sure the following command completes successfully before using this script."
+  $stderr.puts "  gem install #{pretty_dep}"
   exit 1
 ensure
   $VERBOSE = verbose
@@ -35,7 +39,7 @@ class PingRb
 
   attr_reader :name, :url, :color, :count
 
-  def initialize(url:, count:, name: nil, color: nil)
+  def initialize(url:, count: 1, name: nil, color: nil)
     @url = url
     raise UnreachableUrlError.new("#{@url} is not responding") unless pingable?
 
@@ -140,10 +144,9 @@ class PingTracker
     @pings << PingRb.new(args)
   end
 
-  def format_time_val(val, key = nil)
+  def format_numerical_val(val, key = nil)
     return val.red if val.include?("LOST")
-    return val if val.count(".") > 1
-    return val if val.to_i.zero?
+    return val if (val.count(".") > 1 || val =~ /[a-zA-Z]/)
 
     if key == :lost
       # Color based on loss percentage
@@ -157,9 +160,10 @@ class PingTracker
       end
     end
 
+    # return val if val =~ /^\s*[0-9]*(\.[0-9]*)?$/
     # Color based on RTT in ms
     case val.to_i
-    when 1..49
+    when 0..49
       val.green
     when 50..99
       val.yellow
@@ -194,15 +198,17 @@ class PingTracker
 
       if !curr_thr.status
         curr_thr.join
+        system "clear"
         $stdout.puts curr_thr[:output]
-        next
+      else
+        pending << "PENDING: iteration #{curr_thr[:idx]} -- #{Time.now.to_i - curr_thr[:time_epoch]}s".cyan
+        new_q << curr_thr
       end
 
-      pending << "PENDING: iteration #{curr_thr[:idx]} -- #{Time.now.to_i - curr_thr[:time_epoch]}s".cyan
-      new_q << curr_thr
+      print("\r#{pending.join("\n")}")
+      sleep 0.4
     end
 
-    puts("\n#{pending.join("\n")}")
     @thr_q += new_q
   end
 
@@ -215,7 +221,6 @@ class PingTracker
     loop do
       next unless Time.now.to_i > curr_time_epoch
 
-      system "clear"
       process_q
 
       curr_time_epoch = Time.now.to_i
@@ -230,8 +235,7 @@ class PingTracker
         Thread.current[:output] += table(curr_pings)
       end
 
-      sleep 0.5
-
+      sleep 0.1
       i += 1
     end
   end
@@ -280,7 +284,7 @@ class PingTracker
       row = []
       table_data.each_key do |k|
         cell_val = table_data[k][i]
-        cell_val = format_time_val(cell_val.to_s.rjust(col_widths[k]), k)
+        cell_val = format_numerical_val(cell_val.to_s.rjust(col_widths[k]), k)
         row << cell_val.ljust(col_widths[k])
       end
       table += "#{row.join(' | ')}\n"
@@ -315,14 +319,15 @@ if $PROGRAM_NAME == __FILE__
 
   named_sets = {
     sonos: [
-      { url: "192.168.1.65", count: 5, name: "Bathroom", color: :blue },
-      { url: "192.168.1.67", count: 5, name: "Living room", color: :cyan },
-      { url: "192.168.1.69", count: 5, name: "Library", color: :magenta },
+      { url: "192.168.1.65", name: "Bathroom" },
+      { url: "192.168.1.67", name: "Living room" },
+      { url: "192.168.1.69", name: "Library" },
     ],
-    router: [{ url: "192.168.1.254", count: 5, name: "Router", color: :white }],
-    google: [{ url: "google.com", count: 5, name: "Google", color: :yellow }],
-    spotify: [{ url: "spotify.com", count: 5, name: "Spotify", color: :green }],
-    github: [{ url: "github.com", count: 5, name: "Gitub", color: :red }],
+    modem: [{ url: "192.168.1.254", name: "AT&T modem" }],
+    gateway: [{ url: `route get default | grep gateway`.split.last, name: "Default gateway" }],
+    google: [{ url: "google.com", name: "Google" }],
+    spotify: [{ url: "spotify.com", name: "Spotify" }],
+    github: [{ url: "github.com", name: "Gitub" }],
   }
 
   if options[:named_sets].nil?
