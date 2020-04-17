@@ -201,11 +201,17 @@ class PingTracker
         system "clear"
         $stdout.puts curr_thr[:output]
       else
-        pending << "PENDING: iteration #{curr_thr[:idx]} -- #{Time.now.to_i - curr_thr[:time_epoch]}s".cyan
+        pending << [curr_thr[:idx], Time.now.to_i - curr_thr[:time_epoch]]
         new_q << curr_thr
       end
 
-      print("\r#{pending.join("\n")}")
+      pending_str = pending.map do |(idx, time)|
+        "#{idx}: #{time}s"
+      end.join("; ")
+
+      if pending.length > 0
+        print("\rPENDING: iteration#{pending.length > 1 ? 's' : ''} -- #{pending_str}".cyan)
+      end
       sleep 0.4
     end
 
