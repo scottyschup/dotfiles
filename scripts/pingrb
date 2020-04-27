@@ -190,36 +190,48 @@ class PingTracker
   end
 
   def process_q
-    new_q = []
+    re_q = []
     pending = []
+    output = []
 
+    ########################
+    # Process thread queue #
+    ########################
     until @thr_q.empty?
       curr_thr = @thr_q.shift
 
       if !curr_thr.status
         curr_thr.join
-        system "clear"
-        $stdout.puts curr_thr[:output]
+        output << curr_thr[:output]
       else
         pending << [curr_thr[:idx], Time.now.to_i - curr_thr[:time_epoch]]
-        new_q << curr_thr
+        re_q << curr_thr
       end
-
-      pending_str = pending.map do |(idx, time)|
-        "iteration #{idx}: #{time}s"
-      end.join("; ")
-
-      if pending.length > 0
-        print("\rPENDING: #{pending_str}".cyan)
-      end
-      sleep 0.4
     end
 
-    @thr_q += new_q
+    # Handle and print results
+    unless output.empty?
+      @curr_output = output.join("\n")
+    end
+
+    system "clear"
+    $stdout.puts(@curr_output)
+
+    if pending.length > 0
+      pending_str = pending.map do |(idx, time)|
+        "  * Iteration #{idx}: #{time}s"
+      end.join("\n")
+
+      $stdout.puts("PENDING:\n#{pending_str}\n".cyan)
+    end
+
+    @thr_q += re_q
   end
 
   def run
+    @start_time = Time.now
     @thr_q = []
+    @curr_output = nil
     @avg_times_and_losses = nil
     i = 1
     curr_time_epoch = 0
@@ -236,12 +248,38 @@ class PingTracker
 
         curr_pings = []
         @pings.each { |ping| curr_pings << [ping, ping.single_ping_data] }
-        time_pretty = Time.at(time_epoch).to_s.split[1]
-        Thread.current[:output] = "\nIteration #{idx} -- #{time_pretty}\n".magenta
+        time_pretty = Time.at(time_epoch).strftime("%T")
+
+        rt_ss = Time.at(time_epoch) - @start_time
+        # Integer#divmod returns and qrray of [QUOTIENT, MODULUS]
+        rt_hh = nil
+        rt_dd = nil
+        # X seconds to MM:SS
+        rt_min, rt_sec = rt_ss.divmod 60
+        rt_mm, rt_ss = [rt_min, rt_sec].map { |n| n.round.to_s.rjust(2, "0") }
+        # X minutes to HH:MM
+        if rt_min > 59
+          rt_hour, rt_min = rt_min.divmod 60
+          rt_hh, rt_mm = [rt_hour, rt_min].map { |n| n.round.to_s.rjust(2, "0") }
+
+          if rt_hour > 23
+            rt_day, rt_hour = rt_hour.divmod 24
+            rt_dd, rt_hh = [rt_day, rt_hour].map { |n| n.round.to_s.rjust(2, "0") }
+          else
+            rt_dd = "00"
+          end
+        else
+          rt_dd = "00"
+          rt_hh = "00"
+        end
+
+        rt_dd_hh_mm_ss = "#{rt_dd}:#{rt_hh}:#{rt_mm}:#{rt_ss}"
+
+        Thread.current[:output] = "\nIteration #{idx} @ #{time_pretty}\t\t\t\tTotal runtime #{rt_dd_hh_mm_ss}\n".magenta
         Thread.current[:output] += table(curr_pings)
       end
 
-      sleep 0.2
+      sleep 0.95
       i += 1
     end
   end
@@ -274,9 +312,6 @@ class PingTracker
     num_rows = table_data[:name].length
     col_widths = {}
     table_data.each do |(k, arr)|
-      # p k
-      # p arr
-      # puts
       col_widths[k] = ([k.to_s] + arr).map { |el| el.to_s.length }.max
     end
 
