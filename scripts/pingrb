@@ -70,7 +70,9 @@ class PingRb
   end
 
   def single_ping_data
-    time = single_ping.split(" ")[6]
+    res = single_ping
+    return { url: url, time: "LOST" } if res.nil?
+    time = res.split(" ")[6]
     time = "LOST" if !time
     time.gsub!("time=", "")
     { url: url, time: time }
