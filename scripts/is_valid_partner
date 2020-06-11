@@ -3,8 +3,8 @@
 require 'colorize'
 
 partners_hash = {
-  basic: %w(amount amount_bank avant avantcredituk regions eloan td td-pos hsbc pnc bbva synovus),
-  default: %w(amount amount_bank avant avantcredituk regions eloan td td-pos hsbc pnc),
+  basic: %w(amount amount_bank avant avantcredituk bbva regions eloan td td-pos hsbc pnc bbva synovus),
+  default: %w(amount amount_bank avant avantcredituk bbva egions eloan td td-pos hsbc pnc),
 }
 
 # First arg is partner
