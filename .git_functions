@@ -175,12 +175,18 @@ function git_checkout {
     return
   fi
 
-  msg=`git checkout "$@"`
+  msg=`git checkout "$@" &> /dev/null`
   if [ $? -gt 0 ]; then
-    if [ $msg = "error: pathspec"*"did not match any file(s) known to git" ]; then git_branch_history rm "$@" fi
-  else
-    git_branch_history add
+    setopt NULL_GLOB
+    if [ $msg = "error: pathspec"*"did not match any file(s) known to git" ]; then
+      git_branch_history rm $branch &> /dev/null
+      return
+    fi
+    unsetopt NULL_GLOB
   fi
+
+  git_branch_history add
+
   if [ $1 != '--' ]; then
     echo "$(git_branch_history last) => $(git_branch_history current)"
   fi
