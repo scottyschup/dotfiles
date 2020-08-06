@@ -1,5 +1,11 @@
 #!/usr/bin/zsh -w
 
+# For compilers to find openssl@1.1
+export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+# For pkg-config to find openssl@1.1
+export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+
 export DOTFILES=$HOME/.dotfiles
 export GITHUB_HOST=github.com
 export GITHUB_HOST_PERSONAL=github.com.personal
