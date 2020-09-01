@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# See also (Avant/Amount employees only): https://avantinc.atlassian.net/wiki/spaces/DL/pages/313066820/Environment+Setup+Amount+Macbook
+# See also (Rally employees only): https://wiki.audaxhealth.com/display/ENG/Development+Environment+Setup
 
 #############################
 # Miscellaneous pre-install #
@@ -12,7 +12,8 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 ############
 # Homebrew #
 ############
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" # old way
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" # new way
 
 ##############
 # Git/Github #
@@ -28,7 +29,7 @@ echo "Note some git clone commands will not work if you do not complete this ste
 read -qs hasSSHkey
 brew install git # system git would be fine for this, but might as well just do it now
 git config --global user.name "Scott Schupbach"
-git config --global user.email "scott.schupbach@amount.com"
+git config --global user.email "scott.schupbach@rallyhealth.com"
 
 ############
 # Dotfiles #
@@ -106,7 +107,7 @@ else
   echo "Default Ruby is not an rbenv Ruby: $(which ruby)"
 fi
 gem install bundler rubocop
-brew tap heroku/brew && brew install heroku
+# brew tap heroku/brew && brew install heroku
 
 ##########
 # Python #
@@ -134,12 +135,13 @@ ln -s $DOTFILES/.zshrc ~/.zshrc # Or change the first `.zshrc` to a different `.
 brew install coreutils # required by k plugin
 git clone git@github.com:supercrabtree/k $ZSH/custom/plugins/k
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
+
 ## Useful terminal tools
 # First, go into the iTerm menu and select "Install Shell Integration"
 # This gets you `imgcat`, among other things
-brew install mdcat tree
-brew install librsvg # Used by `mdcat` to support SVG rendering in iTerm
-brew install duti # Allows you to set default document and URL handlers via command line
+# `librsvg` is used by `mdcat` to support SVG rendering in iTerm
+# `duti` allows you to set default document and URL handlers via command line
+brew install mdcat tree librsvg duti
 
 ##############
 # JS tooling #

@@ -2,7 +2,9 @@
 
 # For compilers to find openssl@1.1
 export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+export CFLAGS="-I/usr/local/opt/openssl@1.1/include"
 export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+
 # For pkg-config to find openssl@1.1
 export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
 
@@ -45,6 +47,7 @@ plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
 #  INIT  #
 ##########
 # ZSH
+ZSH_DISABLE_COMPFIX=1 # This prevents the "Insecure completion-dependent directories detected" warning on startup
 source $ZSH/oh-my-zsh.sh
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -55,13 +58,18 @@ export LANG=en_US.UTF-8
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
 # Init language version managers
+## Ruby
 if [[ `which rbenv` != *"not found" ]]; then
-  eval "$(rbenv init -)"
+  eval "$(rbenv init - zsh)"
 fi
+## Python
 if [[ `which pyenv` != *"not found" ]]; then
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - zsh)"
 fi
-test -e "/usr/local/opt/nvm/nvm.sh" && source "/usr/local/opt/nvm/nvm.sh"
+# Node
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Use Keypad in terminal
 # 0 . Enter
