@@ -41,24 +41,42 @@ export DOTFILES=~/.dotfiles
 ###################
 # MAC OSX changes #
 ###################
+
 ## Set dock animation speed
 defaults write com.apple.dock autohide-time-modifier -float 1.0
+
 ## Change delay between dock-show trigger and dock-show event
 defaults write com.apple.Dock autohide-delay -float 0.5
+
 ## show hidden files everywhere
 defaults write -g AppleShowAllFiles TRUE
+
 ## Keep obnoxious "Try Safari" popup from popping up all the time (requires logout/login?)
 defaults write com.apple.coreservices.uiagent CSUIHasSafariBeenLaunched -bool YES
-defaults write com.apple.coreservices.uiagent CSUIRecommendSafariNextNotificationDate -date 2050-01-01T00:00:00Z
+defaults write com.apple.coreservices.uiagent CSUIRecommendSafariNextNotificationDate -date 2100-01-01T00:00:00Z
 defaults write com.apple.coreservices.uiagent CSUILastOSVersionWhereSafariRecommendationWasMade -float 10.99
+
 ## Prevent power button from sleeping laptop immediately (still works after 2 seconds or so, I think)
 defaults write com.apple.loginwindow PowerButtonSleepsSystem -bool no
+
 ## Turn off 2-finger swipe navigation in Chrome
 # defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE # Doesn't work in Mojave
 defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool FALSE
-## restart Dock
+
+## Change default location for screenshots
+mkdir ~/Pictures/screenshots
+defaults write com.apple.screencapture location ~/Pictures/screenshots
+
+## Get rid of obnoxious OS beep when using certain key combos (cmd+ctrl+DOWN, for example)
+# Taken from: https://github.com/adobe/brackets/issues/2419#issuecomment-344351507 (def works on El Capitan -> Catalina)
+mkdir ~/Library/KeyBindings && echo "{
+    "@^\UF701" = "noop:";
+    "@^\UF702" = "noop:";
+    "@^\UF703" = "noop:";
+}" > ~/Library/KeyBindings/DefaultKeyBinding.dict
+
+## restart Dock and Finder
 killall Dock
-## restart Finder
 killall Finder
 
 ##############

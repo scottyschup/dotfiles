@@ -33,7 +33,6 @@
   "explorer.openEditors.visible": 0,
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
-  "git.ignoreLimitWarning": false,
   "git.suggestSmartCommit": false,
   "gitlens.advanced.messages": {
     "suppressGitVersionWarning": true
@@ -127,13 +126,14 @@
   "typescript.preferences.quoteStyle": "single",
   "window.openFoldersInNewWindow": "on",
   "window.title": "${activeEditorFull}${separator}${rootName}",
-  "window.zoomLevel": -1,
+  "window.zoomLevel": 0,
   "workbench.colorCustomizations": {
+    "statusBar.background": "#0c0c0c",
     "statusBar.debuggingBackground": "#2a4639",
     "statusBar.noFolderBackground": "#2d134e"
   },
   "workbench.commandPalette.history": 500,
-  "workbench.colorTheme": "Material Theme Darker",
+  "workbench.colorTheme": "Material Theme Darker High Contrast",
   "workbench.editor.closeOnFileDelete": true,
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.labelFormat": "short",
@@ -151,5 +151,13 @@
   "yaml.format.singleQuote": true,
   "[yaml]": {
     "editor.autoIndent": "advanced"
+  },
+  "yaml.schemas": {
+    "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.7.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "files.watcherExclude": {
+    "**/.bloop": true,
+    "**/.metals": true,
+    "**/.ammonite": true
   }
 }

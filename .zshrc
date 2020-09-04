@@ -116,4 +116,7 @@ source $DOTFILES/.aliases
 # CLEAN UP PATH
 clean_path
 
+# Set custom default applications with `duti`
+duti $DOTFILES/.duti && echo 'Set custom default applications'
+
 echo 'Sourced .zshrc'
