@@ -57,6 +57,11 @@ source $DOTFILES/.colors
 export LANG=en_US.UTF-8
 
 # Init language version managers
+# Node
+export NVM_DIR="$(brew --prefix nvm)"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/etc/bash_completion.d/nvm" ] && . "$NVM_DIR/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
 ## Ruby
 if [[ `which rbenv` != *"not found" ]]; then
   eval "$(rbenv init - zsh)"
@@ -65,10 +70,8 @@ fi
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init - zsh)"
 fi
-# Node
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# Source .zshenv which adds pyenv/rbenv bin dirs to PATH
+source $DOTFILES/.zshenv
 
 # Use Keypad in terminal
 # 0 . Enter
@@ -124,6 +127,5 @@ if [ -e ~/.gitignore ]; then
   fi
 fi
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked to $DOTFILES/.gitignore_global"
-
 
 echo 'Sourced .zshrc'
