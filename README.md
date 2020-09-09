@@ -25,6 +25,8 @@ This is just for me to make my terminal workflow more consistent between work an
   ln -s $DOTFILES/.vimrc ~/.vimrc
   ```
 
+- Note that `.gitignore_global` is automatically symlinked in `.zshrc`.
+
 - Restart terminal, or source `.zshrc` (only after you've set the symlink)
   ```sh
   . ~/.zshrc

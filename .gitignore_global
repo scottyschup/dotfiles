@@ -64,4 +64,4 @@ node_modules
 **/*.tmp
 .tmp
 tmp
-.vscode
+.metals

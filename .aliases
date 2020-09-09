@@ -164,6 +164,7 @@ alias ust="update_slack_theme"
 alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
 alias lss="list_scripts"
 alias psaux="parse_ps_aux"
+alias symsrc="stat -f %Y"
 
 # networking
 alias remoteip="curl ifconfig.me/all"

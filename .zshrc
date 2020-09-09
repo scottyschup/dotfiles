@@ -55,7 +55,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # Definitions
 source $DOTFILES/.colors
 export LANG=en_US.UTF-8
-ln -sf $DOTFILES/.gitignore_global ~/.gitignore_global
 
 # Init language version managers
 ## Ruby
@@ -110,13 +109,21 @@ done &&
   echo 'Something happened :/ ^^^'
 
 # Aliases
-alias hurl=handy_urls
 source $DOTFILES/.aliases
 
 # CLEAN UP PATH
-clean_path
+# clean_path && echo "PATH cleaned of dups"
 
 # Set custom default applications with `duti`
 duti $DOTFILES/.duti && echo 'Set custom default applications'
+
+# Symlink global .gitignore
+if [ -e ~/.gitignore ]; then
+  if [ -L ~/.gitignore ] && [ $(symsrc ~/.gitignore) != "$DOTFILES/.gitignore_global" ]; then
+    mv ~/.gitignore ~/.gitignore_bkp &>/dev/null && echo "~/.gitignore already exists; renaming to ~/.gitignore_bkp"
+  fi
+fi
+ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked to $DOTFILES/.gitignore_global"
+
 
 echo 'Sourced .zshrc'

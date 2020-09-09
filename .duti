@@ -1,4 +1,6 @@
-# Usage: brew install duti && duti $DOTFILES/.duti
+# Usage:
+#  brew install duti (if necessary)
+#  duti $DOTFILES/.duti
 
 com.google.chrome public.url all
 com.microsoft.VSCode css all
