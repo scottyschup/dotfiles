@@ -2,6 +2,8 @@
 
 # See also (Rally employees only): https://wiki.audaxhealth.com/display/ENG/Development+Environment+Setup
 
+# This gist also has some interesting things in it: https://gist.github.com/obatiuk/7be332c88bf6ead4bde7e48329e55f0f
+
 #############################
 # Miscellaneous pre-install #
 #############################
@@ -37,6 +39,7 @@ git config --global user.email "scott.schupbach@rallyhealth.com"
 git clone git@github.com:scottyschup/dotfiles.git
 mv dotfiles ~/.dotfiles
 export DOTFILES=~/.dotfiles
+ln -s $DOTFILES/.vimrc ~/.vimrc
 
 ###################
 # MAC OSX changes #
@@ -48,8 +51,14 @@ defaults write com.apple.dock autohide-time-modifier -float 1.0
 ## Change delay between dock-show trigger and dock-show event
 defaults write com.apple.Dock autohide-delay -float 0.5
 
-## show hidden files everywhere
+## Show all filename extensions in Finder
+defaults write -g AppleShowAllExtensions -bool true
+
+## Show hidden files everywhere
 defaults write -g AppleShowAllFiles TRUE
+
+## Show Library folders
+sudo chflags nohidden /Library/ ~/Library/
 
 ## Keep obnoxious "Try Safari" popup from popping up all the time (requires logout/login?)
 defaults write com.apple.coreservices.uiagent CSUIHasSafariBeenLaunched -bool YES
@@ -69,11 +78,14 @@ defaults write com.apple.screencapture location ~/Pictures/screenshots
 
 ## Get rid of obnoxious OS beep when using certain key combos (cmd+ctrl+DOWN, for example)
 # Taken from: https://github.com/adobe/brackets/issues/2419#issuecomment-344351507 (def works on El Capitan -> Catalina)
+# See also https://gist.github.com/trusktr/1e5e516df4e8032cbc3d for larger list of keybindings
+# and http://xahlee.info/kbd/osx_keybinding_action_code.html for keybinding action names
 mkdir ~/Library/KeyBindings && echo "{
-    "@^\UF701" = "noop:";
-    "@^\UF702" = "noop:";
-    "@^\UF703" = "noop:";
-}" > ~/Library/KeyBindings/DefaultKeyBinding.dict
+  \"@^\\\UF701\" = \"noop:\";
+  \"@^\\\UF702\" = \"noop:\";
+  \"@^\\\UF703\" = \"noop:\";
+}
+" > ~/Library/KeyBindings/DefaultKeyBinding.dict
 
 ## restart Dock and Finder
 killall Dock

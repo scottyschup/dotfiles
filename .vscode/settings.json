@@ -12,7 +12,7 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": false,
   "editor.minimap.enabled": true,
-  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.multiCursorModifier": "alt",
   "editor.quickSuggestions": true,
   "editor.renderWhitespace": "all",
   "editor.rulers": [
@@ -130,7 +130,20 @@
   "workbench.colorCustomizations": {
     "statusBar.background": "#0c0c0c",
     "statusBar.debuggingBackground": "#2a4639",
-    "statusBar.noFolderBackground": "#2d134e"
+    "statusBar.noFolderBackground": "#2d134e",
+    "activityBar.activeBackground": "#252525",
+    "activityBar.activeBorder": "#606020",
+    "activityBar.background": "#252525",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#606020",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#252525",
+    "titleBar.activeBackground": "#0c0c0c",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#0c0c0c99",
+    "titleBar.inactiveForeground": "#e7e7e799"
   },
   "workbench.commandPalette.history": 500,
   "workbench.colorTheme": "Material Theme Darker High Contrast",
@@ -159,5 +172,6 @@
     "**/.bloop": true,
     "**/.metals": true,
     "**/.ammonite": true
-  }
+  },
+  "peacock.color": "#0c0c0c"
 }

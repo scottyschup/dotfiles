@@ -6,18 +6,23 @@ This is just for me to make my terminal workflow more consistent between work an
   ```sh
   git clone git@github.com:scottyschup/dotfiles.git $HOME/.dotfiles
   ```
-  - If not home, then change the $DOTFILES var in your .zshrc_VARIANT
+  - If not home, then change the `$DOTFILES` var in your `.zshrc_<VARIANT>`
 
-- create a .zshrc symlink to the .zshrc_VARIANT of your choosing in your home directory. (Change VARIANT to home, work, etc.)
+- create a `.zshrc` symlink to the `.zshrc_<VARIANT>` of your choosing in your home directory. (Change `<VARIANT>` to home, work, company/laptop name, etc.)
   ```sh
   export DOTFILES=$HOME/.dotfiles # or wherever your copy lives
-  ln -s $DOTFILES/.zshrc_VARIANT ~/.zshrc
+  ln -s $DOTFILES/.zshrc_<VARIANT> ~/.zshrc
   ln -s $DOTFILES/.zshenv ~/.zshenv
   ```
 
-- create a .railsrc symlink as well:
+- If using Rails, create a `.railsrc` symlink as well:
   ```sh
   ln -s $DOTFILES/.railsrc ~/.railsrc
+  ```
+
+- If using vim, create a `.vimrc` symlink as well:
+  ```sh
+  ln -s $DOTFILES/.vimrc ~/.vimrc
   ```
 
 - Restart terminal, or source `.zshrc` (only after you've set the symlink)
@@ -25,7 +30,7 @@ This is just for me to make my terminal workflow more consistent between work an
   . ~/.zshrc
   ```
 
-### An example `.zshrc_VARIANT` file
+### An example `.zshrc_<VARIANT>` file
 `~/.zshrc_work`
 ```sh
 # Don't forget to symlink this file at `~/.zshrc`
@@ -48,7 +53,7 @@ export PATH=$PATH:$HOME/.yarn/bin # Add path for Yarn
 ```
 
 ### A note about zsh custom plugins
-The `.zshrc` and `.zshrc_VARIANT`s are pretty picky about how things were initially setup. For example, k.sh, z.sh, and zsh-syntax-highlighting all need to be in the `~/.oh-my-zsh/custom/plugin` directory (but if you move z.sh, leave .z in the home directory). k.sh and z.sh also need to be put in plugin format. I.e.:
+The `.zshrc` and `.zshrc_<VARIANT>`s are pretty picky about how things were initially setup. For example, `k.sh`, `z.sh`, and `zsh-syntax-highlighting` all need to be in the `~/.oh-my-zsh/custom/plugin` directory (but if you move `z.sh`, leave `.z` in the home directory). `k.sh` and `z.sh` also need to be renamed using the ZSH plugin format. I.e.:
 ```sh
 cp k.sh $ZSH_CUSTOM/plugins/k/k.plugin.zsh
 cp z.sh $ZSH_CUSTOM/plugins/z/z.plugin.zsh
