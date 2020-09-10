@@ -10,6 +10,7 @@
 # To be able to run this script you must first:
 ## Install Xcode through App Store and launch it once to accept agreement. Then:
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+# This was necessary for ~Yosemite, but didn't seem to be for Catalina
 
 ############
 # Homebrew #
@@ -178,8 +179,8 @@ brew install mdcat tree librsvg duti
 ##############
 brew install nvm npm yarn
 # Add these to .*shrc (unless using dotfiles repo, in which case they're already there)
-export NVM_DIR="$(brew --prefix nvm)"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh" # This loads nvm
 
 #########
 # Redis #
@@ -196,36 +197,3 @@ brew cask install virtualbox
 brew install docker docker-machine docker-compose
 docker-machine create -d virtualbox dev
 eval "$(docker-machine env dev)"
-
-######################
-# Amount (fka Avant) #
-######################
-mkdir "~/amount"
-export AMOUNT="~/amount"
-cd $AMOUNT
-
-## Get all the repos
-git clone git@github.com:avantcredit/avant-basic.git
-git clone git@github.com:avantcredit/avant-apply.git
-git clone git@github.com:avantcredit/avant-views.git
-git clone git@github.com:avantcredit/frontend.git
-
-## Install postgres
-brew install postgresql@9.4
-brew link --force postgresql@9.4
-brew services start postgresql@9.4
-
-## avant-basic
-cd "$AMOUNT/avant-basic"
-### build the correct ruby
-rbenv install ${$(cat .ruby-version)#ruby-} # for rvm: `rvm use ${$(cat .ruby-version)#ruby-}`
-### gems
-gem update --system
-gem install bundler
-bundle install
-### database
-cp config/database.yml.sample.yaml config/database.yml
-bin/prep_local
-### install and start mailcatcher
-gem install mailcatcher
-mailcatcher # Daemonized by default; add -f flag to run in foreground
