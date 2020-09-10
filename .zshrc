@@ -58,9 +58,10 @@ export LANG=en_US.UTF-8
 
 # Init language version managers
 # Node
-export NVM_DIR="$(brew --prefix nvm)"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/etc/bash_completion.d/nvm" ] && . "$NVM_DIR/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+export NVM_DIR="$HOME/.nvm"
+export NVM_BREW_PREFIX=$(brew --prefix nvm)
+[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"  # This loads nvm
+[ -s "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm" ] && . "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 ## Ruby
 if [[ `which rbenv` != *"not found" ]]; then

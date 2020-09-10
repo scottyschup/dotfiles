@@ -178,7 +178,7 @@ brew install mdcat tree librsvg duti
 ##############
 brew install nvm npm yarn
 # Add these to .*shrc (unless using dotfiles repo, in which case they're already there)
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$(brew --prefix nvm)"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
 #########
