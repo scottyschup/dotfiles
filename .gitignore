@@ -5,3 +5,4 @@
 .gitignore_*
 !.gitignore_global
 .ruby-version
+.vscode
