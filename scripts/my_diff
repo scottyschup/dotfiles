@@ -1,17 +1,55 @@
 #!/usr/bin/env ruby -w
 
-# Color-wrapper for the standard shell `diff` command
-
 require "colorize"
+
+def usage
+  script_name = $0.split('/').last.light_white.bold
+  "Usage: #{script_name} is a color-wrapper for the standard shell #{'diff'} command" +
+  "\n\t#{script_name} accepts all standard #{'diff'.light_white.bold} options" +
+  "\n\tI find -u, -b, -w, -y, and -i are most helpful" +
+  "\n\n\tFor side-by-side mode (-y), if the output is not neatly aligned," +
+  "\n\tthe -t flag may be necessary to normalize tab size"
+end
+
+if ARGV.empty?
+  $stdout.puts usage
+  exit 1
+end
+
+if ARGV.select { |arg| !arg.start_with? '-' }.length < 2
+  $stdout.puts "ArgumentError: At least two filename arguments required\n".light_red.bold
+  $stdout.puts usage
+  exit 2
+end
+
+parallel = ARGV.any? { |arg| arg =~ /^-.*y/ }
+unified = ARGV.any? { |arg| arg =~ /^-.*u/ }
+add_sym = unified ? "+" : ">"
+sub_sym = unified ? "-" : "<"
 
 output_str = `diff #{ARGV.join(" ")}`
 output_arr = output_str.split("\n")
 
 output_arr.each do |line|
-  color = line[0] == ">" ?
-    :green :
-    line[0] == "<" ?
-      :red :
-      ""
-  $stdout.puts line.colorize color
+  if parallel
+    pipe_line_re = /.*\s*\|\s*.*/
+    if line =~ pipe_line_re
+      left, right = line.split("|")
+      $stdout.puts [left.red, (right || " ").green].join("|")
+    else
+      color = line =~ /\s*>/ ?
+        :green :
+        line =~ /.*<\s*$/ ?
+          :red :
+          ""
+      $stdout.puts line.colorize color
+    end
+  else
+    color = line[0] == add_sym ?
+      :green :
+      line[0] == sub_sym ?
+        :red :
+        ""
+    $stdout.puts line.colorize color
+  end
 end

@@ -150,6 +150,7 @@ alias chrome="open -a 'Google Chrome'"
 alias curli="curl -I"
 alias grepi="grep -i"
 alias grep_alias="alias | grep -i" # zsh only
+alias grepa=grep_alias # zsh only
 alias hurls=handy_urls
 alias aliases_for="grep_alias"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
