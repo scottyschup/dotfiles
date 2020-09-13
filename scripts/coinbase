@@ -132,15 +132,18 @@ class CoinbaseClient
 
     what = "#{timestamp}#{method}#{request_path}#{body}";
 
-      # create a sha256 hmac with the secret
-      secret = Base64.decode64(SECRET)
-      hash  = OpenSSL::HMAC.digest("sha256", secret, what)
-      Base64.strict_encode64(hash)
-    end
+    # create a sha256 hmac with the secret
+    secret = Base64.decode64(SECRET)
+    hash  = OpenSSL::HMAC.digest("sha256", secret, what)
+    Base64.strict_encode64(hash)
   end
 
-  def client
+  def api_client
     @client ||= Coinbase::Exchange::AsyncClient.new(KEY, SECRET, PASSPHRASE)
+  end
+
+  def websocket
+    @socket = Coinbase::Exchange::Websocket.new(keepalive: true)
   end
 
   def bid()

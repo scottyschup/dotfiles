@@ -173,5 +173,11 @@
   },
   "yaml.schemas": {
     "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.7.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-  }
+  },
+  "files.watcherExclude": {
+    "**/.bloop": true,
+    "**/.metals": true,
+    "**/.ammonite": true
+  },
+  "peacock.color": "#0c0c0c"
 }

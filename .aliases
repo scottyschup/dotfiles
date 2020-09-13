@@ -229,6 +229,7 @@ alias rnv="rbenv_new_versions"
 
 # server
 alias pys="python -m SimpleHTTPServer"
+alias pyss="python -m SimpleHTTPServer"
 alias rbsp="ruby -run -e httpd . -p"
 alias rbs="ruby -run -e httpd ."
 
