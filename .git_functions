@@ -31,6 +31,7 @@
 # Custom Git functions #
 ########################
 
+# DEPRECATED: use `git_branch_history current` instead
 function git_current_branch {
   git symbolic-ref HEAD 2>/dev/null | cut -d "/" -f 3
 }
@@ -38,8 +39,12 @@ alias current_git_branch=git_current_branch
 alias gcb=git_current_branch
 alias cgb=git_current_branch
 
+# TODO: extract git_add and git_commit into seperate functions
 function git_add_commit {
   if [ $# -lt 2 ]; then return "Enter a commit message"; fi
+  if [ $# -eq 2 ]; then
+    if [ $1 = "." ]; then 1="-A"; fi
+  fi
 
   g_add=()
   while [ $# -gt 1 ]; do

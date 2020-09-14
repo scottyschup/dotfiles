@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -w
 
-# ABANDONED?
+# ABANDONED: use `git_branch_history` instead
 
 ###########
 # HELPERS #
