@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+if [ ! $1 ]; then
+  echo "Must provide a port to check"
+  exit 1
+fi
+
+lsof -nP -iTCP:$1 | grep LISTEN
