@@ -144,32 +144,33 @@ alias react_babel_install="npm install --save babel-core babel-loader babel-pres
 alias wpdev="./bin/webpack-dev-server --watch --colors --progress"
 alias wp="$(npm bin)/webpack"
 
-# miscellany
+# Aliases for my scripts/miscellany
+alias aliases_for="grep_alias"
 alias bks=buildkite_state
 alias chrome="open -a 'Google Chrome'"
+alias clr="clear"
+alias cls="clear"
 alias curli="curl -I"
 alias grepi="grep -i"
 alias grep_alias="alias | grep -i" # zsh only
 alias grepa=grep_alias # zsh only
 alias hurls=handy_urls
-alias aliases_for="grep_alias"
+alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
+alias lss="list_scripts"
+alias psaux="parse_ps_aux"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"
 alias rebuild_indices="rebuild_open_with_index && rebuild_spotlight_index"
 alias rbi="rebuild_indices"
 alias rbfind="ruby_find"
-alias clr="clear"
-alias cls="clear"
-alias update_slack_theme="add_custom_theme_to_slack"
-alias ust="update_slack_theme"
-alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
-alias lss="list_scripts"
-alias psaux="parse_ps_aux"
+alias symlinksrc="stat -f %Y"
 alias symsrc="stat -f %Y"
+alias update_slack_theme="add_custom_theme_to_slack"
 
 # networking
-alias remoteip="curl ifconfig.me/all"
 alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1"
+alias port=port_checker
+alias remoteip="curl ifconfig.me/all"
 
 # navigation
 alias back="cd .."

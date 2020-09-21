@@ -19,11 +19,11 @@ scripts_dir = File.dirname(__FILE__)
 file_name = "#{scripts_dir}/#{ARGV.shift}"
 if File.file?(file_name)
   $stdout.puts("File already exists")
-  exit
+  exit 1
 end
 
 language = ARGV.shift || "ruby"
-flags = ARGV.shift || "-w"
+flags = ARGV.shift || (language == "ruby" ? "-w" : "")
 
 body = nil
 if language == "ruby"
