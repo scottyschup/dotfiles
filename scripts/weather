@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby -w
+
+#############
+# Ruby code #
+#############
+def run_wxr_widget(zip_code = 60640)
+  while true
+    system "clear"
+    $stdout.puts(Time.now.strftime("%T"))
+    $stdout.puts(`curl -s wttr.in/#{zip_code}`)
+    sleep 60 * 240
+  end
+end
+
+def usage
+  "Get forecast from wttr.in" +
+  "\tUsage: `#{__FILE__}` [ZIP_CODE]" +
+  "\tZIP_CODE defaults to 60640"
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  if ['-h', '--help', 'help'].include? ARGV.first
+    puts usage
+    exit
+  end
+
+  run_wxr_widget ARGV.first
+end
