@@ -8,7 +8,7 @@ def run_wxr_widget(zip_code = 60640)
     system "clear"
     $stdout.puts(Time.now.strftime("%T"))
     $stdout.puts(`curl -s wttr.in/#{zip_code}`)
-    sleep 60 * 240
+    sleep 60 * 60 * 4 # 4 hours
   end
 end
 
