@@ -3,12 +3,26 @@
 #############
 # Ruby code #
 #############
+require 'active_support/core_ext/numeric/time.rb'
+
 def run_wxr_widget(zip_code = 60640)
+  last_update = 5.hours.ago
+
   while true
+    if last_update > 4.hours.ago
+      $stdout.print("\rCurrent time => #{Time.now.strftime('%F %T')}")
+      sleep 1
+      next
+    end
+
     system "clear"
-    $stdout.puts(Time.now.strftime("%T"))
-    $stdout.puts(`curl -s wttr.in/#{zip_code}`)
-    sleep 60 * 60 * 4 # 4 hours
+    cmd = `curl -s wttr.in/#{zip_code}`
+    # cmd = `curl "samiare.net/daily/190128"` # Test URL (so as not to overwhelm wttr.in during dev/testing)
+    $stdout.puts(cmd)
+    $stdout.puts("Last updated => #{Time.now.strftime('%F %T')}")
+    $stdout.puts("Next update  => #{(Time.now + 4.hours).strftime('%F %T')}")
+    $stdout.print("Current time => #{Time.now.strftime('%F %T')}") # Gets periodically overwritten in line 13
+    last_update = Time.now
   end
 end
 
