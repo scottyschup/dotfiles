@@ -254,7 +254,7 @@ echo 'Sourced .functions'
 #############
 # Shareable #
 #############
-## die/omni_killer
+## DEPRECATED: see die/omni_killer above
 function kill_all {
   # Usage:
   # kill_all redis
