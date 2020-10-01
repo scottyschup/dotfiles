@@ -166,6 +166,7 @@ alias rbfind="ruby_find"
 alias symlinksrc="stat -f %Y"
 alias symsrc="stat -f %Y"
 alias update_slack_theme="add_custom_theme_to_slack"
+alias wxr=weather
 
 # networking
 alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1"

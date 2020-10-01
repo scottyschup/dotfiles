@@ -1,9 +1,19 @@
 {
+  "atlascode.bitbucket.explorer.enabled": false,
+  "atlascode.bitbucket.enabled": false,
+  "atlascode.jira.jqlList": [{
+    "id": "6b1c353f-08bc-4772-96b7-875d6520d8d4",
+    "enabled": true,
+    "name": "My jira.rallyhealth.com Issues",
+    "query": "assignee = currentUser() AND resolution = Unresolved ORDER BY lastViewed DESC",
+    "siteId": "jira.rallyhealth.com",
+    "monitor": true
+  }],
   "atomKeymap.promptV3Features": true,
   "breadcrumbs.enabled": true,
   "editor.acceptSuggestionOnCommitCharacter": false,
   "editor.acceptSuggestionOnEnter": "off",
-  "editor.detectIndentation": false,
+  "editor.autoIndent": "advanced",
   "editor.dragAndDrop": false,
   "editor.find.seedSearchStringFromSelection": true,
   "editor.fontFamily": "'Fira Code', 'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
@@ -24,13 +34,29 @@
   "editor.snippetSuggestions": "top",
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [{
+      "scope": [
+        "punctuation.definition.comment",
+        "comment.block",
+        "comment.line",
+        "comment.block.documentation"
+      ],
+      "settings": {
+        "foreground": "#999999"
+      }
+    }]
+  },
   "editor.wordBasedSuggestions": true,
   "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
   "editor.wordWrap": "off",
   "explorer.compactFolders": false,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
-  "explorer.openEditors.visible": 0,
+  "explorer.openEditors.visible": 100,
+  "files.associations": {
+    ".zshrc*": "shellscript"
+  },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "files.watcherExclude": {
@@ -152,7 +178,7 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "workbench.commandPalette.history": 500,
-  "workbench.colorTheme": "Material Theme Darker High Contrast",
+  "workbench.colorTheme": "Community Material Theme Darker High Contrast",
   "workbench.editor.closeOnFileDelete": true,
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.labelFormat": "short",
@@ -172,12 +198,6 @@
     "editor.autoIndent": "advanced"
   },
   "yaml.schemas": {
-    "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.7.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-  },
-  "files.watcherExclude": {
-    "**/.bloop": true,
-    "**/.metals": true,
-    "**/.ammonite": true
-  },
-  "peacock.color": "#0c0c0c"
+    "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.8.2/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  }
 }

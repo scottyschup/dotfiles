@@ -3,6 +3,17 @@
 #############
 # Ruby code #
 #############
+# Extract this into separate script; or better, make install_if_not_installed script
+def gem_installed?(gem_name)
+  list = `gem list #{gem_name}`
+  list.split("\n").any? { |line| line.include?(gem_name) }
+end
+
+unless gem_installed? 'activesupport'
+  system 'clear'
+  $stdout.puts "Installing `activesupport` gem"
+  `gem install activesupport 1>&2`
+end
 require 'active_support/core_ext/numeric/time.rb'
 
 def run_wxr_widget(zip_code = 60640)

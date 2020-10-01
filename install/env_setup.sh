@@ -33,6 +33,7 @@ read -qs hasSSHkey
 brew install git # system git would be fine for this, but might as well just do it now
 git config --global user.name "Scott Schupbach"
 git config --global user.email "scott.schupbach@rallyhealth.com"
+git config --global core.excludesfile "~/.gitignore" # assuming you've symlinked
 
 ############
 # Dotfiles #
@@ -144,8 +145,9 @@ gem install bundler rubocop
 # Python #
 ##########
 brew install pyenv
-pyenv install 2.7.10 # includes pip
-pyenv global 2.7.10
+pyenv install 2.7.18 # Because I'm old school like that
+pyenv install 3.8.5
+pyenv global 3.8.5
 ## Use pip to install pygmentize (required for oh-my-zsh colorize plugin)
 pip install --upgrade pip
 pip install pygments
