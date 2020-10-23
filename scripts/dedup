@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby -w
+
+filename = ARGV.pop
+quiet = ARGV.pop
+
+unless filename
+  $stdout.puts('No file name was provided :(')
+  $stdout.puts('Usage: dedup [-q] FILE_NAME')
+  return 1
+end
+
+begin
+  uniq_lines = File.open(filename).readlines.uniq
+  $stdout.puts(uniq_lines) unless quiet == '-q'
+  f = File.open(filename, 'w')
+  uniq_lines.each { |line| f.write(line) }
+ensure
+  f.close
+end

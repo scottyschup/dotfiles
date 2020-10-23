@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby -w
+
+# WIP: refactor using ARGF
+# See ./hilong for example
+
+if ARGV.empty? && ARGF.empty?
+  $stdout.puts('No string to split was provided :(')
+  $stdout.puts('Usage: split-str [-d DELIMITER] FILE_NAME')
+  return 1
+end
+
+string = ARGV.pop
+delimiter = ARGV.pop || ' '
+
+$stdout.puts string.split(delimiter)
