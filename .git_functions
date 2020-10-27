@@ -180,13 +180,12 @@ function git_checkout {
     return 1
   fi
 
-  msg=`git checkout "$@" &> /dev/null`
+  msg=`git checkout "$@" 2>&1`
   if [ $? -gt 0 ]; then
     setopt NULL_GLOB
-    if [ $msg = "error: pathspec"*"did not match any file(s) known to git" ]; then
+    if [[ $msg = "error: pathspec"*"did not match any file(s) known to git" ]]; then
       git_branch_history rm $branch &> /dev/null
       echo "Branch '$branch' not found."
-      echo "$msg"
     else
       echo $msg
     fi
