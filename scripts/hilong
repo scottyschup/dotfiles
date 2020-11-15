@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby -w
+
+# A simply utility to show character counts for each line of input and
+# highlight lines longer than 80 characters.
+#
+# Written as an example for http://jstorimer.com/2011/12/12/writing-ruby-scripts-that-respect-pipelines.html
+#
+# Examples:
+#
+# $ hilong Gemfile
+# $ hilong Gemfile | more
+# $ hilong Gemfile > output.txt
+# $ hilong Gemfile Gemfile.lock
+# $ cat Gemfile* | hilong
+# $ cat Gemfile | hilong - Gemfile.lock
+#
+# Install:
+# $ curl https://raw.github.com/gist/1465437/gistfile1.rb > ~/bin/hilong
+# $ chmod +x ~/bin/hilong
+
+# escaped bash color codes
+red = "\e[31m"
+reset_color = "\e[0m"
+
+maximum_line_length = 80
+colorized_output = true
+
+require 'optparse'
+OptionParser.new do |options|
+  # This banner is the first line of your help documentation.
+  options.set_banner "Usage: hilong [options] [files]\n" \
+    "Show character count for each line of input and highlight long lines."
+
+  # Separator just adds a new line with the specified text.
+  options.separator ""
+  options.separator "Specific options:"
+
+  options.on("--no-color", "Disable colorized output") do |color|
+    colorized_output = color
+  end
+
+  options.on("-m", "--max NUM", Integer, "Maximum line length") do |max|
+    maximum_line_length = max
+  end
+
+  options.on_tail("-h", "--help", "You're looking at it!") do
+    $stderr.puts options
+    exit 1
+  end
+end.parse!
+
+# Keep reading lines of input as long as they're coming.
+while input = ARGF.gets
+  input.each_line do |line|
+    # Construct a string that begins with the length of this line
+    # and ends with the content. The trailing newline is #chop'ped
+    # off of the content so we can control where the newline occurs.
+    # The string are joined with a tab character so that indentation
+    # is preserved.
+    output_line = [line.size, line.chop].join("\t")
+
+    # If the line is long and our $stdout is not being piped then we'll
+    # colorize this line.
+    if colorized_output && line.size > maximum_line_length
+      # Turn the output to red starting at the first character.
+      output_line.insert(0, red)
+      # Reset the text color back to what it was at the end of the
+      # line.
+      output_line.insert(-1, reset_color)
+    end
+
+    begin
+      $stdout.puts output_line
+    rescue Errno::EPIPE
+      exit(74)
+    end
+  end
+end

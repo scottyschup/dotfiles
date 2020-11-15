@@ -71,7 +71,7 @@ fi
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init - zsh)"
 fi
-# Source .zshenv which adds pyenv/rbenv bin dirs to PATH
+# Source .zshenv which adds pyenv/rbenv/npm bin dirs to PATH
 source $DOTFILES/.zshenv
 
 # Use Keypad in terminal
@@ -100,7 +100,6 @@ bindkey -s "^[OX" "="
 tabs -2
 
 # Functions
-# source $DOTFILES/.git_completion
 source $DOTFILES/.git_functions
 source $DOTFILES/.functions
 
@@ -115,9 +114,6 @@ done &&
 # Aliases
 source $DOTFILES/.aliases
 
-# CLEAN UP PATH
-# clean_path && echo "PATH cleaned of dups"
-
 # Set custom default applications with `duti`
 duti $DOTFILES/.duti && echo 'Set custom default applications'
 
@@ -128,5 +124,26 @@ if [ -e ~/.gitignore ]; then
   fi
 fi
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked to $DOTFILES/.gitignore_global"
+
+###################################################################
+# Remove duplicates from PATH in the event of re-sourcing dotfiles #
+###################################################################
+# Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
+# slower each time, so duplicates are being removed here.
+# Because it's being done with Ruby, there are 2 additional paths that have to
+# be removed from the top: one for rbenv executables and one for the bin dir of
+# the current version of Ruby.
+# E.g. from Rally laptop:
+# Original PATH (at time of writing):
+# /Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+# Modified PATH (with rbenv-added paths):
+# /Users/shannon.schupbach/.rbenv/versions/2.6.5/bin:/usr/local/Cellar/rbenv/1.1.2/libexec:/Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+# Modified PATH (without rbenv-added paths):
+# /Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+# Since switching versions of Ruby/Node modifies the path by prepending the current
+# version, this should be turned into a script that also checks for and removes
+# earlier versions that are being overridden.
+export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq[2..-1].join(":")')
+echo "PATH uniqified!"
 
 echo 'Sourced .zshrc'

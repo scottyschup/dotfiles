@@ -4,6 +4,7 @@ highlight ColorColumn ctermbg=DarkBlue guibg=DarkBlue
 map <space> /
 map <c-space> ?
 set autoread
+set autoindent
 set backspace=indent,eol,start
 set cmdheight=2
 set colorcolumn=80,100
@@ -14,7 +15,7 @@ set ignorecase
 set incsearch
 set listchars=tab:<-,trail:~
 set mat=2
-set number
+set number " adds line numbers
 set numberwidth=5
 set rnu
 set shiftwidth=2

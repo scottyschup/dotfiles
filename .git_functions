@@ -177,17 +177,20 @@ function git_checkout {
   current=`git_branch_history current`
   if [ "$current" = "$branch" ]; then
     echo "$1 is already checked out"
-    return
+    return 1
   fi
 
-  msg=`git checkout "$@" &> /dev/null`
+  msg=`git checkout "$@" 2>&1`
   if [ $? -gt 0 ]; then
     setopt NULL_GLOB
-    if [ $msg = "error: pathspec"*"did not match any file(s) known to git" ]; then
+    if [[ $msg = "error: pathspec"*"did not match any file(s) known to git" ]]; then
       git_branch_history rm $branch &> /dev/null
-      return
+      echo "Branch '$branch' not found."
+    else
+      echo $msg
     fi
     unsetopt NULL_GLOB
+    return $?
   fi
 
   git_branch_history add

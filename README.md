@@ -51,7 +51,7 @@ export LOG_SERVER_ROOT='/home'
 export RAILS_ENV="development"
 export SQL_DATABASE_PASSWORD="allYourSQLAreBelongToMe"
 
-export PATH=$PATH:$HOME/.yarn/bin # Add path for Yarn
+export PATH="$HOME/.yarn/bin:$PATH" # Add path for Yarn
 ```
 
 ### A note about zsh custom plugins
