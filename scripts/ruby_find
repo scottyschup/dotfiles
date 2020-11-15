@@ -4,6 +4,24 @@ require "colorize"
 require "timeout"
 require "pry"
 
+SKIP_DIRS = {
+  '.atom' => true,
+  '.cache' => true,
+  '.npm' => true,
+  '.nvm' => true,
+  '.pry' => true,
+  '.rbenv' => true,
+  '.Trash' => true,
+  '.vscode' => true,
+  'Caches' => true,
+  'iMovie Library.imovielibrary' => true,
+  'Library' => true,
+  'node_modules' => true,
+  'Photos Library.photoslibrary' => true,
+  'tmp' => true,
+  'Volumes' => true,
+}
+
 # Helper functions
 def dir_contents(dir)
   Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
@@ -17,7 +35,7 @@ end
 
 def dirs_in_dir(dir)
   dir_contents(dir)
-    .select { |el| File.directory? el }
+    .select { |el| File.directory?(el) && !skippable?(el) }
     .compact
 rescue StandardError => e
   puts "Rescued Exception: #{e.exception}"
@@ -38,6 +56,15 @@ def path_and_name_from_str(str)
   path = str.split('/')
   el = path.pop
   [path, el]
+end
+
+def skippable?(path)
+  split_path = path.split('/')
+  dir = split_path.last
+  return false unless SKIP_DIRS[dir]
+
+  $ruby_find_skipped += 1
+  true
 end
 
 def usage
@@ -92,6 +119,7 @@ stack = [root]
 matches = []
 i = 0
 found = 0
+$ruby_find_skipped = 0
 
 begin
   while stack.length > 0
@@ -120,7 +148,10 @@ rescue StandardError => e
   $stderr.puts "contents: #{contents.to_s.cyan}"
   exit 2
 end
-$stdout.puts "Searched #{i} directories"
-$stdout.puts "Found #{found} matches"
+
+$stdout.puts "Matches:" unless matches.empty?
 $stdout.puts(matches.map{ |el| el.green }.join("\n")) unless matches.empty?
+$stdout.puts "Searched #{i} directories"
+$stdout.puts "Skipped #{$ruby_find_skipped} directories"
+$stdout.puts "Found #{found} matches"
 $stdout.puts "Total time `ruby_find`: #{Time.now - start} seconds"
