@@ -181,7 +181,8 @@ function git_checkout {
   fi
 
   msg=`git checkout "$@" 2>&1`
-  if [ $? -gt 0 ]; then
+  co_status=$?
+  if [ $co_status -gt 0 ]; then
     setopt NULL_GLOB
     if [[ $msg = "error: pathspec"*"did not match any file(s) known to git" ]]; then
       git_branch_history rm $branch &> /dev/null
@@ -190,7 +191,7 @@ function git_checkout {
       echo $msg
     fi
     unsetopt NULL_GLOB
-    return $?
+    return $co_status
   fi
 
   git_branch_history add
