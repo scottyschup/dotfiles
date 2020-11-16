@@ -156,6 +156,7 @@ alias grepa=grep_alias # zsh only
 alias hurls=handy_urls
 alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
 alias lss="list_scripts"
+alias now="ruby -e 'puts Time.now'"
 alias psaux="parse_ps_aux"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"

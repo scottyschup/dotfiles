@@ -27,7 +27,7 @@ def run_wxr_widget(zip_code = 60640)
     end
 
     system "clear"
-    cmd = `curl -s wttr.in/#{zip_code}`
+    cmd = `curl -s wttr.in/#{zip_code}?u`
     # cmd = `curl "samiare.net/daily/190128"` # Test URL (so as not to overwhelm wttr.in during dev/testing)
     $stdout.puts(cmd)
     $stdout.puts("Last updated => #{Time.now.strftime('%F %T')}")
