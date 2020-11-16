@@ -57,12 +57,11 @@ source $DOTFILES/.colors
 export LANG=en_US.UTF-8
 
 # Init language version managers
-# Node
+## Node
 export NVM_DIR="$HOME/.nvm"
 export NVM_BREW_PREFIX=$(brew --prefix nvm)
 [ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"  # This loads nvm
 [ -s "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm" ] && . "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
 ## Ruby
 if [[ `which rbenv` != *"not found" ]]; then
   eval "$(rbenv init - zsh)"
@@ -71,8 +70,10 @@ fi
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init - zsh)"
 fi
-# Source .zshenv which adds pyenv/rbenv/npm bin dirs to PATH
-source $DOTFILES/.zshenv
+## Add rbenv/pyenv/npm bin to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$(npm bin):$PATH"
+export PATH="$HOME/.pyenv/bin:$PATH"
+export PATH="$HOME/.rbenv/bin:$PATH"
 
 # Use Keypad in terminal
 # 0 . Enter

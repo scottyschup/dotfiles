@@ -171,6 +171,16 @@ function ping_google {
   ping -c $count google.com
 }
 
+function pretty_print {
+  if [ $2 ]
+  then
+    local delimiter="$2"
+  else
+    local delimiter=' '
+  fi
+  echo "$1" | tr "$delimiter" "\n"
+}
+
 function psaux_with_grep {
   ps aux | grep $1
 }
