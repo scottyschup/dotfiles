@@ -169,14 +169,22 @@ function git_branch_set_upstream {
 function git_checkout {
   git_branch_history add
   if [ "$1" = "-b" ]; then
-    branch=$2
+    local branch=$2
+  elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    git checkout --help
+    return
+  elif [ "$1" = "-t" ] || [ "$1" = "--track" ]; then
+    local branch="${2#*/}"
+    local remote="${2%/*}/"
   else
-    branch=$1
+    local branch=$1
   fi
+
+  echo "Checking out: $remote$branch"
 
   current=`git_branch_history current`
   if [ "$current" = "$branch" ]; then
-    echo "$1 is already checked out"
+    echo "$branch is already checked out"
     return 1
   fi
 
@@ -186,7 +194,7 @@ function git_checkout {
     setopt NULL_GLOB
     if [[ $msg = "error: pathspec"*"did not match any file(s) known to git" ]]; then
       git_branch_history rm $branch &> /dev/null
-      echo "Branch '$branch' not found."
+      echo "Branch '$remote$branch' not found."
     else
       echo $msg
     fi
