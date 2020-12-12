@@ -7,23 +7,23 @@ begin
   verbose = $VERBOSE
   $VERBOSE = nil # Suppress deprecation warnings and the like
 
-  require "optparse"
-  require "net/ping"
-  require "colorize"
+  require 'optparse'
+  require 'net/ping'
+  require 'colorize'
   # add more requires here
 rescue LoadError => err
   # Error example:
   #   pry(main)> require 'fake_gem/with/path'
   #   LoadError: cannot load such file -- fake-gem/with/path
   #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
-  dependency = err.message.split(" -- ").last
-  # Remove "/with/path" from the gem name; noop for all others
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
   dep_map = {
-    "net/ping" => "net-ping",
+    'net/ping' => 'net-ping',
   }
   pretty_dep = dep_map[dependency] || dependency
   $stderr.puts "Missing dependency: #{pretty_dep}"
-  $stderr.puts "Make sure the following command completes successfully before using this script."
+  $stderr.puts 'Make sure the following command completes successfully before using this script.'
   $stderr.puts "  gem install #{pretty_dep}"
   exit 1
 ensure
@@ -50,19 +50,19 @@ class PingRb
   end
 
   def add_to_history
-    raise NotImplementedError.new("`PingRb#add_to_history` has not been implemented")
+    raise NotImplementedError.new('`PingRb#add_to_history` has not been implemented')
   end
 
   def full_ping(count: nil)
     curr_count = count || @count
-    `ping #{@url} -c #{curr_count.to_s}`
+    `ping #{@url} -c #{curr_count}`
     # output = `ping #{@url} -c #{curr_count.to_s}`
     # add_to_history(:full_ping, curr_count, output)
   end
 
   # TODO
   def full_ping_data
-    raise NotImplementedError.new("`PingRb#full_ping_data` has not been implemented")
+    raise NotImplementedError.new('`PingRb#full_ping_data` has not been implemented')
   end
 
   def single_ping
@@ -71,10 +71,11 @@ class PingRb
 
   def single_ping_data
     res = single_ping
-    return { url: url, time: "LOST" } if res.nil?
-    time = res.split(" ")[6]
-    time = "LOST" if !time
-    time.gsub!("time=", "")
+    return { url: url, time: 'LOST' } if res.nil?
+
+    time = res.split(' ')[6]
+    time ||= 'LOST'
+    time.gsub!('time=', '')
     { url: url, time: time }
   end
 
@@ -119,25 +120,24 @@ class PingRb
 
   def unpack(resp)
     # If resp is a packets line, return an Array with 3 elements [tx, rx, loss]
-    if resp.include?("packets")
-      # rubocop:disable Layout/MultilineMethodCallIndentation
-      resp                               # "3 packets transmitted, 3 packets received, 0.0% packet loss"
-        .split(", ")                     # ["3 packets transmitted", "3 packets received", "0.0% packet loss"]
-        .map { |el| el.split(" ").first } # ["3", "3", "0.0%"]
-      # rubocop:enable Layout/MultilineMethodCallIndentation
-    elsif resp.include?("stddev")
-      resp            # "round-trip min/avg/max/stddev = 43.535/59.527/74.010/12.487 ms"
-        .split(" = ") # ["round-trip min/avg/max/stddev", "43.535/59.527/74.010/12.487 ms"]
-        .last         # "43.535/59.527/74.010/12.487 ms"
-        .split(" ")   # ["43.535/59.527/74.010/12.487", "ms"]
-        .first         # "43.535/59.527/74.010/12.487"
-        .split("/")   # ["43.535", "59.527", "74.010", "12.487"]
+    if resp.include?('packets')
+      resp                                # '3 packets transmitted, 3 packets received, 0.0% packet loss'
+        .split(', ')                      # ['3 packets transmitted', '3 packets received', '0.0% packet loss']
+        .map { |el| el.split(' ').first } # ['3', '3', '0.0%']
+    elsif resp.include?('stddev')
+      resp                                # 'round-trip min/avg/max/stddev = 43.535/59.527/74.010/12.487 ms'
+        .split(' = ')                     # ['round-trip min/avg/max/stddev', '43.535/59.527/74.010/12.487 ms']
+        .last                             # '43.535/59.527/74.010/12.487 ms'
+        .split(' ')                       # ['43.535/59.527/74.010/12.487', 'ms']
+        .first                            # '43.535/59.527/74.010/12.487'
+        .split('/')                       # ['43.535', '59.527', '74.010', '12.487']
     end
   end
 end
 
+# rubocop:disable Metrics/ClassLength
 class PingTracker
-  def initialize(args_for_pings = [{ url: "google.com", count: 10, color: :white }])
+  def initialize(args_for_pings = [{ url: 'google.com', count: 10, color: :white }])
     @pings = []
     args_for_pings.each { |args| add_ping(**args) }
   end
@@ -147,10 +147,13 @@ class PingTracker
   end
 
   def format_numerical_val(val, key = nil)
-    return val.red if val.include?("LOST")
-    return val if (val.count(".") > 1 || val =~ /[a-zA-Z]/)
+    return val.red if val.include?('LOST')
+    return val if val.count('.') > 1 || val =~ /[a-zA-Z]/
 
     if key == :lost
+      # rubocop:disable Layout/EndAlignment
+      # rubocop:disable Layout/CaseIndentation
+
       # Color based on loss percentage
       return case val.to_i
       when 0..1
@@ -160,6 +163,8 @@ class PingTracker
       when 5..100
         val.red
       end
+      # rubocop:enable Layout/EndAlignment
+      # rubocop:enable Layout/CaseIndentation
     end
 
     # return val if val =~ /^\s*[0-9]*(\.[0-9]*)?$/
@@ -169,14 +174,14 @@ class PingTracker
       val.green
     when 50..99
       val.yellow
-    when 100..100000
+    when 100..100_000
       val.red
     end
   end
 
   def ping_all(summary: false)
-    @pings.inject([]) do |_q, ping|
-      _q << Thread.new do
+    @pings.inject([]) do |q, ping|
+      q << Thread.new do
         Thread.current[:res] = ping.send(summary ? :summary_ping : :full_ping)
       end
     end.each(&:join)
@@ -186,6 +191,7 @@ class PingTracker
     @pings.each do |p|
       $stdout.puts("Pinging #{p.name} @ #{p.url} #{p.count} times".colorize(p.color))
     end
+
     ping_all(summary: summary).each_with_index do |thread, idx|
       $stdout.puts("\n#{@pings[idx].name}:\n#{thread[:res]}".colorize(@pings[idx].color))
     end
@@ -212,22 +218,47 @@ class PingTracker
     end
 
     # Handle and print results
-    unless output.empty?
-      @curr_output = output.join("\n")
-    end
+    @curr_output = output.join("\n") unless output.empty?
 
-    system "clear"
+    system 'clear'
     $stdout.puts(@curr_output)
 
-    if pending.length > 0
-      pending_str = pending.map do |(idx, time)|
-        "  * Iteration #{idx}: #{time}s"
-      end.join("\n")
+    if pending.length.positive?
+      pending_str = pending.map { |(idx, time)| "  * Iteration #{idx}: #{time}s" }.join("\n")
 
       $stdout.puts("PENDING:\n#{pending_str}\n".cyan)
     end
 
     @thr_q += re_q
+  end
+
+  def runtime(start, curr)
+    rt_ss = curr - start
+    # Integer#divmod returns and qrray of [QUOTIENT, MODULUS]
+    rt_hh = nil
+    rt_dd = nil
+
+    # X seconds to MM:SS
+    rt_min, rt_sec = rt_ss.divmod 60
+    rt_mm, rt_ss = [rt_min, rt_sec].map { |n| n.round.to_s.rjust(2, '0') }
+
+    # X minutes to HH:MM
+    if rt_min > 59
+      rt_hour, rt_min = rt_min.divmod 60
+      rt_hh, rt_mm = [rt_hour, rt_min].map { |n| n.round.to_s.rjust(2, '0') }
+
+      if rt_hour > 23
+        rt_day, rt_hour = rt_hour.divmod 24
+        rt_dd, rt_hh = [rt_day, rt_hour].map { |n| n.round.to_s.rjust(2, '0') }
+      else
+        rt_dd = '00'
+      end
+    else
+      rt_dd = '00'
+      rt_hh = '00'
+    end
+
+    "#{rt_dd}:#{rt_hh}:#{rt_mm}:#{rt_ss}"
   end
 
   def run
@@ -250,34 +281,11 @@ class PingTracker
 
         curr_pings = []
         @pings.each { |ping| curr_pings << [ping, ping.single_ping_data] }
-        time_pretty = Time.at(time_epoch).strftime("%T")
+        time_pretty = Time.at(time_epoch).strftime('%T')
 
-        rt_ss = Time.at(time_epoch) - @start_time
-        # Integer#divmod returns and qrray of [QUOTIENT, MODULUS]
-        rt_hh = nil
-        rt_dd = nil
-        # X seconds to MM:SS
-        rt_min, rt_sec = rt_ss.divmod 60
-        rt_mm, rt_ss = [rt_min, rt_sec].map { |n| n.round.to_s.rjust(2, "0") }
-        # X minutes to HH:MM
-        if rt_min > 59
-          rt_hour, rt_min = rt_min.divmod 60
-          rt_hh, rt_mm = [rt_hour, rt_min].map { |n| n.round.to_s.rjust(2, "0") }
+        rt = runtime(@start_time, Time.at(time_epoch))
 
-          if rt_hour > 23
-            rt_day, rt_hour = rt_hour.divmod 24
-            rt_dd, rt_hh = [rt_day, rt_hour].map { |n| n.round.to_s.rjust(2, "0") }
-          else
-            rt_dd = "00"
-          end
-        else
-          rt_dd = "00"
-          rt_hh = "00"
-        end
-
-        rt_dd_hh_mm_ss = "#{rt_dd}:#{rt_hh}:#{rt_mm}:#{rt_ss}"
-
-        Thread.current[:output] = "\nIteration #{idx} @ #{time_pretty}\t\t\t\tTotal runtime #{rt_dd_hh_mm_ss}\n".magenta
+        Thread.current[:output] = "\nIteration #{idx} @ #{time_pretty}\t\t\t\tTotal runtime #{rt}\n".magenta
         Thread.current[:output] += table(curr_pings)
       end
 
@@ -288,15 +296,17 @@ class PingTracker
 
   def table(ping_responses)
     table_data = Hash.new { |h, k| h[k] = [] }
+
     @avg_times_and_losses ||= Hash.new do |h, k|
       h[k] = Hash.new { |h2, k2| h2[k2] = 0 }
     end
+
     ping_responses.each do |(ping, resp)|
       table_data[:name] << ping.name
       table_data[:url] << resp[:url]
       table_data[:time] << resp[:time]
 
-      if resp[:time] == "LOST"
+      if resp[:time] == 'LOST'
         table_data[:average] << @avg_times_and_losses[ping.name][:average]
         @avg_times_and_losses[ping.name][:lost] += 1
       else
@@ -317,9 +327,9 @@ class PingTracker
       col_widths[k] = ([k.to_s] + arr).map { |el| el.to_s.length }.max
     end
 
-    table = ""
-    header = table_data.keys.map { |k| k.to_s.upcase.ljust(col_widths[k]) }.join(" | ")
-    hr = "-" * header.length
+    table = ''
+    header = table_data.keys.map { |k| k.to_s.upcase.ljust(col_widths[k]) }.join(' | ')
+    hr = '-' * header.length
 
     table += "#{header}\n#{hr}\n"
 
@@ -336,6 +346,7 @@ class PingTracker
     table
   end
 end
+# rubocop:enable Metrics/ClassLength
 
 ################
 # Shell script #
@@ -346,31 +357,32 @@ if $PROGRAM_NAME == __FILE__
   options = {}
   OptionParser.new do |opts|
     # opts.banner = usage
-    opts.on("-nX,Y,Z", "--named-sets=X,Y,Z", Array, "Use named sets") do |named|
+    opts.on('-nX,Y,Z', '--named-sets=X,Y,Z', Array, 'Use named sets') do |named|
       options[:named_sets] = named
     end
 
-    opts.on("-i", "--interactive") { options[:interactive] = true }
-    opts.on("-r", "--run") { options[:run] = true }
-    opts.on("-s", "--summary") { options[:summary] = true }
+    opts.on('-cCOUNT', '--count=COUNT') { |count| options[:count] = count.to_i }
+    opts.on('-i', '--interactive') { options[:interactive] = true }
+    opts.on('-r', '--run') { options[:run] = true }
+    opts.on('-s', '--summary') { options[:summary] = true }
 
-    opts.on_tail("-h", "--help", "Show this help message") do
+    opts.on_tail('-h', '--help', 'Show this help message') do
       puts opts
       exit
     end
   end.parse!
 
   named_sets = {
-    # sonos: [
-    #   { url: "10.0.0.10", name: "PLAY:1 (Bathroom)" },
-    #   { url: "10.0.0.11", name: "PLAY:1 (Bedroom)" },
-    #   { url: "10.0.0.12", name: "PLAY:3 (Living room)" },
-    # ],
-    modem: [{ url: "192.168.1.254", name: "AT&T modem" }],
-    gateway: [{ url: `route get default | grep gateway`.split.last, name: "Default gateway" }],
-    google: [{ url: "google.com", name: "Google" }],
-    spotify: [{ url: "spotify.com", name: "Spotify" }],
-    github: [{ url: "github.com", name: "Gitub" }],
+    sonos: [
+      { url: '10.0.0.7', name: 'PLAY:1 (Bathroom)' },
+      { url: '10.0.0.9', name: 'PLAY:1 (Bedroom)' },
+      { url: '10.0.0.10', name: 'PLAY:3 (Living room)' },
+    ],
+    modem: [{ url: '192.168.1.254', name: 'AT&T modem' }],
+    gateway: [{ url: `route get default | grep gateway`.split.last, name: 'Default gateway' }],
+    google: [{ url: 'google.com', name: 'Google' }],
+    spotify: [{ url: 'spotify.com', name: 'Spotify' }],
+    github: [{ url: 'github.com', name: 'Gitub' }],
   }
 
   if options[:named_sets].nil?

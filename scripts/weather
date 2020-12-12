@@ -16,12 +16,20 @@ unless gem_installed? 'activesupport'
 end
 require 'active_support/core_ext/numeric/time.rb'
 
+def clock_number(n)
+  n.to_s.rjust(2, '0')
+end
+
 def run_wxr_widget(zip_code = 60640)
   last_update = 5.hours.ago
 
   while true
     if last_update > 4.hours.ago
-      $stdout.print("\rCurrent time => #{Time.now.strftime('%F %T')}")
+      next_in_secs = (last_update + 4.hours) - Time.now
+      hours, mins_in_secs = next_in_secs.round.divmod(3600)
+      mins, secs = mins_in_secs.divmod(60)
+      next_str = "#{clock_number hours}:#{clock_number mins}:#{clock_number secs}"
+      $stdout.print("\rCurrent time => #{Time.now.strftime('%F %T')}; next update in #{next_str}")
       sleep 1
       next
     end
@@ -31,7 +39,6 @@ def run_wxr_widget(zip_code = 60640)
     # cmd = `curl "samiare.net/daily/190128"` # Test URL (so as not to overwhelm wttr.in during dev/testing)
     $stdout.puts(cmd)
     $stdout.puts("Last updated => #{Time.now.strftime('%F %T')}")
-    $stdout.puts("Next update  => #{(Time.now + 4.hours).strftime('%F %T')}")
     $stdout.print("Current time => #{Time.now.strftime('%F %T')}") # Gets periodically overwritten in line 13
     last_update = Time.now
   end

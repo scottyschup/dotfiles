@@ -1,9 +1,9 @@
 #! /usr/bin/env zsh
 
-. $DOTFILES/.functions
+source $DOTFILES/.functions
 
-full_pid=$(lsof -nP -iTCP:$1 | grep LISTEN)
-pid=$(echo "$full_pid" | awk '{print $2}')
+local full_pid=$(lsof -nP -iTCP:$1 | grep LISTEN)
+local pid=$(echo "$full_pid" | awk '{print $2}')
 
 if [[ "$pid" = '' ]]
 then

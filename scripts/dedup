@@ -10,7 +10,7 @@ unless filename
 end
 
 begin
-  uniq_lines = File.open(filename).readlines.uniq
+  uniq_lines = File.open(filename).readlines.reverse.uniq.reverse
   $stdout.puts(uniq_lines) unless quiet == '-q'
   f = File.open(filename, 'w')
   uniq_lines.each { |line| f.write(line) }
