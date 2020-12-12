@@ -1,39 +1,89 @@
+# TODO:
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: false
+Lint/DuplicateRescueException:
+  Enabled: false
+Lint/EmptyConditionalBody:
+  Enabled: false
+Lint/FloatComparison:
+  Enabled: false
+Lint/OutOfRangeRegexpRef:
+  Enabled: false
+Lint/SelfAssignment:
+  Enabled: false
+Lint/TopLevelReturnWithArgument:
+  Enabled: false
+Style/ExplicitBlockArgument:
+  Enabled: false
+Style/GlobalStdStream:
+  Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
+Style/SingleArgumentDig:
+  Enabled: false
+Style/StringConcatenation:
+  Enabled: false
+
 # My custom settings
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
 Layout/LineLength:
   Max: 120
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+Lint/DuplicateElsifCondition:
+  Enabled: true
+Lint/MissingSuper:
+  Enabled: true
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
+Lint/UnreachableLoop:
+  Enabled: true
+
+Metrics/AbcSize:
+  Max: 30
+Metrics/CyclomaticComplexity:
+  Max: 30
+
 Naming/RescuedExceptionsVariableName:
+  Enabled: false
+
+Style/AccessorGrouping:
+  Enabled: true
+Style/ArrayCoercion:
+  Enabled: true
+Style/BisectedAttrAccessor:
+  Enabled: true
+Style/CaseLikeIf:
+  Enabled: true
+Style/ExponentialNotation:
   Enabled: false
 Style/FrozenStringLiteralComment:
   Enabled: false
+Style/HashAsLastArrayItem:
+  Enabled: true
 Style/HashEachMethods:
+  Enabled: true
+Style/HashLikeCase:
   Enabled: true
 Style/HashTransformKeys:
   Enabled: true
 Style/HashTransformValues:
   Enabled: true
-Style/StderrPuts:
-  Enabled: false
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-Style/TrailingCommaInHashLiteral:
+Style/RedundantAssignment:
   Enabled: true
-  EnforcedStyleForMultiline: consistent_comma
-Lint/StructNewOverride:
-  Enabled: true
-Lint/RaiseException:
-  Enabled: true
-
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: true
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-Lint/DeprecatedOpenSSLConstant:
-  Enabled: true
-Lint/MixedRegexpCaptureTypes:
-  Enabled: true
-Style/ExponentialNotation:
-  Enabled: false
 Style/RedundantFetchBlock:
+  Enabled: true
+Style/RedundantFileExtensionInRequire:
   Enabled: true
 Style/RedundantRegexpCharacterClass:
   Enabled: true
@@ -41,31 +91,18 @@ Style/RedundantRegexpEscape:
   Enabled: true
 Style/SlicingWithRange:
   Enabled: true
-
-Style/AccessorGrouping:
-  Enabled: true
-Style/BisectedAttrAccessor:
-  Enabled: true
-Style/RedundantAssignment:
-  Enabled: true
-
-Lint/DuplicateElsifCondition:
-  Enabled: true
-Style/ArrayCoercion:
-  Enabled: true
-Style/CaseLikeIf:
-  Enabled: true
-Style/HashAsLastArrayItem:
-  Enabled: true
-Style/HashLikeCase:
-  Enabled: true
-Style/RedundantFileExtensionInRequire:
-  Enabled: true
-
+Style/StderrPuts:
+  Enabled: false
 Style/StringLiterals:
   EnforcedStyle: single_quotes
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
 
-  ###############
+################################################################################
 # Some common custom settings
 # Source: https://gist.github.com/jhass/a5ae80d87f18e53e7b56
 
@@ -89,8 +126,8 @@ Style/SymbolArray:
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
 
-# A specialized exception class will take one or more arguments and construct the message from it.
-# So both variants make sense.
+# A specialized exception class will take one or more arguments and construct
+# the message from it. So both variants make sense.
 Style/RaiseArgs:
   Enabled: false
 
