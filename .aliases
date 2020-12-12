@@ -68,6 +68,7 @@ alias gdns="git diff --numstat"
 alias gf="git fetch"
 alias gfp="git fetch --all --prune; git pull"
 alias ghl="cat .git/refs/heads/master" # full hash
+alias gho="open_on_github"
 alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
 alias gin="git init"
 alias glb="echo `gbh last`"

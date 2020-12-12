@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require "optparse"
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn "Make sure the following command completes successfully before using this script."
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+def main(remote: 'origin')
+  unless Dir.exist?('.git')
+    $stderr.puts("ERR: This is not a git repo")
+    exit 2
+  end
+
+  remote_url = `git remote get-url #{remote}`
+  project_path = remote_url&.split(':')&.last&.split('.')&.first
+
+  unless project_path
+    $stderr.puts("ERR: could not extract project path from remote URL: #{remote_url}")
+    exit 3
+  end
+
+  site_url = "https://github.com/#{project_path}"
+  $stdout.puts("Opening #{site_url} in the default browser")
+  `open #{site_url}`
+end
+
+################
+# Shell script #
+################
+def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    # These are mostly just here as examples
+
+    # opts.banner = usage
+    # opts.on("-v", "--verbose", "More loquacious") do
+    #   options[:verbose] = true
+    # end
+
+    opts.on("-rREMOTE", "--remote=REMOTE", "Option with value message") do |r|
+      options[:remote] = r
+    end
+
+    # opts.on_tail("-h", "--help", "Show this help message") do
+    #   puts opts
+    #   exit
+    # end
+  end.parse!
+
+  main(options)
+end
