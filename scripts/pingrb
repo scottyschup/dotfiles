@@ -374,9 +374,9 @@ if $PROGRAM_NAME == __FILE__
 
   named_sets = {
     sonos: [
-      { url: '10.0.0.7', name: 'PLAY:1 (Bathroom)' },
-      { url: '10.0.0.9', name: 'PLAY:1 (Bedroom)' },
-      { url: '10.0.0.10', name: 'PLAY:3 (Living room)' },
+      { url: '192.168.1.8', name: 'PLAY:1 (Bathroom)' },
+      { url: '192.168.1.9', name: 'PLAY:1 (Bedroom)' },
+      { url: '192.168.1.12', name: 'PLAY:3 (Living room)' },
     ],
     modem: [{ url: '192.168.1.254', name: 'AT&T modem' }],
     gateway: [{ url: `route get default | grep gateway`.split.last, name: 'Default gateway' }],

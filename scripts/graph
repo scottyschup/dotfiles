@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require "optparse"
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn "Make sure the following command completes successfully before using this script."
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+class Graph
+  class InvalidInputError < StandardError; end
+
+  attr_accessor :equation, :input, :input_axis, :height, :width
+
+  def initialize(
+    input: nil,
+    input_axis: nil,
+    height: 30,
+    width: 100,
+    &block
+  )
+    @equation = block
+    @height = height
+    @width = width
+    @input = input
+    @input_axis = input_axis
+    input_arr
+    @min_h = Float::INFINITY
+    @max_h = -Float::INFINITY
+    @min_w = @input_arr.min
+    @max_w = @input_arr.max
+  end
+
+  def datapoints
+    @iterations.times.map do |x|
+      [x, @equation.call(x)]
+    end
+  end
+
+  def input_arr
+    @input_arr ||= case @input
+    when  Integer
+      (0..@input).to_a
+    when Range
+      @input.to_a
+    when Array
+      @input.sort
+    else
+      @input.respond_to?(:sort) ? @input.sort : raise_invalid_input
+    end
+  end
+
+  def raise_invalid_input
+    raise InvalidInputError.new("'#{@input.class}' is not a valid input type.")
+  end
+end
+
+################
+# Shell script #
+################
+def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    # These are mostly just here as examples
+
+    # opts.banner = usage
+    # opts.on("-v", "--verbose", "More loquacious") do
+    #   options[:verbose] = true
+    # end
+
+    opts.on("-wVAL", "--width=VAL", "Output width (default is 100)") do |val|
+      options[:width] = val
+    end
+
+    opts.on("-hVAL", "--height=VAL", "Output height (default is 30)") do |val|
+      options[:height] = val
+    end
+
+    # opts.on_tail("-h", "--help", "Show this help message") do
+    #   puts opts
+    #   exit
+    # end
+  end.parse!
+
+  equation = ARGV.first
+
+  g = Graph.new(
+    height: options[:height],
+    width: options[:width],
+    equation: equation,
+    input: options[:input],
+    input_axis: options[:input_axis],
+  )
+end

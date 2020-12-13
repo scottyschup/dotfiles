@@ -8,16 +8,38 @@ fi
 
 if [ $2 ]; then
   port=$2
-  pid=1 # Not a typo; this val just needs to be truthy
+  if [ $1 = "pid" ]
+  then
+    pid_only=1
+  else
+    # Catch invalid arg
+    echo "ArgumentError: invalid arg: $1" && exit 2
+  fi
 else
   port=$1
 fi
 
+# Catch non-numerical port arg
+num_re='^[0-9]+$'
+if [ ! "$port" =~ "$num_re" ]
+then
+  echo "Port '$port' is not a number :("
+  exit 3
+fi
+
 line=$(lsof -nP -iTCP:$port | grep LISTEN)
 
-if [ $pid ]; then
+#
+if [ ! $line ]
+then
+  echo "$RED""Nothing found on port $port$NONE" 1>&2
+  exit 4
+fi
+
+# Successful responses
+if [ $pid_only ]; then
   echo $line | awk '{print $2}'
-  exit 0
+  exit
 fi
 
 echo $line
