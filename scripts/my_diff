@@ -32,14 +32,14 @@ output_arr = output_str.split("\n")
 
 output_arr.each do |line|
   if parallel
-    pipe_line_re = /.*\s*\|\s*.*/
+    pipe_line_re = /.*\s+\|\s+.*/
     if line =~ pipe_line_re
       left, right = line.split("|")
       $stdout.puts [left.red, (right || " ").green].join("|")
     else
-      color = line =~ /\s*>/ ?
+      color = line =~ /\s+>/ ?
         :green :
-        line =~ /.*<\s*$/ ?
+        line =~ /.*<\s+$/ ?
           :red :
           ""
       $stdout.puts line.colorize color
