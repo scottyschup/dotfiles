@@ -18,7 +18,7 @@ end
 #########
 # SETUP #
 #########
-class GitBranchTracker
+class GitBranchHistory
   class NotGitRepoError < StandardError; end
 
   DIR_NAME = "#{ENV['HOME']}/.git_branch_history"
@@ -172,9 +172,9 @@ class GitBranchTracker
 end
 
 begin
-  tracker = GitBranchTracker.new args: ARGV
+  tracker = GitBranchHistory.new args: ARGV
   tracker.main
-rescue GitBranchTracker::NotGitRepoError => e
+rescue GitBranchHistory::NotGitRepoError => e
   warn e
   exit 1
 end
