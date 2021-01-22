@@ -338,7 +338,7 @@ class PingTracker
       table_data.each_key do |k|
         cell_val = table_data[k][i]
         cell_val = format_numerical_val(cell_val.to_s.rjust(col_widths[k]), k)
-        row << cell_val.ljust(col_widths[k])
+        row << cell_val&.ljust(col_widths[k])
       end
       table += "#{row.join(' | ')}\n"
     end
