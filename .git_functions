@@ -2,6 +2,23 @@
 # To use personal git settings on work laptop:
 #   * upgl (use personal git local)
 #   * change git@github.com:scottyschup/repo.git to git@github.com.personal:scottyschup/repo.git
+#
+# To set up:
+#   * `ssh-keygen -t rsa -C "ssschupbach@gmail.com" -f "id_rsa_personal"`
+#   * `vim ~/.ssh/config`
+#   * Add:
+#   ```sh
+#   # Work account (default)
+#   Host github.com
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_rsa
+#   # Personal account
+#   Host github.com.personal
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_rsa_personal
+#   ```
 
 ####################
 # Git autocomplete #
@@ -167,17 +184,19 @@ function git_branch_set_upstream {
 }
 
 function git_checkout {
+  local remote=""
+  local branch=""
   git_branch_history add
   if [ "$1" = "-b" ]; then
-    local branch=$2
+    branch=$2
   elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     git checkout --help
     return
   elif [ "$1" = "-t" ] || [ "$1" = "--track" ]; then
-    local branch="${2#*/}"
-    local remote="${2%/*}/"
+    branch="${2#*/}"
+    remote="${2%/*}/"
   else
-    local branch=$1
+    branch=$1
   fi
 
   echo "Checking out: $remote$branch"
