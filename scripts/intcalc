@@ -1,0 +1,162 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  require 'colorize'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/
+  #     kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+class InterestCalculator
+  REQUIRED_OPTS = %i(interest terms amount).freeze
+  TIME_PERIODS = {
+    days: :days,
+    weeks: :weeks,
+    months: :months,
+    years: :years,
+  }.freeze
+  TIME_PERIOD_ADVERBS = {
+    days: :daily,
+    weeks: :weekly,
+    months: :monthly,
+    years: :annually,
+  }
+  DEFAULT_VALUES = {
+    term_period: TIME_PERIODS[:months],
+    interest_period: TIME_PERIODS[:months],
+    verbose: false,
+  }.freeze
+
+  def initialize(options)
+    # Req'd
+    @amount = options[:amount].to_f
+    @interest = options[:interest].to_f
+    @terms = options[:terms].to_i
+
+    # Optional
+    @term_period = options[:term_period] || DEFAULT_VALUES[:term_period]
+    @interest_period = options[:interest_period] || DEFAULT_VALUES[:interest_period]
+    @verbose = options[:verbose] || DEFAULT_VALUES[:verbose]
+  end
+
+  def calculate
+    if @term_period != @interest_period
+      msg = "Term period and interest period must be the same"
+      return msg += "\n\tterm: #{@term_period}\n\tinterest: #{@interest_period}"
+    end
+
+    amount_rjust = ('%.2f' % @amount).length + 1
+    terms_rjust = @terms.to_s.length + 1
+
+    result = @amount
+    $stdout.puts(
+      "#{time_period_adverb @interest_period, capitalize: true} accrual @ #{@interest}% over #{@terms} #{@term_period}"
+    )
+    @terms.times do |i|
+      n = i + 1
+      result *= (1 + @interest / 100)
+      result = result.round(2)
+
+      if @verbose || n == @terms
+        gain = result - @amount
+        gain_str = ('%.2f' % gain).rjust(amount_rjust)
+        percent_gain_str = ('%.2f' % (gain / @amount * 100)).rjust(7)
+        term_str = n.to_s.rjust(terms_rjust)
+
+        msg = "#{term_str}: $#{('%.2f' % result).rjust(amount_rjust)}  "
+        msg += "Total gain: $#{gain_str} — #{percent_gain_str}%"
+
+        $stdout.puts(msg)
+      end
+    end
+  end
+
+  private
+
+  def time_period_adverb(period, capitalize: false)
+    adv = TIME_PERIOD_ADVERBS[period].to_s
+    capitalize ? adv.capitalize : adv
+  end
+end
+
+################
+# Shell script #
+################
+def usage
+  'Usage: intcalc REQD_OPTS [OTHER_OPTS]'
+end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    # These are mostly just here as examples
+
+    opts.banner = usage
+
+    opts.on('-aAMOUNT', '--amount=AMOUNT', '[REQD] Starting amount') do |amt|
+      options[:amount] = amt
+    end
+
+    opts.on('-iINTEREST', '--interest=INTEREST', '[REQD] Interest rate (per term)') do |int|
+      options[:interest] = int
+    end
+
+    opts.on('-tTERMS', '--term=TERMS', '[REQD] Number of term periods') do |terms|
+      options[:terms] = terms
+    end
+
+    opts.on(
+      '-yINTEREST_PERIOD',
+      '--interest-period=INTEREST_PERIOD',
+      'Type of interest period (defaults to months)'
+    ) do |interest_period|
+      options[:interest_period] = interest_period
+    end
+
+    opts.on(
+      '-pTERM_PERIOD',
+      '--term-period=TERM_PERIOD',
+      'Type of term period (defaults to months)'
+    ) do |term_period|
+      options[:term_period] = term_period
+    end
+
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  InterestCalculator::REQUIRED_OPTS.each do |prop|
+    raise OptionParser::MissingArgument.new(prop) if options[prop].nil?
+  end
+
+  InterestCalculator.new(options).calculate
+end
