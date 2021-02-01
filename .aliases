@@ -172,7 +172,8 @@ alias wxr=weather
 # networking
 alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1"
 alias netd="network_diagnostics"
-alias port=port_checker
+alias on_port=port_checker_local
+alias open_ports=port_checker_remote
 alias remoteip="curl ifconfig.me/all"
 
 # navigation

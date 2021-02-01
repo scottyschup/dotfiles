@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-source $DOTFILES/.aliases &1>/dev/null
+source $DOTFILES/.aliases >/dev/null 2>&1
 
 mkdir -p "~/.netd"
 filename="$HOME/.netd/fulldiagnostic-$(date +%s)"
+
+touch $filename
 
 echo "localip:\n\t$(localip)" >> $filename
 echo "\n" >> $filename
@@ -12,4 +14,6 @@ echo "\n" >> $filename
 echo "arp -na:\n$(arp -na)" >> $filename
 echo "\n" >> $filename
 echo "ifconfig:\n$(ifconfig)" >> $filename
+echo "\n" >> $filename
+echo "open ports:\n$(port_checker_remote `localip`)" >> $filename
 echo "\n" >> $filename

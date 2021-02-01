@@ -39,7 +39,7 @@ def run_wxr_widget(zip_code = 60640)
     # cmd = `curl "samiare.net/daily/190128"` # Test URL (so as not to overwhelm wttr.in during dev/testing)
     $stdout.puts(cmd)
     $stdout.puts("Last updated => #{Time.now.strftime('%F %T')}")
-    $stdout.print("Current time => #{Time.now.strftime('%F %T')}") # Gets periodically overwritten in line 13
+    $stdout.print("Current time => #{Time.now.strftime('%F %T')}") # Gets periodically overwritten
     last_update = Time.now
   end
 end

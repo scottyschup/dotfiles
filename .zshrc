@@ -1,5 +1,11 @@
 #!/usr/bin/zsh -w
 
+source `brew --prefix`/etc/profile.d/z.sh
+export LANG=en_US.UTF-8
+export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
+export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
 # For compilers to find openssl@1.1
 export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
 export CFLAGS="-I/usr/local/opt/openssl@1.1/include"
@@ -57,11 +63,36 @@ source $DOTFILES/.colors
 export LANG=en_US.UTF-8
 
 # Init language version managers
-## Node
+## Node/nvm
 export NVM_DIR="$HOME/.nvm"
 export NVM_BREW_PREFIX=$(brew --prefix nvm)
-[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"  # This loads nvm
+[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"  # This loads nvm from Homebrew
+# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm from manual installation
 [ -s "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm" ] && . "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Hook into `cd` to automatically swtich Node version if `.nvmrc` present
+# Must be after nvm initialization
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
 ## Ruby
 if [[ `which rbenv` != *"not found" ]]; then
   eval "$(rbenv init - zsh)"

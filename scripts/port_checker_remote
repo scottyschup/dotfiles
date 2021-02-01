@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require "optparse"
+  require 'socket'
+  require 'timeout'
+
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(" -- ").last
+  # Remove "/with/path" from the gem name; noop for all others
+  dependency = dependency.split("/").first
+  warn "Missing dependency: #{dependency}"
+  warn "Make sure the following command completes successfully before using this script."
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+def port_open?(ip, port, seconds=1)
+  # => checks if a port is open or not on a remote host
+  Timeout::timeout(seconds) do
+    begin
+      TCPSocket.new(ip, port).close
+      true
+    rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError
+      false
+    end
+  end
+rescue Timeout::Error
+  false
+end
+
+def print_output(host, open_ports, total_checked)
+  if open_ports.length > 0
+    $stdout.print("\rOpen ports on #{host}")
+    $stdout.print(": #{open_ports.join(', ')}")
+    return
+  end
+
+  $stdout.print("\rNo open ports found on #{host}")
+end
+
+################
+# Shell script #
+################
+def usage
+  $stdout.puts "$0: #{`echo $0`}"
+  $stdout.puts "$PROGRAM_NAME: #{$PROGRAM_NAME}"
+  $stdout.puts "__FILE__: #{__FILE__}"
+  $stdout.puts "Usage:  HOST_IP [OPTS]"
+  $stdout.puts "\t-p, --port\tPort to check (will check all form 0-9999 if none provided)"
+end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("-pPORT", "--port=PORT", "Port to check (or omit to check 0-9999)") do |port|
+      options[:port] = port
+    end
+
+    opts.on_tail("-h", "--help", "Show this help message") do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  host = options[:host] || ARGV.shift
+
+  unless host
+    usage
+    abort
+  end
+
+  single_port = options[:port] || ARGV.shift
+  ports = single_port ? [single_port] : (1..9999).to_a
+
+  thread_q = []
+  open_ports = []
+  ports_checked = 0
+
+  ports.each do |port|
+    ports_checked += 1
+    $stdout.print("\rQueueing #{port} of #{ports.length}")
+    thread_q << Thread.new do
+      Thread.current[:host] = host
+      Thread.current[:port] = port
+      Thread.current[:is_open] = port_open?(host, port)
+      Thread.current[:total_checked] = ports_checked
+    end
+  end
+
+  until thread_q.empty?
+    curr_thr = thread_q.shift
+    if !curr_thr.status
+      curr_thr.join
+      open_ports << curr_thr[:port] if curr_thr[:is_open]
+      print_output(curr_thr[:host], open_ports, curr_thr[:port])
+    else
+      thread_q.unshift(curr_thr)
+    end
+  end
+
+  $stdout.puts
+end
