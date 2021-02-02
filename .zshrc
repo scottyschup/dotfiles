@@ -1,6 +1,6 @@
 #!/usr/bin/zsh -w
 
-source `brew --prefix`/etc/profile.d/z.sh
+source `brew --prefix`/etc/profile.d/z.sh &>/dev/null
 export LANG=en_US.UTF-8
 export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
 export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
