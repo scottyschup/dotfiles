@@ -70,6 +70,11 @@ export NVM_BREW_PREFIX=$(brew --prefix nvm)
 # [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm from manual installation
 [ -s "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm" ] && . "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ssschupbach/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ssschupbach/google-cloud-sdk/path.zsh.inc'; fi
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/ssschupbach/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ssschupbach/google-cloud-sdk/completion.zsh.inc'; fi
+
 # Hook into `cd` to automatically swtich Node version if `.nvmrc` present
 # Must be after nvm initialization
 autoload -U add-zsh-hook
