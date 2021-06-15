@@ -101,7 +101,7 @@ alias react_new='new_react_project'
 
 function omni_killer {
   count=0
-  pids="$(pids_for $1)"
+  pids="$(pids_for $@)"
 
   for pid in $(echo $pids); do
     (kill -9 $(($pid)) || kill -9 $pid) && ((count++))

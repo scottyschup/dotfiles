@@ -47,6 +47,7 @@ if language == "ruby"
       dependency = dependency.split('/').first
       warn "Missing dependency: #{dependency}"
       warn 'Make sure the following command completes successfully before using this script.'
+      warn "\tgem install #{dependency}"
       exit 1
     ensure
       $VERBOSE = verbose

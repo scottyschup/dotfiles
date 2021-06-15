@@ -1,0 +1,353 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+require 'json'
+require 'net/http'
+require 'openssl'
+require 'optparse'
+require 'uri'
+
+#############
+# Ruby code #
+#############
+class V2CampaignTemplate
+  def initialize(name: nil)
+    @name = name.to_s
+  end
+
+  def random_x_digit_number(x)
+    (rand * (10 ** x)).floor
+  end
+
+  def placements_hash
+    [[
+      {
+        placementType: 'resources_page_featured_promo',
+        productType: 'resources',
+        productPlacementCategory: 'resources_page_placements',
+        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
+        headline: 'Monday Refresh',
+        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
+        priority: 800,
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        cta: {
+          ctaType: 'url',
+          ctaText: 'Check it Out!',
+          ctaValue: 'http://google.com'
+        },
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'engage_dashboard',
+        productType: 'engage',
+        productPlacementCategory: 'engage_placements',
+        priority: 100,
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'engage_dashboard_banner',
+        productType: 'engage',
+        productPlacementCategory: 'engage_placements',
+        priority: 100,
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyRedMedium',
+      },
+      {
+        placementType: 'advantage_mobile_dashboard',
+        productType: 'engage',
+        productPlacementCategory: 'engage_placements',
+        priority: 100,
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyWhite',
+      },
+    ].sample(rand(3) + 1)].flatten.each_with_object({}) { |el, agg| agg[el['placementType']] = el }
+  end
+
+  def assignment_criteria_arr
+    [
+      {
+        "product": "engage",
+        "partner": "great_west_life",
+        "membershipCategories": [],
+        "coverageTypeCodes": [],
+        "affiliations": [],
+        "policyNumbers": [],
+        "pvrcCodes": [],
+        "excludeClientIds": [],
+        "validPlacements": [],
+        "startDate": 1500854400000,
+        "timeZone": "UTC",
+        "overrides": {}
+      },
+      {
+        product: 'advantage',
+        partner: 'rally_health',
+        client: 'rally_employees',
+        membershipCategories: [],
+        coverageTypeCodes: [],
+        affiliations: [],
+        policyNumbers: [],
+        pvrcCodes: [],
+        excludeClientIds: [],
+        validPlacements: [],
+        startDate: 1500854400000,
+        timeZone: 'UTC',
+        overrides: {},
+      },
+      {
+        product: 'advantage',
+        partner: 'optum',
+        client: 'babcock_power',
+        membershipCategories: [],
+        coverageTypeCodes: [],
+        affiliations: [
+          'optum_babcock_power_aff_201512335_213537_OFor',
+          'optum_babcock_power_aff_201512335_213537_TN1L',
+          'optum_babcock_power_aff_201512335_213537_cQKN'
+        ],
+        policyNumbers: [],
+        pvrcCodes: [],
+        excludeClientIds: [],
+        startDate: 1598632180684,
+        timeZone: 'UTC',
+        overrides: {},
+      },
+      {
+        product: 'arcade',
+        lineOfBusiness: 'M&R',
+        membershipCategories: [
+          'MEDICA',
+          'PCP',
+        ],
+        coverageTypeCodes: [],
+        affiliations: [],
+        policyNumbers: [],
+        pvrcCodes: [],
+        excludeClientIds: [],
+        validPlacements: [],
+        startDate: 1513486800000,
+        timeZone: 'UTC',
+        overrides: {},
+      },
+      {
+        product: 'advantage',
+        membershipCategories: [],
+        coverageTypeCodes: [],
+        affiliations: [],
+        policyNumbers: [],
+        pvrcCodes: [],
+        excludeClientIds: [],
+        validPlacements: [],
+        startDate: 1599038800058,
+        timeZone: 'UTC',
+        overrides: {}
+      }
+    ].sample(rand(4) + 2) # pick 2 to 5 of the above assignments
+  end
+
+  def create
+    {
+      id: "12345-abcd-#{random_x_digit_number 7}",
+      name: "#{@name + ' '}campaign #{random_x_digit_number 7}",
+      labels: [],
+      comment: '',
+      assignmentCriteria: assignment_criteria_arr,
+      placements: placements_hash,
+      metadata: {
+        activityId: {
+          id: 'OPTUM.ENGAGE.GOTFLUSHOT.ATTEST',
+        },
+      },
+      tagApplicationLogic: {
+        includedTags: {
+          criteria: [
+            'realAge=23',
+            'realAge=24',
+          ],
+          logicalOperator: 'AND',
+        },
+        excludedTags: {
+          criteria: ['realAge=23'],
+          logicalOperator: 'AND',
+        },
+      },
+      status: %w[draft published].sample,
+    }
+  end
+end
+
+class V2CampaignGenerator
+  DEFAULT_METHOD ||= 'POST'.freeze
+  DEFAULT_NUM_CAMPAIGNS ||= 1
+  DEFAULT_PATH ||= 'rest/campaignmanager/v2/versionedCampaign'.freeze
+  DEFAULT_TENANT ||= 'thankful-diet'.freeze
+
+  def initialize(
+    cookie:,
+    xsrf_token:,
+    curl_method: DEFAULT_METHOD,
+    num_campaigns: DEFAULT_NUM_CAMPAIGNS,
+    path: DEFAULT_PATH,
+    tenant: DEFAULT_TENANT
+  )
+    @cookie = cookie
+    @xsrf_token = xsrf_token
+
+    @method = curl_method
+    @num_campaigns = num_campaigns.to_i
+    @path = path.start_with?('/') ? path[1..-1] : path
+    @tenant = tenant
+  end
+
+  def run
+    if [@xsrf_token, @cookie, @path, @tenant].any? { |ivar| ivar.nil? || ivar.empty? }
+      $stderr.puts 'Missing a required argument:'
+      $stderr.puts "\tcookie     => #{@cookie}"
+      $stderr.puts "\ttenant     => #{@tenant}"
+      $stderr.puts "\txsrf_token => #{@xsrf_token}"
+
+      exit
+    end
+
+    @num_campaigns.times do
+      data = V2CampaignTemplate.new(name: 'Script-generated').create
+
+      $stdout.puts "\nGenerating #{@num_campaigns} campaign#{'s' if @num_campaigns > 1} with args:"
+      $stdout.puts "\ttenant => #{@tenant}"
+      $stdout.puts "\tmethod => #{@method}"
+      $stdout.puts "\tpath => #{@path}"
+      $stdout.puts "\txsrf_token => #{@xsrf_token}"
+      $stdout.puts "\tcookie => #{@cookie}"
+      $stdout.puts "\tdata => #{data}"
+      $stdout.puts
+
+      uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
+      request = Net::HTTP::Post.new(uri)
+      request['Accept'] = 'application/json, text/plain, */*'
+      request['Accept-Language'] = 'en-US,en;q=0.9'
+      request['Cache-Control'] = 'no-cache'
+      request['Connection'] = 'keep-alive'
+      request['Content-Type'] = 'application/x-www-form-urlencoded'
+      request['Cookie'] = @cookie
+      request['Pragma'] = 'no-cache'
+      request['Referer'] = "https://rallyengine.#{@tenant}.rally-dev.com"
+      request['X-XSRF-TOKEN'] = @xsrf_token
+      request['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+      request.body = JSON.dump data
+
+      req_options = {
+        use_ssl: uri.scheme == 'https',
+        verify_mode: OpenSSL::SSL::VERIFY_NONE,
+      }
+
+      resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+      end
+
+      # TODO track successes/failures and generate a report
+      $stdout.puts '**************************************************************'
+      $stdout.puts 'RESPONSE'
+      $stdout.puts "code: #{resp.code}"
+      $stdout.puts "msg:  #{resp.body}"
+    end
+  end
+end
+
+################
+# Shell script #
+################
+# def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  # OPTIONS PARSING
+  options = {}
+  OptionParser.new do |opts|
+    # opts.banner = usage
+
+    opts.on('-xTOKEN', '--xsrf-token=TOKEN', 'A valid XSRF token') do |xsrf_token|
+      options[:xsrf_token] = xsrf_token
+    end
+
+    opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to') do |tenant|
+      options[:tenant] = tenant
+    end
+
+    opts.on('-cCOOKIE', '--cookie=COOKIE', 'A valid cookie') do |cookie|
+      options[:cookie] = cookie
+    end
+
+    opts.on('-pPATH', '--path=PATH', 'The endpoint to CURL') do |path|
+      options[:path] = path
+    end
+
+    opts.on('-mMETHOD', '--method=METHOD', 'The method to send in the CURL req') do |curl_method|
+      options[:curl_method] = curl_method
+    end
+
+    opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
+      options[:num_campaigns] = number
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  # DATA COLLECTION
+  ## Required values
+  options[:cookie] ||= ''
+  options[:xsrf_token] ||= ''
+
+  while options[:cookie].empty?
+    $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+    options[:cookie] = $stdin.gets.strip
+  end
+
+  while options[:xsrf_token].empty?
+    $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+    options[:xsrf_token] = $stdin.gets.strip
+  end
+
+  ## Optional values
+  if options[:path].nil?
+    $stdout.puts "\nPath defaults to '#{V2CampaignGenerator::DEFAULT_PATH}'; press <return> to use this path or enter a different one:"
+    path_input = $stdin.gets.chomp
+    options[:path] = path_input unless path_input.empty?
+  end
+
+  if options[:tenant].nil?
+    $stdout.puts "\nTenant defaults to '#{V2CampaignGenerator::DEFAULT_TENANT}'; press <return> to use this tenant or enter a different tenant name:"
+    tenant_input = $stdin.gets.chomp
+    options[:tenant] = tenant_input unless tenant_input.empty?
+  end
+
+  if options[:curl_method].nil?
+    $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::DEFAULT_METHOD}'; press <return> to use this method or enter a different HTTP verb:"
+    method_input = $stdin.gets.chomp
+    options[:curl_method] = method_input unless method_input.empty?
+  end
+
+  if options[:num_campaigns].nil?
+    $stdout.puts "\nOne new campaign will be generated by default; press <return> to create one campaign or enter a different number for more:"
+    num_campaigns_input = $stdin.gets.chomp
+    options[:num_campaigns] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+  end
+
+  V2CampaignGenerator.new(**options).run
+end

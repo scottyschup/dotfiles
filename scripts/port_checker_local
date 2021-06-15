@@ -1,7 +1,7 @@
 #! /usr/bin/env zsh
 
 if [ ! $1 ] || [ $# -gt 2 ]; then
-  echo "ArgumentError: expected 1 or 2 arguments but got $#"
+  echo "$RED""ArgumentError:$NONE expected 1 or 2 arguments but got $#"
   echo "\tUsage: $0 [pid] PORT "
   exit 1
 fi
@@ -13,7 +13,7 @@ if [ $2 ]; then
     pid_only=1
   else
     # Catch invalid arg
-    echo "ArgumentError: invalid arg: $1" && exit 2
+    echo "$RED""ArgumentError:$NONE invalid arg: $1" && exit 2
   fi
 else
   port=$1
@@ -24,7 +24,7 @@ num_re='^[0-9]+$'
 
 if [[ ! "$port" =~ "$num_re" ]]
 then
-  echo "Port '$port' is not a number :("
+  echo "$RED""ArgumentError:$NONE Port '$port' is not a number :/"
   exit 3
 fi
 
@@ -32,7 +32,7 @@ fi
 line=$(lsof -nP -iTCP:$port | grep LISTEN)
 if [ ! "$line" ]
 then
-  echo "$RED""Nothing found on port $port$NONE" 1>&2
+  echo "$CYN""Nothing found on port $port$NONE" 1>&2
   exit 4
 fi
 
