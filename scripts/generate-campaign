@@ -3,16 +3,16 @@
 ###############
 # Setup/Usage #
 ###############
-# These are the directory and file the script will live in; feel free to change these to fit your environment
-camgen_root_dir="$HOME/.v2camgen"
-camgen_script="$camgen_root_dir/generate-campaign"
-mkdir -p $camgen_root_dir
-curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
-chmod +x $camgen_script
+# # These are the directory and file the script will live in; feel free to change these to fit your environment:
+# camgen_root_dir="$HOME/.v2camgen"
+# camgen_script="$camgen_root_dir/generate-campaign"
+# mkdir -p $camgen_root_dir
+# curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
+# chmod +x $camgen_script
 
-# This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.v2camgen/generate-campaign` each time
-# Change the path/name for your `.zshrc` if it's not in your home dir
-echo "export PATH=$camgen_root_dir"':$PATH' >> $HOME/.zshrc
+# # This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.v2camgen/generate-campaign` each time
+# # Change the path/name for your `.zshrc` if it's not in your home dir
+# echo "export PATH=$camgen_root_dir"':$PATH' >> "$HOME/.zshrc"
 
 ################
 # Dependencies #
@@ -89,7 +89,7 @@ class V2CampaignTemplate
         },
         theme: 'rallyWhite',
       },
-    ].sample(rand(3) + 1)].flatten.each_with_object({}) { |el, agg| agg[el['placementType']] = el }
+    ].sample(rand(3) + 1)].flatten.each_with_object({}) { |el, agg| agg[el[:placementType]] = el }
   end
 
   def assignment_criteria_arr
@@ -201,7 +201,7 @@ class V2CampaignTemplate
           logicalOperator: 'AND',
         },
       },
-      status: %w[draft published].sample,
+      status: 'draft' # this prop isn't really used anymore, but without it, or with an invalid value the req fails
     }
   end
 end
@@ -215,7 +215,9 @@ class V2CampaignGenerator
   def initialize(
     cookie:,
     xsrf_token:,
-    curl_method: DEFAULT_METHOD,
+    http_method: DEFAULT_METHOD,
+    data: nil,
+    no_data: false,
     num_campaigns: DEFAULT_NUM_CAMPAIGNS,
     path: DEFAULT_PATH,
     tenant: DEFAULT_TENANT
@@ -223,7 +225,9 @@ class V2CampaignGenerator
     @cookie = cookie
     @xsrf_token = xsrf_token
 
-    @method = curl_method
+    @method = http_method
+    @data = data
+    @no_data = no_data
     @num_campaigns = num_campaigns.to_i
     @path = path.start_with?('/') ? path[1..-1] : path
     @tenant = tenant
@@ -240,7 +244,7 @@ class V2CampaignGenerator
     end
 
     @num_campaigns.times do
-      data = V2CampaignTemplate.new(name: 'Script-generated').create
+      data = @data || V2CampaignTemplate.new(name: 'Script-generated').create
 
       $stdout.puts "\nGenerating #{@num_campaigns} campaign#{'s' if @num_campaigns > 1} with args:"
       $stdout.puts "\ttenant => #{@tenant}"
@@ -252,7 +256,7 @@ class V2CampaignGenerator
       $stdout.puts
 
       uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
-      request = Net::HTTP::Post.new(uri)
+      request = @method == 'POST' ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
       request['Accept'] = 'application/json, text/plain, */*'
       request['Accept-Language'] = 'en-US,en;q=0.9'
       request['Cache-Control'] = 'no-cache'
@@ -263,12 +267,18 @@ class V2CampaignGenerator
       request['Referer'] = "https://rallyengine.#{@tenant}.rally-dev.com"
       request['X-XSRF-TOKEN'] = @xsrf_token
       request['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
-      request.body = JSON.dump data
+      request.body = @no_data ? nil : JSON.dump(data)
 
       req_options = {
         use_ssl: uri.scheme == 'https',
         verify_mode: OpenSSL::SSL::VERIFY_NONE,
       }
+
+      $stdout.puts '**************************************************************'
+      $stdout.puts 'REQUEST'
+      $stdout.puts "method:    #{request.method}"
+      $stdout.puts "has data?: #{request.response_body_permitted? && !!request.body}"
+      $stdout.puts "req:       #{request.uri}"
 
       resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
@@ -279,6 +289,8 @@ class V2CampaignGenerator
       $stdout.puts 'RESPONSE'
       $stdout.puts "code: #{resp.code}"
       $stdout.puts "msg:  #{resp.body}"
+
+      break if @data # if custom data was passed in, don't make same request multiple times
     end
   end
 end
@@ -310,12 +322,20 @@ if $PROGRAM_NAME == __FILE__
       options[:path] = path
     end
 
-    opts.on('-mMETHOD', '--method=METHOD', 'The method to send in the CURL req') do |curl_method|
-      options[:curl_method] = curl_method
+    opts.on('-mMETHOD', '--method=METHOD', 'The method to send in the HTTP req') do |http_method|
+      options[:http_method] = http_method
     end
 
     opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
       options[:num_campaigns] = number
+    end
+
+    opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do
+      options[:data] = true
+    end
+
+    opts.on('-D', '--no-data', 'Do not include a data object with the request') do
+      options[:no_data] = true
     end
 
     opts.on_tail('-h', '--help', 'Show this help message') do
@@ -352,16 +372,22 @@ if $PROGRAM_NAME == __FILE__
     options[:tenant] = tenant_input unless tenant_input.empty?
   end
 
-  if options[:curl_method].nil?
-    $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::DEFAULT_METHOD}'; press <return> to use this method or enter a different HTTP verb:"
+  if options[:http_method].nil?
+    $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::DEFAULT_METHOD}'; press <return> to use the default value or enter a different HTTP verb:"
     method_input = $stdin.gets.chomp
-    options[:curl_method] = method_input unless method_input.empty?
+    options[:http_method] = method_input unless method_input.empty?
   end
 
   if options[:num_campaigns].nil?
-    $stdout.puts "\nOne new campaign will be generated by default; press <return> to create one campaign or enter a different number for more:"
+    $stdout.puts "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:"
     num_campaigns_input = $stdin.gets.chomp
     options[:num_campaigns] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+  end
+
+  if !options[:no_data] && options[:data].nil?
+    $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data or enter a different stringified JSON data object:"
+    num_campaigns_input = $stdin.gets.chomp
+    options[:data] = num_campaigns_input.to_i unless num_campaigns_input.empty?
   end
 
   V2CampaignGenerator.new(**options).run
