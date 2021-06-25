@@ -17,6 +17,7 @@
 ################
 # Dependencies #
 ################
+require 'fileutils'
 require 'json'
 require 'net/http'
 require 'openssl'
@@ -36,60 +37,65 @@ class V2CampaignTemplate
   end
 
   def placements_hash
-    [[
-      {
-        placementType: 'resources_page_featured_promo',
-        productType: 'resources',
-        productPlacementCategory: 'resources_page_placements',
-        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
-        headline: 'Monday Refresh',
-        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
-        priority: 800,
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
+    [
+      [
+        {
+          placementType: 'resources_page_featured_promo',
+          productType: 'resources',
+          productPlacementCategory: 'resources_page_placements',
+          imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
+          headline: 'Monday Refresh',
+          body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
+          priority: 800,
+          colorPair: {
+            background: 'white',
+            foreground: 'black',
+          },
+          cta: {
+            ctaType: 'url',
+            ctaText: 'Check it Out!',
+            ctaValue: 'http://google.com'
+          },
+          theme: 'rallyWhite',
         },
-        cta: {
-          ctaType: 'url',
-          ctaText: 'Check it Out!',
-          ctaValue: 'http://google.com'
+        {
+          placementType: 'engage_dashboard',
+          productType: 'engage',
+          productPlacementCategory: 'engage_placements',
+          priority: 100,
+          headline: 'Do all placements have headlines?',
+          colorPair: {
+            background: 'white',
+            foreground: 'black',
+          },
+          theme: 'rallyWhite',
         },
-        theme: 'rallyWhite',
-      },
-      {
-        placementType: 'engage_dashboard',
-        productType: 'engage',
-        productPlacementCategory: 'engage_placements',
-        priority: 100,
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
+        {
+          placementType: 'engage_dashboard_banner',
+          productType: 'engage',
+          productPlacementCategory: 'engage_placements',
+          priority: 100,
+          headline: "Hi! I'm a headline!",
+          colorPair: {
+            background: 'white',
+            foreground: 'black',
+          },
+          theme: 'rallyRedMedium',
         },
-        theme: 'rallyWhite',
-      },
-      {
-        placementType: 'engage_dashboard_banner',
-        productType: 'engage',
-        productPlacementCategory: 'engage_placements',
-        priority: 100,
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
+        {
+          placementType: 'advantage_mobile_dashboard',
+          productType: 'engage',
+          productPlacementCategory: 'engage_placements',
+          priority: 100,
+          headline: 'Something go here',
+          colorPair: {
+            background: 'white',
+            foreground: 'black',
+          },
+          theme: 'rallyWhite',
         },
-        theme: 'rallyRedMedium',
-      },
-      {
-        placementType: 'advantage_mobile_dashboard',
-        productType: 'engage',
-        productPlacementCategory: 'engage_placements',
-        priority: 100,
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
-        },
-        theme: 'rallyWhite',
-      },
-    ].sample(rand(3) + 1)].flatten.each_with_object({}) { |el, agg| agg[el[:placementType]] = el }
+      ].sample(rand(3) + 1)
+  ].flatten.each_with_object({}) { |el, agg| agg[el[:placementType]] = el }
   end
 
   def assignment_criteria_arr
@@ -207,30 +213,74 @@ class V2CampaignTemplate
 end
 
 class V2CampaignGenerator
-  DEFAULT_METHOD ||= 'POST'.freeze
-  DEFAULT_NUM_CAMPAIGNS ||= 1
-  DEFAULT_PATH ||= 'rest/campaignmanager/v2/versionedCampaign'.freeze
-  DEFAULT_TENANT ||= 'thankful-diet'.freeze
+  CAMGEN_ROOT_DIR ||= `echo $HOME/.v2camgen`.freeze
+  LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
+  FILE_DELIMITER ||= '<:::>'.freeze
 
-  def initialize(
-    cookie:,
-    xsrf_token:,
-    http_method: DEFAULT_METHOD,
-    data: nil,
-    no_data: false,
-    num_campaigns: DEFAULT_NUM_CAMPAIGNS,
-    path: DEFAULT_PATH,
-    tenant: DEFAULT_TENANT
-  )
-    @cookie = cookie
-    @xsrf_token = xsrf_token
+  KWARG_DEFAULTS ||= {
+    http_method: 'POST'.freeze,
+    num_campaigns: 1,
+    path: 'rest/campaignmanager/v2/versionedCampaign'.freeze,
+    tenant: 'thankful-diet'.freeze,
+  }
 
-    @method = http_method
-    @data = data
-    @no_data = no_data
-    @num_campaigns = num_campaigns.to_i
-    @path = path.start_with?('/') ? path[1..-1] : path
-    @tenant = tenant
+  KWARG_NAMES = %i(
+    cookie
+    xsrf_token
+    http_method
+    data
+    no_data
+    num_campaigns
+    path
+    tenant
+  ).freeze
+
+  def self.edit_last_used_args
+    `open #{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}`
+  end
+
+  def initialize(last_used: false, path: KWARG_DEFAULTS[:path], **kwargs)
+    use_last_used_values! if last_used
+
+    # Process kwargs
+    ## Skip path as the value may need to be formatted first
+    (KWARG_NAMES - %i(path)).each do |kwarg_name|
+      # Only use kwargs value if not already read in from last_used_values file
+      next if instance_variable_defined?(ivarize(kwarg_name))
+
+      instance_variable_set(
+        ivarize(kwarg_name),
+        kwargs[kwarg_name] || KWARG_DEFAULTS[kwarg_name]
+      )
+    end
+
+    @path ||= path.start_with?('/') ? path[1..-1] : path
+
+    update_last_used_values!
+  end
+
+  def ivarize(str)
+    "@#{str}".to_sym
+  end
+
+  def use_last_used_values!
+    FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
+    File.readlines("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each do |line|
+      ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
+      instance_variable_set(
+        ivar_name,
+        ivar_name == "@num_campaigns" ? ivar_val.to_i : ivar_val
+      )
+    end
+  end
+
+  def update_last_used_values!
+    FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
+    File.open("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
+      KWARG_NAMES.each do |kwarg_name|
+        file.puts("@#{kwarg_name}#{FILE_DELIMITER}#{instance_variable_get(ivarize(kwarg_name))}")
+      end
+    end
   end
 
   def run
@@ -243,12 +293,12 @@ class V2CampaignGenerator
       exit
     end
 
-    @num_campaigns.times do
+    @num_campaigns.to_i.times do
       data = @data || V2CampaignTemplate.new(name: 'Script-generated').create
 
       $stdout.puts "\nGenerating #{@num_campaigns} campaign#{'s' if @num_campaigns > 1} with args:"
       $stdout.puts "\ttenant => #{@tenant}"
-      $stdout.puts "\tmethod => #{@method}"
+      $stdout.puts "\tmethod => #{@http_method}"
       $stdout.puts "\tpath => #{@path}"
       $stdout.puts "\txsrf_token => #{@xsrf_token}"
       $stdout.puts "\tcookie => #{@cookie}"
@@ -256,7 +306,7 @@ class V2CampaignGenerator
       $stdout.puts
 
       uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
-      request = @method == 'POST' ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
+      request = @http_method == 'POST' ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
       request['Accept'] = 'application/json, text/plain, */*'
       request['Accept-Language'] = 'en-US,en;q=0.9'
       request['Cache-Control'] = 'no-cache'
@@ -305,6 +355,13 @@ if $PROGRAM_NAME == __FILE__
   options = {}
   OptionParser.new do |opts|
     # opts.banner = usage
+    opts.on('-l', '--last-used-args') do
+      options[:last_used] = true
+    end
+
+    opts.on('-e', '--edit-last-used-args') do
+      options[:edit_last_used] = true
+    end
 
     opts.on('-xTOKEN', '--xsrf-token=TOKEN', 'A valid XSRF token') do |xsrf_token|
       options[:xsrf_token] = xsrf_token
@@ -344,50 +401,57 @@ if $PROGRAM_NAME == __FILE__
     end
   end.parse!
 
+  if options[:edit_last_used]
+    V2CampaignGenerator.edit_last_used_args
+    exit
+  end
+
   # DATA COLLECTION
-  ## Required values
-  options[:cookie] ||= ''
-  options[:xsrf_token] ||= ''
+  unless options[:last_used]
+    ## Required values
+    options[:cookie] ||= ''
+    options[:xsrf_token] ||= ''
 
-  while options[:cookie].empty?
-    $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
-    options[:cookie] = $stdin.gets.strip
-  end
+    while options[:cookie].empty?
+      $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+      options[:cookie] = $stdin.gets.strip
+    end
 
-  while options[:xsrf_token].empty?
-    $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
-    options[:xsrf_token] = $stdin.gets.strip
-  end
+    while options[:xsrf_token].empty?
+      $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+      options[:xsrf_token] = $stdin.gets.strip
+    end
 
-  ## Optional values
-  if options[:path].nil?
-    $stdout.puts "\nPath defaults to '#{V2CampaignGenerator::DEFAULT_PATH}'; press <return> to use this path or enter a different one:"
-    path_input = $stdin.gets.chomp
-    options[:path] = path_input unless path_input.empty?
-  end
+    ## Optional values
+    if options[:path].nil?
+      $stdout.puts "\nPath defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:"
+      path_input = $stdin.gets.chomp
+      options[:path] = path_input unless path_input.empty?
+    end
 
-  if options[:tenant].nil?
-    $stdout.puts "\nTenant defaults to '#{V2CampaignGenerator::DEFAULT_TENANT}'; press <return> to use this tenant or enter a different tenant name:"
-    tenant_input = $stdin.gets.chomp
-    options[:tenant] = tenant_input unless tenant_input.empty?
-  end
+    if options[:tenant].nil?
+      $stdout.puts "\nTenant defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:"
+      tenant_input = $stdin.gets.chomp
+      options[:tenant] = tenant_input unless tenant_input.empty?
+    end
 
-  if options[:http_method].nil?
-    $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::DEFAULT_METHOD}'; press <return> to use the default value or enter a different HTTP verb:"
-    method_input = $stdin.gets.chomp
-    options[:http_method] = method_input unless method_input.empty?
-  end
+    if options[:http_method].nil?
+      $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:"
+      method_input = $stdin.gets.chomp
+      options[:http_method] = method_input unless method_input.empty?
+    end
 
-  if options[:num_campaigns].nil?
-    $stdout.puts "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:"
-    num_campaigns_input = $stdin.gets.chomp
-    options[:num_campaigns] = num_campaigns_input.to_i unless num_campaigns_input.empty?
-  end
+    if options[:num_campaigns].nil?
+      $stdout.puts "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:"
+      num_campaigns_input = $stdin.gets.chomp
+      options[:num_campaigns] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+    end
 
-  if !options[:no_data] && options[:data].nil?
-    $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data or enter a different stringified JSON data object:"
-    num_campaigns_input = $stdin.gets.chomp
-    options[:data] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+    if !options[:no_data] && options[:data].nil?
+      $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data or enter a different stringified JSON data object:"
+      num_campaigns_input = $stdin.gets.chomp
+      options[:data] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+    end
   end
 
   V2CampaignGenerator.new(**options).run
