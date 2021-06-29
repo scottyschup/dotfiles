@@ -116,7 +116,7 @@ class V2CampaignTemplate
       },
       {
         product: 'advantage',
-        partner: 'rally_health',
+        partner: 'rally',
         client: 'rally_employees',
         membershipCategories: [],
         coverageTypeCodes: [],
@@ -213,7 +213,7 @@ class V2CampaignTemplate
 end
 
 class V2CampaignGenerator
-  CAMGEN_ROOT_DIR ||= `echo $HOME/.v2camgen`.freeze
+  CAMGEN_ROOT_DIR ||= `echo $HOME/.v2camgen`.chomp.freeze
   LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
   FILE_DELIMITER ||= '<:::>'.freeze
 
@@ -236,48 +236,48 @@ class V2CampaignGenerator
   ).freeze
 
   def self.edit_last_used_args
-    `open #{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}`
+    file_path = "#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
+    $stdout.puts("Opening #{file_path}")
+    `open #{file_path}`
   end
 
-  def initialize(last_used: false, path: KWARG_DEFAULTS[:path], **kwargs)
-    use_last_used_values! if last_used
+  def initialize(last_used: false, **kwargs)
+    $stdout.puts("Initializing with kwargs: \n#{kwargs}\n\n")
+    last_used_values = last_used ? fetch_last_used_values : {}
 
     # Process kwargs
-    ## Skip path as the value may need to be formatted first
-    (KWARG_NAMES - %i(path)).each do |kwarg_name|
-      # Only use kwargs value if not already read in from last_used_values file
-      next if instance_variable_defined?(ivarize(kwarg_name))
+    KWARG_NAMES.each do |kwarg_name|
+      ivar_name = ivarize(kwarg_name)
+      ivar_val = kwargs[kwarg_name] || last_used_values[kwarg_name] || KWARG_DEFAULTS[kwarg_name]
 
-      instance_variable_set(
-        ivarize(kwarg_name),
-        kwargs[kwarg_name] || KWARG_DEFAULTS[kwarg_name]
-      )
+      $stdout.puts("Setting ivar #{ivar_name} => #{ivar_val}")
+      instance_variable_set(ivar_name, ivar_val)
     end
 
-    @path ||= path.start_with?('/') ? path[1..-1] : path
+    @path = @path.start_with?('/') ? @path[1..-1] : @path
 
-    update_last_used_values!
+    update_last_used_values
   end
 
   def ivarize(str)
     "@#{str}".to_sym
   end
 
-  def use_last_used_values!
+  def fetch_last_used_values
     FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
-    File.readlines("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each do |line|
+    File.readlines("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
       ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
-      instance_variable_set(
-        ivar_name,
-        ivar_name == "@num_campaigns" ? ivar_val.to_i : ivar_val
-      )
+      obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_campaigns" ? ivar_val.to_i : ivar_val
     end
   end
 
-  def update_last_used_values!
+  def update_last_used_values
+    $stdout.puts("\nUpdating last used values")
+
     FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
     File.open("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
       KWARG_NAMES.each do |kwarg_name|
+        $stdout.puts("#{kwarg_name}: #{instance_variable_get(ivarize(kwarg_name))}")
         file.puts("@#{kwarg_name}#{FILE_DELIMITER}#{instance_variable_get(ivarize(kwarg_name))}")
       end
     end
@@ -384,7 +384,7 @@ if $PROGRAM_NAME == __FILE__
     end
 
     opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
-      options[:num_campaigns] = number
+      options[:num_campaigns] = number.to_i
     end
 
     opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do
