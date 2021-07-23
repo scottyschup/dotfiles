@@ -1,10 +1,19 @@
-# These are the directory and file the script will live in; feel free to change these to fit your environment
+# Setup
+These are the directory and file the script will live in; feel free to change
+these as needed to fit your environment
+```sh
 camgen_root_dir="$HOME/.v2camgen"
 camgen_script="$camgen_root_dir/generate-campaign"
 mkdir -p $camgen_root_dir
-curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/v2campaigns" > $camgen_script
+curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
 chmod +x $camgen_script
+```
 
-# This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.v2camgen/generate-campaign` each time
-# Change the path/name for your `.zshrc` if it's not in your home dir
+This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather
+than having to type `~/.v2camgen/generate-campaign` each time
+
+Change the path/name for your `.zshrc` if it's not in your home dir, it's named something else,
+or you use a different shell
+```
 echo "export PATH=$camgen_root_dir"':$PATH' >> $HOME/.zshrc
+```

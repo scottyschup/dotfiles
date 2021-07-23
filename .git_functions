@@ -204,7 +204,7 @@ function git_checkout {
   current=`git_branch_history current`
   if [ "$current" = "$branch" ]; then
     echo "$branch is already checked out"
-    return 1
+    return 0
   fi
 
   msg=`git checkout "$@" 2>&1`

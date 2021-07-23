@@ -100,6 +100,7 @@ class V2CampaignTemplate
 
   def assignment_criteria_arr
     [
+      # Great West Life/All Clients
       {
         "product": "engage",
         "partner": "great_west_life",
@@ -114,6 +115,7 @@ class V2CampaignTemplate
         "timeZone": "UTC",
         "overrides": {}
       },
+      # Rally/Rally Employees
       {
         product: 'advantage',
         partner: 'rally',
@@ -129,10 +131,10 @@ class V2CampaignTemplate
         timeZone: 'UTC',
         overrides: {},
       },
+      #  Optum/All Clients
       {
         product: 'advantage',
         partner: 'optum',
-        client: 'babcock_power',
         membershipCategories: [],
         coverageTypeCodes: [],
         affiliations: [
@@ -147,6 +149,7 @@ class V2CampaignTemplate
         timeZone: 'UTC',
         overrides: {},
       },
+      # All partners/all clients
       {
         product: 'arcade',
         lineOfBusiness: 'M&R',
@@ -164,8 +167,11 @@ class V2CampaignTemplate
         timeZone: 'UTC',
         overrides: {},
       },
+      # Kaiser Permanente/Kaiser Base (the only client in our dev tenant)
       {
         product: 'advantage',
+        partner: 'kaiser_permanente',
+        client: 'kaiser_base',
         membershipCategories: [],
         coverageTypeCodes: [],
         affiliations: [],
