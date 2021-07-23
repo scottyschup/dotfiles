@@ -94,7 +94,8 @@ Style/SlicingWithRange:
 Style/StderrPuts:
   Enabled: false
 Style/StringLiterals:
-  EnforcedStyle: single_quotes
+  Enabled: false
+  # EnforcedStyle: single_quotes
 Style/TrailingCommaInArrayLiteral:
   Enabled: true
   EnforcedStyleForMultiline: consistent_comma

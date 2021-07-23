@@ -39,11 +39,11 @@ alias gbhc="gbh csv"
 alias gbml="git_backmerge_latest_master"
 alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbr="git branch -r" # list remote branches
-unalias gbs # git bisect
-unalias gbsb # git bisect bad
-unalias gbsg # git bisect good
-unalias gbsr # git bisect reset
-unalias gbss # git bisect start
+unalias gbs 2>/dev/null # git bisect; silence output to prevent warnings when re-sourcing file
+unalias gbsb 2>/dev/null # git bisect bad; silence output to prevent warnings when re-sourcing file
+unalias gbsg 2>/dev/null # git bisect good; silence output to prevent warnings when re-sourcing file
+unalias gbsr 2>/dev/null # git bisect reset; silence output to prevent warnings when re-sourcing file
+unalias gbss 2>/dev/null # git bisect start; silence output to prevent warnings when re-sourcing file
 alias gbsu="git_branch_set_upstream"
 alias gca="git commit --amend"
 alias gcb="git_current_branch"
@@ -104,7 +104,7 @@ alias grsv="git remote -v show"
 alias gs="git status -sb"
 alias gst="git stash"
 alias gsta="git stash apply"
-unalias gstaa # not sure where this one is coming from
+unalias gstaa 2>/dev/null # not sure where this one is coming from; silence output to prevent warnings when re-sourcing file
 alias gstai="git stash apply --index"
 alias gstb="git stash branch"
 alias gstl="git stash list"
@@ -120,12 +120,17 @@ alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
 alias upgl="git config user.email 'ssschupbach@gmail.com'; \
             git config user.name 'Scott Schupbach'; \
             echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
-alias uwgg="git config --global user.email 'scott.schupbach@avant.com'; \
-            git config --global user.name 'Scott Schupbach'; \
-            echo 'Switched to work git user/email settings.\nRemember to set remote host to $GITHUB_HOST.'"
-alias uwgl="git config user.email 'scott.schupbach@avant.com'; \
-            git config user.name 'Scott Schupbach'; \
-            echo 'Switched to work git user/email settings.\nRemember to set remote host to $GITHUB_HOST.'"
+# These should be overridden in work `.zshrc_<VARIANT>`s
+alias uwgg="echo 'You need to set this up in your current .zshrc_<VARIANT> for work' && \
+            echo 'Use the following as a template:\n' && \
+            echo 'git config --global user.email \"shannon.schupbach@some-company.com\";' && \
+            echo 'git config --global user.name \"Scott Schupbach\"; # or however it appears in your work account' && \
+            echo 'echo \"Switched to work git user/email settings. Remember to set remote host to $""GITHUB_HOST.\"'"
+alias uwgl="echo 'You need to set this up in your current .zshrc_<VARIANT> for work' && \
+            echo 'Use the following as a template:\n' && \
+            echo 'git config user.email \"shannon.schupbach@some-company.com\";' && \
+            echo 'git config user.name \"Scott Schupbach\"; # or however it appears in your work account' && \
+            echo 'echo \"Switched to work git user/email settings. Remember to set remote host to $""GITHUB_HOST.\"'"
 
 # heroku
 alias hrc="heroku run rails console --app"
