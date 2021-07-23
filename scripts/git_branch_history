@@ -21,7 +21,7 @@ end
 class GitBranchHistory
   class NotGitRepoError < StandardError; end
 
-  DIR_NAME = "#{ENV['HOME']}/.git_branch_history"
+  DIR_NAME = "#{ENV['HOME']}/.git_branch_history".freeze
 
   def initialize(args:)
     @file_name = `2> /dev/null git rev-parse --show-toplevel`.chomp.split('/')[-1]
@@ -37,24 +37,24 @@ class GitBranchHistory
 
   def usage
     $stdout.puts "USAGE: git_branch_history CMD [ARGS]"
-    $stdout.puts "CMDs:  add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open"
-    $stdout.puts "\tpush/set/add:  add branch to history"
-    $stdout.puts "\t\tARGS: branch_name (default: current branch)\n\n"
-    $stdout.puts "\tlast/get:      get last (n) branch(es)"
-    $stdout.puts "\t\tARGS: number_of_branches_to_retrieve (default: 1)\n\n"
-    $stdout.puts "\tls/list:          list all branches (optionally that match a grep)"
-    $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
-    $stdout.puts "\tcsv:           list all branches, comma-separated (optionally that match a grep)"
-    $stdout.puts "\t\tARGS: (optional) string to grep\n\n"
-    $stdout.puts "\trm/remove/delete: delete specified branch from history"
-    $stdout.puts "\t\tARGS: branch_name (required)\n\n"
-    $stdout.puts "\thelp:          Print this message"
-    $stdout.puts "\topen:          Open the branch history file"
+    $stdout.puts "CMDs:  add|current|csv|delete|get|help|last|list|ls|push|remove|rm|set|open\n\n"
+    $stdout.puts "       push|set|add: add branch to history"
+    $stdout.puts "                     ARGS: branch_name (default: current branch)\n\n"
+    $stdout.puts "      last|prev|get: get last (n) branch(es)"
+    $stdout.puts "                     ARGS: number_of_branches_to_retrieve (default: 1)\n\n"
+    $stdout.puts "            ls|list: list all branches (optionally that match a grep)"
+    $stdout.puts "                     ARGS: (optional) string to grep\n\n"
+    $stdout.puts "                csv: list all branches, comma-separated (optionally that match a grep)"
+    $stdout.puts "                     ARGS: (optional) string to grep\n\n"
+    $stdout.puts "\trm|remove|delete:  delete specified branch from history"
+    $stdout.puts "                     ARGS: branch_name (required)\n\n"
+    $stdout.puts "               help: Print this message"
+    $stdout.puts "               open: Open the branch history file"
   end
 
   def add_branch!
     branch = @args.shift || current_branch
-    branches_arr.delete branch
+    branches_arr.delete branch # Ensure no duplicates added
     branch == current_branch ? branches_arr << branch : branches_arr.unshift(branch)
     update_file!
   end
@@ -77,14 +77,6 @@ class GitBranchHistory
     @branches
   end
 
-  def check_order
-    # Make sure current branch isn't also last branch
-    if branches_arr.last == current_branch && branches_arr.length > 1
-      branches_arr[-1], branches_arr[-2] = branches_arr[-2], branches_arr[-1]
-      update_file!
-    end
-  end
-
   def current_branch
     @current_branch ||= `git symbolic-ref -q HEAD`.strip.gsub("refs/heads/", "")
   end
@@ -93,20 +85,21 @@ class GitBranchHistory
     "#{current_branch} (current)".cyan
   end
 
-  def last_branch
+  def prev_branch
     branches = branches_arr.dup
     branches.delete current_branch
     n = (@args.shift || 1).to_i
 
-    return current_branch_pretty if branches.length < n
+    return current_branch_pretty if branches.length.zero?
+    return branches if branches.length < n
+
     branches[-n..-1]
   end
 
   def list_branches(cmd)
-    check_order
     branches = branches_arr.dup
     grep = @args.shift
-    branches.select! { |branch| branch.include?(grep) } unless grep.nil?
+    branches.select! { |branch| !!branch.match(/#{grep}/) } unless grep.nil?
     return branches.join(", ") if cmd == "csv"
     branches.map! do |branch|
       current_branch == branch ? "#{branch} (current)".cyan : branch
@@ -119,7 +112,6 @@ class GitBranchHistory
     branches_arr.select! { |branch| !branch.include?(str) }
     deleted_branches = old_branches - branches_arr
     $stdout.puts "Deleted branches:\n\t#{deleted_branches.join("\n\t")}"
-    check_order
     update_file!
   end
 
@@ -143,9 +135,8 @@ class GitBranchHistory
     case cmd
     when "push", "set", "add"
       add_branch!
-    when "last", "get"
-      check_order
-      $stdout.puts last_branch
+    when "last", "get", "prev"
+      $stdout.puts prev_branch
     when "list", "all", "csv", "ls"
       $stdout.puts list_branches(cmd)
     when "remove", "delete", "rm"
@@ -157,13 +148,21 @@ class GitBranchHistory
     when "current"
       $stdout.puts current_branch
     when "open"
-      check_order
-      if !`which atom`.empty?
+      $stdout.puts "Attempting to open #{@file_path}"
+      if !`which code`.empty?
+        $stdout.puts "Trying VS Code"
+        `code #{@file_path}`
+      elsif !`which atom`.empty?
+        $stdout.puts "Trying Atom"
         `atom #{@file_path}`
       elsif !`which subl`.empty?
+        $stdout.puts "Trying Sublime"
         `subl #{@file_path}`
       else
-        $stdout.puts "Neither Atom nor Sublime available"
+        $stdout.puts "Couldn't find VS Code, Atom, or Sublime"
+        $stdout.puts "Open with Vim? [y/n]"
+        use_vim = $stdin.gets.chomp.downcase
+        use_vim == 'y' ? `vim #{@file_path} < $(tty) > $(tty)` : "Could not open #{@file_path}"
       end
     else
       usage
