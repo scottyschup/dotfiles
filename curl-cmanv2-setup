@@ -1,19 +1,19 @@
-# Setup
+# Setup (for Mac)
 These are the directory and file the script will live in; feel free to change
 these as needed to fit your environment
 ```sh
-camgen_root_dir="$HOME/.curlcmanv2"
-camgen_script="$camgen_root_dir/generate-campaign"
-mkdir -p $camgen_root_dir
-curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
-chmod +x $camgen_script
+curlcmanv2_root_dir="$HOME/.curlcmanv2"
+curlcmanv2_script="$curlcmanv2_root_dir/curl-cmanv2"
+mkdir -p $curlcmanv2_root_dir
+curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/curl-cmanv2" > $curlcmanv2_script
+chmod +x $curlcmanv2_script
 ```
 
-This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather
-than having to type `~/.curlcmanv2/generate-campaign` each time
+The following adds the campaign generator dir to your path so you can run it with `curl-cmanv2`
+rather than having to type `~/.curlcmanv2/curl-cmanv2` each time:
 
-Change the path/name for your `.zshrc` if it's not in your home dir, it's named something else,
-or you use a different shell
+Change the path/name for your `.zshrc` if it's not in your home dir, it's named something else, or
+you use a different shell
 ```
-echo "export PATH=$camgen_root_dir"':$PATH' >> $HOME/.zshrc
+echo "export PATH=$curlcmanv2_root_dir"':$PATH' >> $HOME/.zshrc
 ```
