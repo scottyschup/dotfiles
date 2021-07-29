@@ -3,14 +3,17 @@
 ###############
 # Setup/Usage #
 ###############
+# This needs the `faker` gem to work. If you don't already have the `faker` gem run:
+# `gem install faker`
+
 # # These are the directory and file the script will live in; feel free to change these to fit your environment:
-# camgen_root_dir="$HOME/.v2camgen"
+# camgen_root_dir="$HOME/.curlcmanv2"
 # camgen_script="$camgen_root_dir/generate-campaign"
 # mkdir -p $camgen_root_dir
 # curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
 # chmod +x $camgen_script
 
-# # This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.v2camgen/generate-campaign` each time
+# # This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.curlcmanv2/generate-campaign` each time
 # # Change the path/name for your `.zshrc` if it's not in your home dir
 # echo "export PATH=$camgen_root_dir"':$PATH' >> "$HOME/.zshrc"
 
@@ -23,10 +26,14 @@ require 'net/http'
 require 'openssl'
 require 'optparse'
 require 'uri'
+require 'faker'
 
 #############
 # Ruby code #
 #############
+def titlecase(str)
+  str.split(/\s/).map(&:capitalize).join(' ')
+end
 class V2CampaignTemplate
   def initialize(name: nil)
     @name = name.to_s
@@ -218,8 +225,8 @@ class V2CampaignTemplate
   end
 end
 
-class V2CampaignGenerator
-  CAMGEN_ROOT_DIR ||= `echo $HOME/.v2camgen`.chomp.freeze
+class V2CampaignManagerClient
+  CAMGEN_ROOT_DIR ||= `echo $HOME/.curlcmanv2`.chomp.freeze
   LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
   FILE_DELIMITER ||= '<:::>'.freeze
 
@@ -245,6 +252,12 @@ class V2CampaignGenerator
     file_path = "#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
     $stdout.puts("Opening #{file_path}")
     `open #{file_path}`
+  end
+
+  def self.show_last_used_args
+    file_path = "#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
+    $stdout.puts("Opening #{file_path}")
+    $stdout.puts(`cat #{file_path}`)
   end
 
   def initialize(last_used: false, **kwargs)
@@ -300,7 +313,7 @@ class V2CampaignGenerator
     end
 
     @num_campaigns.to_i.times do
-      data = @data || V2CampaignTemplate.new(name: 'Script-generated').create
+      data = @data || V2CampaignTemplate.new(name: titlecase(Faker::Company.catch_phrase)).create
 
       $stdout.puts "\nGenerating #{@num_campaigns} campaign#{'s' if @num_campaigns > 1} with args:"
       $stdout.puts "\ttenant => #{@tenant}"
@@ -361,36 +374,8 @@ if $PROGRAM_NAME == __FILE__
   options = {}
   OptionParser.new do |opts|
     # opts.banner = usage
-    opts.on('-l', '--last-used-args') do
-      options[:last_used] = true
-    end
-
-    opts.on('-e', '--edit-last-used-args') do
-      options[:edit_last_used] = true
-    end
-
-    opts.on('-xTOKEN', '--xsrf-token=TOKEN', 'A valid XSRF token') do |xsrf_token|
-      options[:xsrf_token] = xsrf_token
-    end
-
-    opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to') do |tenant|
-      options[:tenant] = tenant
-    end
-
     opts.on('-cCOOKIE', '--cookie=COOKIE', 'A valid cookie') do |cookie|
       options[:cookie] = cookie
-    end
-
-    opts.on('-pPATH', '--path=PATH', 'The endpoint to CURL') do |path|
-      options[:path] = path
-    end
-
-    opts.on('-mMETHOD', '--method=METHOD', 'The method to send in the HTTP req') do |http_method|
-      options[:http_method] = http_method
-    end
-
-    opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
-      options[:num_campaigns] = number.to_i
     end
 
     opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do
@@ -401,6 +386,38 @@ if $PROGRAM_NAME == __FILE__
       options[:no_data] = true
     end
 
+    opts.on('-e', '--edit-last-used-args', 'Edit the stored data from the last call') do
+      options[:edit_last_used] = true
+    end
+
+    opts.on('-l', '--last-used-args', 'Re-use the stored data from the last call') do
+      options[:last_used] = true
+    end
+
+    opts.on('-mMETHOD', '--method=METHOD', 'The method to send in the HTTP req') do |http_method|
+      options[:http_method] = http_method
+    end
+
+    opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
+      options[:num_campaigns] = number.to_i
+    end
+
+    opts.on('-pPATH', '--path=PATH', 'The endpoint to CURL') do |path|
+      options[:path] = path
+    end
+
+    opts.on('-s', '--show-last-used-args', 'Display the stored data from the last call') do
+      options[:show_last_used] = true
+    end
+
+    opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to') do |tenant|
+      options[:tenant] = tenant
+    end
+
+    opts.on('-xTOKEN', '--xsrf-token=TOKEN', 'A valid XSRF token') do |xsrf_token|
+      options[:xsrf_token] = xsrf_token
+    end
+
     opts.on_tail('-h', '--help', 'Show this help message') do
       puts opts
       exit
@@ -408,7 +425,12 @@ if $PROGRAM_NAME == __FILE__
   end.parse!
 
   if options[:edit_last_used]
-    V2CampaignGenerator.edit_last_used_args
+    V2CampaignManagerClient.edit_last_used_args
+    exit
+  end
+
+  if options[:show_last_used]
+    V2CampaignManagerClient.show_last_used_args
     exit
   end
 
@@ -430,21 +452,22 @@ if $PROGRAM_NAME == __FILE__
 
     ## Optional values
     if options[:path].nil?
-      $stdout.puts "\nPath defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:"
+      $stdout.puts "\nPath defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:"
       path_input = $stdin.gets.chomp
       options[:path] = path_input unless path_input.empty?
     end
 
     if options[:tenant].nil?
-      $stdout.puts "\nTenant defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:"
+      $stdout.puts "\nTenant defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:"
       tenant_input = $stdin.gets.chomp
       options[:tenant] = tenant_input unless tenant_input.empty?
     end
 
     if options[:http_method].nil?
-      $stdout.puts "\nMethod defaults to '#{V2CampaignGenerator::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:"
-      method_input = $stdin.gets.chomp
+      $stdout.puts "\nMethod defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:"
+      method_input = $stdin.gets.chomp.upcase
       options[:http_method] = method_input unless method_input.empty?
+      options[:no_data] = true if method_input == 'GET'
     end
 
     if options[:num_campaigns].nil?
@@ -454,11 +477,12 @@ if $PROGRAM_NAME == __FILE__
     end
 
     if !options[:no_data] && options[:data].nil?
-      $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data or enter a different stringified JSON data object:"
+      $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data, <n> to send no data, or enter a different stringified JSON data object:"
       num_campaigns_input = $stdin.gets.chomp
-      options[:data] = num_campaigns_input.to_i unless num_campaigns_input.empty?
+      options[:no_data] = true if data_input == 'n'
+      options[:data] = data_input unless data_input.empty?
     end
   end
 
-  V2CampaignGenerator.new(**options).run
+  V2CampaignManagerClient.new(**options).run
 end
