@@ -7,15 +7,15 @@
 # `gem install faker`
 
 # # These are the directory and file the script will live in; feel free to change these to fit your environment:
-# camgen_root_dir="$HOME/.curlcmanv2"
-# camgen_script="$camgen_root_dir/generate-campaign"
-# mkdir -p $camgen_root_dir
-# curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/generate-campaign" > $camgen_script
-# chmod +x $camgen_script
+# curlcmanv2_root_dir="$HOME/.curlcmanv2"
+# curlcmanv2_script="$curlcmanv2_root_dir/curl-cmanv2"
+# mkdir -p $curlcmanv2_root_dir
+# curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/curl-cmanv2" > $curlcmanv2_script
+# chmod +x $curlcmanv2_script
 
-# # This adds the campaign generator dir to your path so you can run it with `generate-campaign` rather than having to type `~/.curlcmanv2/generate-campaign` each time
+# # The following adds the campaign generator dir to your path so you can run it with `curl-cmanv2` rather than having to type `~/.curlcmanv2/curl-cmanv2` each time
 # # Change the path/name for your `.zshrc` if it's not in your home dir
-# echo "export PATH=$camgen_root_dir"':$PATH' >> "$HOME/.zshrc"
+# echo "export PATH=$curlcmanv2_root_dir"':$PATH' >> "$HOME/.zshrc"
 
 ################
 # Dependencies #
@@ -226,7 +226,7 @@ class V2CampaignTemplate
 end
 
 class V2CampaignManagerClient
-  CAMGEN_ROOT_DIR ||= `echo $HOME/.curlcmanv2`.chomp.freeze
+  CURL_CMAN_V2_ROOT_DIR ||= `echo $HOME/.curlcmanv2`.chomp.freeze
   LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
   FILE_DELIMITER ||= '<:::>'.freeze
 
@@ -249,13 +249,13 @@ class V2CampaignManagerClient
   ).freeze
 
   def self.edit_last_used_args
-    file_path = "#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
+    file_path = "#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
     $stdout.puts("Opening #{file_path}")
     `open #{file_path}`
   end
 
   def self.show_last_used_args
-    file_path = "#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
+    file_path = "#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
     $stdout.puts("Opening #{file_path}")
     $stdout.puts(`cat #{file_path}`)
   end
@@ -283,8 +283,8 @@ class V2CampaignManagerClient
   end
 
   def fetch_last_used_values
-    FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
-    File.readlines("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
+    FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
+    File.readlines("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
       ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
       obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_campaigns" ? ivar_val.to_i : ivar_val
     end
@@ -293,8 +293,8 @@ class V2CampaignManagerClient
   def update_last_used_values
     $stdout.puts("\nUpdating last used values")
 
-    FileUtils.mkdir_p(CAMGEN_ROOT_DIR) unless File.directory?(CAMGEN_ROOT_DIR)
-    File.open("#{CAMGEN_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
+    FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
+    File.open("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
       KWARG_NAMES.each do |kwarg_name|
         $stdout.puts("#{kwarg_name}: #{instance_variable_get(ivarize(kwarg_name))}")
         file.puts("@#{kwarg_name}#{FILE_DELIMITER}#{instance_variable_get(ivarize(kwarg_name))}")
