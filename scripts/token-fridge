@@ -136,7 +136,7 @@ if $PROGRAM_NAME == __FILE__
 
   unless options[:last_used]
     while options[:cookie].nil? || options[:cookie].empty?
-      $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+      $stdout.print "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):\n> "
       options[:cookie] = $stdin.gets.strip
     end
   end

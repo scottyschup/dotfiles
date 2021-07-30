@@ -20,11 +20,12 @@ chmod +x $token_fridge_script
 ```
 
 ## Final steps
-The following adds the campaign generator dir to your path so you can run it with `curl-cmanv2`
-rather than having to type `~/.curlcmanv2/curl-cmanv2` each time:
+The following adds the `.curlcmanv2` dir to your path so you can run the scripts with `curl-cmanv2`
+and `token-fridge` rather than having to type `~/.curlcmanv2/curl-cmanv2` or `~/.curlcmanv2/curl-cmanv2`
+respectively each time.
 
-Change the path/name for your `.zshrc` if it's not in your home dir, it's named something else, or
-you use a different shell
+**Note**: change the path/name for your `.zshrc` if it's not in your home dir, it's named something else, or
+you use a different shell.
 ```
 echo "export PATH=$curlcmanv2_root_dir"':$PATH' >> $HOME/.zshrc
 ```
@@ -40,7 +41,14 @@ You can also pass in the cookie with the `-c` flag. Be sure to wrap values with 
 non-alphanumeric characters in double-quotes when using the flags, but do not include quotes around
 values when responding to the command prompts.
 ```sh
-curl-cmanv2 -P -c "YOUR_COOKIE_STRING_HERE"
+curl-cmanv2 -P -c "YOUR_COOKIE_STRING_HERE_IN_DOUBLE_QUOTES"
+```
+but
+```sh
+$ curl-cmanv2
+
+Enter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):
+>YOUR_COOKIE_STRING_HERE_WITHOUT_QUOTES
 ```
 
 If you've already entered a cookie that's still valid and don't need to override any default values,
@@ -51,14 +59,7 @@ curl-cmanv2 -l
 
 Since `token-fridge` is just a long-running script that uses `curl-cmanv2` in a very specific way,
 you will only need to provide a valid cookie. The same `-c` flag can be used to pass the cookie in,
-and the same `-l` flag can be added to reuse the values.
-from the previous call.
-```sh
-$ curl-cmanv2
-
-Enter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):
->
-```
+and the same `-l` flag can be added to reuse the values from the previous call.
 
 Run each command with the `-h` flag for options help.
 ```sh
