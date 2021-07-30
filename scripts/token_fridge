@@ -1,5 +1,22 @@
 #!/usr/bin/env ruby -w
 
+###############
+# Setup/Usage #
+###############
+# This needs the `curl-cmanv2` script from this same `scripts` directory to work. If you don't already have it, see the
+# setup/usage instructions at https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/curl-cmanv2
+
+# # These are the directory and file the script will live in; feel free to change these to fit your environment:
+# token_fridge_root_dir="$HOME/.curlcmanv2"
+# mkdir -p $token_fridge_root_dir
+# token_fridge_script="$token_fridge_root_dir/token-fridge"
+# curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/token-fridge" > $token_fridge_script
+# chmod +x $token_fridge_script
+
+# # The following adds the campaign generator dir to your path so you can run it with `token_fridge` rather than having to type `~/.curlcmanv2/token_fridge` each time
+# # Change the path/name for your `.zshrc` if it's not in your home dir
+# echo "export PATH=$token_fridge_root_dir"':$PATH' >> "$HOME/.zshrc"
+
 ################
 # Dependencies #
 ################

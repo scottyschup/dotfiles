@@ -1,6 +1,6 @@
 # Setup (for Mac)
-These are the directory and file the script will live in; feel free to change
-these as needed to fit your environment
+## `curl-cmanv2`
+These are the directory and file the script will live in; feel free to change these as needed to fit your environment:
 ```sh
 curlcmanv2_root_dir="$HOME/.curlcmanv2"
 curlcmanv2_script="$curlcmanv2_root_dir/curl-cmanv2"
@@ -9,6 +9,15 @@ curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/curl-c
 chmod +x $curlcmanv2_script
 ```
 
+## `token-fridge`
+This needs the `curl-cmanv2` script from this same `scripts` directory to work (see above).
+```sh
+token_fridge_script="$curlcmanv2_root_dir/token-fridge"
+curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/token-fridge" > $token_fridge_script
+chmod +x $token_fridge_script
+```
+
+## Final steps
 The following adds the campaign generator dir to your path so you can run it with `curl-cmanv2`
 rather than having to type `~/.curlcmanv2/curl-cmanv2` each time:
 
@@ -16,4 +25,11 @@ Change the path/name for your `.zshrc` if it's not in your home dir, it's named 
 you use a different shell
 ```
 echo "export PATH=$curlcmanv2_root_dir"':$PATH' >> $HOME/.zshrc
+```
+
+# Usage
+Run each command with the `-h` flag for usage help.
+```sh
+curl-cmanv2 -h
+token-fridge -h
 ```
