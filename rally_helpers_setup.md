@@ -48,7 +48,7 @@ but
 $ curl-cmanv2
 
 Enter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):
->YOUR_COOKIE_STRING_HERE_WITHOUT_QUOTES
+> YOUR_COOKIE_STRING_HERE_WITHOUT_QUOTES
 ```
 
 If you've already entered a cookie that's still valid and don't need to override any default values,
