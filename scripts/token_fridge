@@ -65,11 +65,14 @@ class TokenRefrigerator
     @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
   end
 
-  def minutes_until_next_call(time)
-    (@refresh_interval - (Time.now - time) / 60).round
+  def minutes_seconds_until_next_call(last_call_time)
+    next_call = last_call_time + @refresh_interval * 60
+    seconds_until_next = next_call - Time.now
+    seconds_until_next.divmod(60).map(&:floor)
   end
 
   def run
+    @start_time = Time.now
     resp = @client.run
     current_time = Time.now
 
@@ -80,12 +83,13 @@ class TokenRefrigerator
       end
 
       system 'clear'
-      $stdout.puts "Current refresh interval: #{@refresh_interval}"
+      $stdout.puts "Current refresh interval: #{@refresh_interval} minutes"
+      $stdout.puts "Total uptime: #{(Time.now - @start_time).divmod(60).map { |n| n.floor.to_s.rjust(2, '0') }.join(':')}"
       $stdout.puts "Last refresh at #{current_time}"
       $stdout.puts "Last response: #{resp.code}"
-      mins_to_next = minutes_until_next_call current_time
-      $stdout.puts "Next refresh in #{mins_to_next} minute#{mins_to_next > 1 ? 's' : ''}"
-      sleep 60
+      mins, secs = minutes_seconds_until_next_call(current_time).map(&:to_s)
+      $stdout.puts "Next refresh in #{mins}:#{secs.rjust(2, '0')}"
+      sleep 1
     end
 
   end

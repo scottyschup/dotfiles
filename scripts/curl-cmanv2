@@ -322,6 +322,7 @@ class V2CampaignManagerClient
     resp = nil
 
     @num_requests.to_i.times do |i|
+      iter = i + 1
       data = @data || (
         @no_data ?
           '' :
@@ -329,7 +330,7 @@ class V2CampaignManagerClient
       )
 
       if @verbose
-        $stdout.puts "\nGenerating request #{i} of #{@num_requests} with args:"
+        $stdout.puts "\nGenerating request #{iter} of #{@num_requests} with args:"
         $stdout.puts "\ttenant => #{@tenant}"
         $stdout.puts "\tmethod => #{@http_method}"
         $stdout.puts "\tpath => #{@path}"
@@ -359,7 +360,7 @@ class V2CampaignManagerClient
       }
 
       $stdout.puts '**************************************************************'
-      $stdout.puts "REQUEST #{i}"
+      $stdout.puts "REQUEST #{iter}"
       $stdout.puts "method:    #{request.method}"
       $stdout.puts "has data?: #{request.response_body_permitted? && !!request.body}"
       $stdout.puts "req:       #{request.uri}"
@@ -370,7 +371,7 @@ class V2CampaignManagerClient
 
       # TODO track successes/failures and generate a report
       $stdout.puts '**************************************************************'
-      $stdout.puts "RESPONSE #{i}"
+      $stdout.puts "RESPONSE #{iter}"
       $stdout.puts "code: #{resp.code}"
       $stdout.puts "msg:  #{resp.body}" if @verbose
 
