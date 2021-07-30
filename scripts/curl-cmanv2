@@ -232,7 +232,7 @@ class V2CampaignManagerClient
 
   KWARG_DEFAULTS ||= {
     http_method: 'POST'.freeze,
-    num_campaigns: 1,
+    num_requests: 1,
     path: 'rest/campaignmanager/v2/versionedCampaign'.freeze,
     tenant: 'thankful-diet'.freeze,
   }
@@ -243,7 +243,7 @@ class V2CampaignManagerClient
     http_method
     data
     no_data
-    num_campaigns
+    num_requests
     path
     tenant
   ).freeze
@@ -260,8 +260,9 @@ class V2CampaignManagerClient
     $stdout.puts(`cat #{file_path}`)
   end
 
-  def initialize(last_used: false, **kwargs)
-    $stdout.puts("Initializing with kwargs: \n#{kwargs}\n\n")
+  def initialize(last_used: false, verbose: false, **kwargs)
+    $stdout.puts("Initializing with kwargs: \n#{{ last_used: last_used, verbose: verbose, kwargs: kwargs }}\n\n")
+    @verbose = verbose
     last_used_values = last_used ? fetch_last_used_values : {}
 
     # Process kwargs
@@ -269,13 +270,15 @@ class V2CampaignManagerClient
       ivar_name = ivarize(kwarg_name)
       ivar_val = kwargs[kwarg_name] || last_used_values[kwarg_name] || KWARG_DEFAULTS[kwarg_name]
 
-      $stdout.puts("Setting ivar #{ivar_name} => #{ivar_val}")
+      $stdout.puts("Setting ivar #{ivar_name} => #{ivar_val}") if @verbose
       instance_variable_set(ivar_name, ivar_val)
     end
 
     @path = @path.start_with?('/') ? @path[1..-1] : @path
 
-    update_last_used_values
+    @xsrf_token ||= @cookie&.split('XSRF-TOKEN=')&.last
+
+    missing_required_arg? ? missing_required_arg : update_last_used_values
   end
 
   def ivarize(str)
@@ -286,7 +289,7 @@ class V2CampaignManagerClient
     FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
     File.readlines("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
       ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
-      obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_campaigns" ? ivar_val.to_i : ivar_val
+      obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_requests" ? ivar_val.to_i : ivar_val
     end
   end
 
@@ -296,33 +299,45 @@ class V2CampaignManagerClient
     FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
     File.open("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
       KWARG_NAMES.each do |kwarg_name|
-        $stdout.puts("#{kwarg_name}: #{instance_variable_get(ivarize(kwarg_name))}")
+        $stdout.puts("#{kwarg_name}: #{instance_variable_get(ivarize(kwarg_name))}") if @verbose
         file.puts("@#{kwarg_name}#{FILE_DELIMITER}#{instance_variable_get(ivarize(kwarg_name))}")
       end
     end
   end
 
+  def missing_required_arg?
+    [@cookie, @tenant, @path, @xsrf_token].any? { |ivar| ivar.nil? || ivar.empty? }
+  end
+
+  def missing_required_arg
+    $stderr.puts 'Missing a required argument:'
+    $stderr.puts "\tcookie     => #{@cookie}"
+    $stderr.puts "\tpath       => #{@path}"
+    $stderr.puts "\ttenant     => #{@tenant}"
+    $stderr.puts "\txsrf_token => #{@xsrf_token}"
+    exit 2
+  end
+
   def run
-    if [@xsrf_token, @cookie, @path, @tenant].any? { |ivar| ivar.nil? || ivar.empty? }
-      $stderr.puts 'Missing a required argument:'
-      $stderr.puts "\tcookie     => #{@cookie}"
-      $stderr.puts "\ttenant     => #{@tenant}"
-      $stderr.puts "\txsrf_token => #{@xsrf_token}"
+    resp = nil
 
-      exit
-    end
+    @num_requests.to_i.times do |i|
+      data = @data || (
+        @no_data ?
+          '' :
+          V2CampaignTemplate.new(name: titlecase(Faker::Company.catch_phrase)).create
+      )
 
-    @num_campaigns.to_i.times do
-      data = @data || V2CampaignTemplate.new(name: titlecase(Faker::Company.catch_phrase)).create
-
-      $stdout.puts "\nGenerating #{@num_campaigns} campaign#{'s' if @num_campaigns > 1} with args:"
-      $stdout.puts "\ttenant => #{@tenant}"
-      $stdout.puts "\tmethod => #{@http_method}"
-      $stdout.puts "\tpath => #{@path}"
-      $stdout.puts "\txsrf_token => #{@xsrf_token}"
-      $stdout.puts "\tcookie => #{@cookie}"
-      $stdout.puts "\tdata => #{data}"
-      $stdout.puts
+      if @verbose
+        $stdout.puts "\nGenerating request #{i} of #{@num_requests} with args:"
+        $stdout.puts "\ttenant => #{@tenant}"
+        $stdout.puts "\tmethod => #{@http_method}"
+        $stdout.puts "\tpath => #{@path}"
+        $stdout.puts "\txsrf_token => #{@xsrf_token}"
+        $stdout.puts "\tcookie => #{@cookie}"
+        $stdout.puts "\tdata => #{data}"
+        $stdout.puts
+      end
 
       uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
       request = @http_method == 'POST' ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
@@ -344,7 +359,7 @@ class V2CampaignManagerClient
       }
 
       $stdout.puts '**************************************************************'
-      $stdout.puts 'REQUEST'
+      $stdout.puts "REQUEST #{i}"
       $stdout.puts "method:    #{request.method}"
       $stdout.puts "has data?: #{request.response_body_permitted? && !!request.body}"
       $stdout.puts "req:       #{request.uri}"
@@ -355,12 +370,21 @@ class V2CampaignManagerClient
 
       # TODO track successes/failures and generate a report
       $stdout.puts '**************************************************************'
-      $stdout.puts 'RESPONSE'
+      $stdout.puts "RESPONSE #{i}"
       $stdout.puts "code: #{resp.code}"
-      $stdout.puts "msg:  #{resp.body}"
+      $stdout.puts "msg:  #{resp.body}" if @verbose
+
+      if resp.code.to_i != 200
+        $stderr.puts "Request failed! :("
+        $stderr.puts "Response: #{resp.code} #{resp.body}"
+        exit 3
+      end
 
       break if @data # if custom data was passed in, don't make same request multiple times
     end
+
+    # Return last response
+    resp
   end
 end
 
@@ -399,8 +423,17 @@ if $PROGRAM_NAME == __FILE__
     end
 
     opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
-      options[:num_campaigns] = number.to_i
+      options[:num_requests] = number.to_i
     end
+
+    opts.on(
+      '-P',
+      '--no-prompt-if-optional',
+      'Disable interactive prompts for missing values if a default value exists'
+    ) do
+      options[:no_prompt] = true
+    end
+
 
     opts.on('-pPATH', '--path=PATH', 'The endpoint to CURL') do |path|
       options[:path] = path
@@ -414,7 +447,15 @@ if $PROGRAM_NAME == __FILE__
       options[:tenant] = tenant
     end
 
-    opts.on('-xTOKEN', '--xsrf-token=TOKEN', 'A valid XSRF token') do |xsrf_token|
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    opts.on(
+      '-xTOKEN',
+      '--xsrf-token=TOKEN',
+      'A valid XSRF token [DEPRECATED: will extract from cookie if not provided]'
+    ) do |xsrf_token|
       options[:xsrf_token] = xsrf_token
     end
 
@@ -438,50 +479,53 @@ if $PROGRAM_NAME == __FILE__
   unless options[:last_used]
     ## Required values
     options[:cookie] ||= ''
-    options[:xsrf_token] ||= ''
+    # options[:xsrf_token] ||= ''
 
     while options[:cookie].empty?
       $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
       options[:cookie] = $stdin.gets.strip
     end
 
-    while options[:xsrf_token].empty?
-      $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
-      options[:xsrf_token] = $stdin.gets.strip
-    end
+    # DEPRECATED: this value can be extracted from the cookie string
+    # while options[:xsrf_token].empty?
+    #   $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+    #   options[:xsrf_token] = $stdin.gets.strip
+    # end
 
     ## Optional values
-    if options[:path].nil?
-      $stdout.puts "\nPath defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:"
-      path_input = $stdin.gets.chomp
-      options[:path] = path_input unless path_input.empty?
-    end
+    unless options[:no_prompts]
+      if options[:path].nil?
+        $stdout.puts "\nPath defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:"
+        path_input = $stdin.gets.chomp
+        options[:path] = path_input unless path_input.empty?
+      end
 
-    if options[:tenant].nil?
-      $stdout.puts "\nTenant defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:"
-      tenant_input = $stdin.gets.chomp
-      options[:tenant] = tenant_input unless tenant_input.empty?
-    end
+      if options[:tenant].nil?
+        $stdout.puts "\nTenant defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:"
+        tenant_input = $stdin.gets.chomp
+        options[:tenant] = tenant_input unless tenant_input.empty?
+      end
 
-    if options[:http_method].nil?
-      $stdout.puts "\nMethod defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:"
-      method_input = $stdin.gets.chomp.upcase
-      options[:http_method] = method_input unless method_input.empty?
-      options[:no_data] = true if method_input == 'GET'
-    end
+      if options[:http_method].nil?
+        $stdout.puts "\nMethod defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:"
+        method_input = $stdin.gets.chomp.upcase
+        options[:http_method] = method_input unless method_input.empty?
+        options[:no_data] = true if method_input == 'GET'
+      end
 
-    if options[:num_campaigns].nil?
-      $stdout.puts "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:"
-      num_campaigns_input = $stdin.gets.chomp
-      options[:num_campaigns] = num_campaigns_input.to_i unless num_campaigns_input.empty?
-    end
+      if options[:num_requests].nil?
+        $stdout.puts "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:"
+        num_requests_input = $stdin.gets.chomp
+        options[:num_requests] = num_requests_input.to_i unless num_requests_input.empty?
+      end
 
-    if !options[:no_data] && options[:data].nil?
-      $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data, <n> to send no data, or enter a different stringified JSON data object:"
-      num_campaigns_input = $stdin.gets.chomp
-      options[:no_data] = true if data_input == 'n'
-      options[:data] = data_input unless data_input.empty?
-    end
+      if !options[:no_data] && options[:data].nil?
+        $stdout.puts "\nSemi-random data will be generated by default; press <return> to use the default data, <n> to send no data, or enter a different stringified JSON data object:"
+        num_requests_input = $stdin.gets.chomp
+        options[:no_data] = true if data_input == 'n'
+        options[:data] = data_input unless data_input.empty?
+      end
+    end # end optional section
   end
 
   V2CampaignManagerClient.new(**options).run

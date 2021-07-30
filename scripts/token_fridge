@@ -1,0 +1,127 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+begin
+  load "#{__dir__}/curl-cmanv2"
+rescue LoadError => err
+  $stderr.puts 'This script is a wrapper for `curl-cmanv2`, but it could not be found.'
+  $stderr.puts 'Make sure both scripts are located in the same directory.'
+  exit 1
+end
+
+#############
+# Ruby code #
+#############
+
+class TokenRefrigerator
+  DEFAULT_OPTION_OVERRIDES = {
+    http_method: 'GET'.freeze,
+    no_data: true,
+  }
+
+  def initialize(refresh_interval: 15, **kwargs)
+    @refresh_interval = refresh_interval.to_i
+    @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
+  end
+
+  def minutes_until_next_call(time)
+    (@refresh_interval - (Time.now - time) / 60).round
+  end
+
+  def run
+    resp = @client.run
+    current_time = Time.now
+
+    while true
+      if Time.now - current_time > 60 * @refresh_interval
+        current_time = Time.now
+        resp = @client.run
+      end
+
+      system 'clear'
+      $stdout.puts "Current refresh interval: #{@refresh_interval}"
+      $stdout.puts "Last refresh at #{current_time}"
+      $stdout.puts "Last response: #{resp.code}"
+      mins_to_next = minutes_until_next_call current_time
+      $stdout.puts "Next refresh in #{mins_to_next} minute#{mins_to_next > 1 ? 's' : ''}"
+      sleep 60
+    end
+
+  end
+end
+
+################
+# Shell script #
+################
+def usage; end
+
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.on(
+      '-cCOOKIE',
+      '--cookie=COOKIE',
+      'The cookie from an authenticated Rally Central API call',
+    ) do |cookie|
+      options[:cookie] = cookie
+    end
+
+    opts.on('-l', '--last-used-args', 'Re-use the stored data from the last call') do
+      options[:last_used] = true
+    end
+
+    opts.on(
+      '-rREFRESH_INTERVAL',
+      '--refresh-interval=REFRESH_INTERVAL',
+      "The amount of time between API calls (in minutes); defaults to 15",
+    ) do |refresh_interval|
+      options[:refresh_interval] = refresh_interval
+    end
+
+    opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to; defaults to `thankful-diet`') do |tenant|
+      options[:tenant] = tenant
+    end
+
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  unless options[:last_used]
+    while options[:cookie].nil? || options[:cookie].empty?
+      $stdout.puts "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
+      options[:cookie] = $stdin.gets.strip
+    end
+  end
+
+  TokenRefrigerator.new(**options).run
+end
