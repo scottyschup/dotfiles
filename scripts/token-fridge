@@ -98,8 +98,6 @@ end
 ################
 # Shell script #
 ################
-def usage; end
-
 if $PROGRAM_NAME == __FILE__
   options = {}
   OptionParser.new do |opts|
@@ -111,16 +109,16 @@ if $PROGRAM_NAME == __FILE__
       options[:cookie] = cookie
     end
 
-    opts.on('-l', '--last-used-args', 'Re-use the stored data from the last call') do
-      options[:last_used] = true
-    end
-
     opts.on(
-      '-rREFRESH_INTERVAL',
-      '--refresh-interval=REFRESH_INTERVAL',
+      '-iINTERVAL',
+      '--interval=INTERVAL',
       "The amount of time between API calls (in minutes); defaults to 15",
     ) do |refresh_interval|
       options[:refresh_interval] = refresh_interval
+    end
+
+    opts.on('-l', '--last-used-args', 'Re-use the stored data from the last call') do
+      options[:last_used] = true
     end
 
     opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to; defaults to `thankful-diet`') do |tenant|

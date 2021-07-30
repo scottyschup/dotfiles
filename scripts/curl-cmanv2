@@ -274,11 +274,15 @@ class V2CampaignManagerClient
       instance_variable_set(ivar_name, ivar_val)
     end
 
+    # Post-processing
     @path = @path.start_with?('/') ? @path[1..-1] : @path
+    extract_xsrf_token_from_cookie
 
-    @xsrf_token ||= @cookie&.split('XSRF-TOKEN=')&.last
+    missing_required_arg? ? raise_missing_required_arg : update_last_used_values
+  end
 
-    missing_required_arg? ? missing_required_arg : update_last_used_values
+  def extract_xsrf_token_from_cookie(cookie = nil)
+    @xsrf_token ||= (cookie || @cookie)&.split('XSRF-TOKEN=')&.last
   end
 
   def ivarize(str)
@@ -294,7 +298,7 @@ class V2CampaignManagerClient
   end
 
   def update_last_used_values
-    $stdout.puts("\nUpdating last used values")
+    $stdout.puts("\nUpdating last used values") if @verbose
 
     FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
     File.open("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}", 'w') do |file|
@@ -309,7 +313,7 @@ class V2CampaignManagerClient
     [@cookie, @tenant, @path, @xsrf_token].any? { |ivar| ivar.nil? || ivar.empty? }
   end
 
-  def missing_required_arg
+  def raise_missing_required_arg
     $stderr.puts 'Missing a required argument:'
     $stderr.puts "\tcookie     => #{@cookie}"
     $stderr.puts "\tpath       => #{@path}"
@@ -360,10 +364,10 @@ class V2CampaignManagerClient
       }
 
       $stdout.puts '**************************************************************'
-      $stdout.puts "REQUEST #{iter}"
+      $stdout.puts "REQUEST #{iter} of #{@num_requests}"
       $stdout.puts "method:    #{request.method}"
       $stdout.puts "has data?: #{request.response_body_permitted? && !!request.body}"
-      $stdout.puts "req:       #{request.uri}"
+      $stdout.puts "endpoint:  #{request.uri}"
 
       resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
@@ -376,7 +380,7 @@ class V2CampaignManagerClient
       $stdout.puts "msg:  #{resp.body}" if @verbose
 
       if resp.code.to_i != 200
-        $stderr.puts "Request failed! :("
+        $stderr.puts "Something happened! :("
         $stderr.puts "Response: #{resp.code} #{resp.body}"
         exit 3
       end
@@ -430,7 +434,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-P',
       '--no-prompt-if-optional',
-      'Disable interactive prompts for missing values if a default value exists'
+      'Disable interactive prompts for missing values if a default value exists',
     ) do
       options[:no_prompt] = true
     end
@@ -465,6 +469,8 @@ if $PROGRAM_NAME == __FILE__
       exit
     end
   end.parse!
+
+  $stdout.puts(options) if options[:verbose]
 
   if options[:edit_last_used]
     V2CampaignManagerClient.edit_last_used_args
