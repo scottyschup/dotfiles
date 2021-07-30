@@ -25,7 +25,6 @@ begin
   $VERBOSE = nil # Suppress deprecation warnings and the like
 
   require 'optparse'
-  # add more requires here
 rescue LoadError => err
   # Error example:
   #   pry(main)> require 'fake_gem/with/path'
@@ -45,7 +44,7 @@ end
 begin
   load "#{__dir__}/curl-cmanv2"
 rescue LoadError => err
-  $stderr.puts 'This script is a wrapper for `curl-cmanv2`, but it could not be found.'
+  $stderr.puts 'This script uses the `curl-cmanv2` script from the same repo, but it could not be found.'
   $stderr.puts 'Make sure both scripts are located in the same directory.'
   exit 1
 end

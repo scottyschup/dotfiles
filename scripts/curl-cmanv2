@@ -415,11 +415,11 @@ if $PROGRAM_NAME == __FILE__
       options[:no_data] = true
     end
 
-    opts.on('-e', '--edit-last-used-args', 'Edit the stored data from the last call') do
+    opts.on('-e', '--edit-last-used-args', 'Edit the stored args from the last call') do
       options[:edit_last_used] = true
     end
 
-    opts.on('-l', '--last-used-args', 'Re-use the stored data from the last call') do
+    opts.on('-l', '--last-used-args', 'Re-use the stored args from the last call') do
       options[:last_used] = true
     end
 
@@ -427,7 +427,7 @@ if $PROGRAM_NAME == __FILE__
       options[:http_method] = http_method
     end
 
-    opts.on('-nNUMBER', '--number=NUMBER', 'The number of campaigns to create') do |number|
+    opts.on('-nNUMBER', '--number=NUMBER', 'The number of times to perform the request') do |number|
       options[:num_requests] = number.to_i
     end
 
@@ -444,7 +444,7 @@ if $PROGRAM_NAME == __FILE__
       options[:path] = path
     end
 
-    opts.on('-s', '--show-last-used-args', 'Display the stored data from the last call') do
+    opts.on('-s', '--show-last-used-args', 'Display the stored args used in the last call') do
       options[:show_last_used] = true
     end
 
@@ -459,7 +459,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-xTOKEN',
       '--xsrf-token=TOKEN',
-      'A valid XSRF token [DEPRECATED: will extract from cookie if not provided]'
+      'DEPRECATED: no longer necessary as script will extract this value from the cookie'
     ) do |xsrf_token|
       options[:xsrf_token] = xsrf_token
     end
