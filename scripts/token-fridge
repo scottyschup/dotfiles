@@ -59,10 +59,12 @@ class TokenRefrigerator
     no_data: true,
   }
 
-  DEFAULT_REFRESH_INTERVAL = 20
+  DEFAULT_REFRESH_INTERVAL = 19
 
   def initialize(refresh_interval: DEFAULT_REFRESH_INTERVAL, **kwargs)
-    @refresh_interval = i.to_i == 0 ? DEFAULT_REFRESH_INTERVAL : i.to_i
+    @refresh_interval = refresh_interval.to_i == 0 ?
+      DEFAULT_REFRESH_INTERVAL :
+      refresh_interval.to_i
     @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
   end
 
