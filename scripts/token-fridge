@@ -59,19 +59,11 @@ class TokenRefrigerator
     no_data: true,
   }
 
-  def initialize(refresh_interval: 15, **kwargs)
-    set_refresh_interval(refresh_interval)
-    @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
-  end
+  DEFAULT_REFRESH_INTERVAL = 20
 
-  def set_refresh_interval(i)
-    @refresh_interval = i.to_i unless i.to_i == 0 # indicates a string, not a stringified number
-    @refresh_interval ||= if i == 'increment'
-      @increment_interval = true
-      20
-    else
-      15
-    end
+  def initialize(refresh_interval: DEFAULT_REFRESH_INTERVAL, **kwargs)
+    @refresh_interval = i.to_i == 0 ? DEFAULT_REFRESH_INTERVAL : i.to_i
+    @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
   end
 
   def minutes_seconds_until_next_call(last_call_time)
@@ -89,7 +81,6 @@ class TokenRefrigerator
       if Time.now - current_time > 60 * @refresh_interval
         current_time = Time.now
         resp = @client.run
-        @refresh_interval += 5 if @increment_interval
       end
 
       system 'clear'
@@ -122,7 +113,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-iINTERVAL',
       '--interval=INTERVAL',
-      "The amount of time between API calls (in minutes); defaults to 15.\nUse 'increment' for an incremental test.",
+      "The amount of time between API calls (in minutes); defaults to 15.",
     ) do |refresh_interval|
       options[:refresh_interval] = refresh_interval
     end

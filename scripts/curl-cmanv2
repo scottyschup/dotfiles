@@ -140,7 +140,7 @@ class V2CampaignTemplate
       },
       #  Optum/All Clients
       {
-        product: 'advantage',
+        product: 'arcade',
         partner: 'optum',
         membershipCategories: [],
         coverageTypeCodes: [],
@@ -158,7 +158,7 @@ class V2CampaignTemplate
       },
       # All partners/all clients
       {
-        product: 'arcade',
+        product: 'advantage',
         lineOfBusiness: 'M&R',
         membershipCategories: [
           'MEDICA',
@@ -197,7 +197,7 @@ class V2CampaignTemplate
     uuid = random_x_digit_number 7
     {
       id: "12345-abcd-#{uuid}",
-      name: "#{@name + ' '}campaign #{uuid}",
+      name: "#{@name} Campaign",
       labels: [],
       comment: '',
       assignmentCriteria: assignment_criteria_arr,
@@ -213,11 +213,14 @@ class V2CampaignTemplate
             'realAge=23',
             'realAge=24',
           ],
-          logicalOperator: 'AND',
+          logicalOperator: 'OR',
         },
         excludedTags: {
-          criteria: ['realAge=23'],
-          logicalOperator: 'AND',
+          criteria: [
+            'realAge=22',
+            'realAge=21',
+          ],
+          logicalOperator: 'OR',
         },
       },
       status: 'draft' # this prop isn't really used anymore, but without it, or with an invalid value the req fails
@@ -242,7 +245,6 @@ class V2CampaignManagerClient
     xsrf_token
     http_method
     data
-    no_data
     num_requests
     path
     tenant
@@ -276,6 +278,8 @@ class V2CampaignManagerClient
 
     # Post-processing
     @path = @path.start_with?('/') ? @path[1..-1] : @path
+    @http_method = @http_method.upcase
+    @no_data ||= @http_method == 'GET'
     extract_xsrf_token_from_cookie
 
     missing_required_arg? ? raise_missing_required_arg : update_last_used_values
@@ -379,7 +383,7 @@ class V2CampaignManagerClient
       $stdout.puts "code: #{resp.code}"
       $stdout.puts "msg:  #{resp.body}" if @verbose
 
-      if resp.code.to_i != 200
+      if resp.code.to_i >= 300
         $stderr.puts "Something happened! :("
         $stderr.puts "Response: #{resp.code} #{resp.body}"
         exit 3
