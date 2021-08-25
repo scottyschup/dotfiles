@@ -57,6 +57,7 @@ class TokenRefrigerator
   DEFAULT_OPTION_OVERRIDES = {
     http_method: 'GET'.freeze,
     no_data: true,
+    num_requests: 1,
   }
 
   DEFAULT_REFRESH_INTERVAL = 19
@@ -115,7 +116,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-iINTERVAL',
       '--interval=INTERVAL',
-      "The amount of time between API calls (in minutes); defaults to 15.",
+      "The amount of time between API calls (in minutes); defaults to 19.",
     ) do |refresh_interval|
       options[:refresh_interval] = refresh_interval
     end

@@ -27,6 +27,7 @@ require 'openssl'
 require 'optparse'
 require 'uri'
 require 'faker'
+require 'pry'
 
 #############
 # Ruby code #
@@ -34,6 +35,7 @@ require 'faker'
 def titlecase(str)
   str.split(/\s/).map(&:capitalize).join(' ')
 end
+
 class V2CampaignTemplate
   def initialize(name: nil)
     @name = name.to_s
@@ -43,192 +45,551 @@ class V2CampaignTemplate
     (rand * (10 ** x)).floor
   end
 
-  def placements_hash
-    [
-      [
-        {
-          placementType: 'resources_page_featured_promo',
-          productType: 'resources',
-          productPlacementCategory: 'resources_page_placements',
-          imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
-          headline: 'Monday Refresh',
-          body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
-          priority: 800,
-          colorPair: {
-            background: 'white',
-            foreground: 'black',
-          },
-          cta: {
-            ctaType: 'url',
-            ctaText: 'Check it Out!',
-            ctaValue: 'http://google.com'
-          },
-          theme: 'rallyWhite',
+  def placements_hash(product)
+    advantage_placements = [
+      {
+        placementType: 'advantage_dashboard_banner',
+        productType: 'advantage',
+        productPlacementCategory: 'advantage_dashboard_placements',
+        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
+        headline: 'Manic Monday',
+        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
+        priority: 800,
+        colorPair: {
+          background: 'black',
+          foreground: 'white',
         },
-        {
-          placementType: 'engage_dashboard',
-          productType: 'engage',
-          productPlacementCategory: 'engage_placements',
-          priority: 100,
-          headline: 'Do all placements have headlines?',
-          colorPair: {
-            background: 'white',
-            foreground: 'black',
-          },
-          theme: 'rallyWhite',
+        cta: {
+          ctaType: 'url',
+          ctaText: 'Check it Out!',
+          ctaValue: 'http://google.com',
         },
-        {
-          placementType: 'engage_dashboard_banner',
-          productType: 'engage',
-          productPlacementCategory: 'engage_placements',
-          priority: 100,
-          headline: "Hi! I'm a headline!",
-          colorPair: {
-            background: 'white',
-            foreground: 'black',
-          },
-          theme: 'rallyRedMedium',
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'dashboard_targeted_content',
+        productType: 'advantage',
+        productPlacementCategory: 'advantage_dashboard_placements',
+        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
+        headline: 'Monday Refresh',
+        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
+        priority: 800,
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
         },
-        {
-          placementType: 'advantage_mobile_dashboard',
-          productType: 'engage',
-          productPlacementCategory: 'engage_placements',
-          priority: 100,
-          headline: 'Something go here',
-          colorPair: {
-            background: 'white',
-            foreground: 'black',
-          },
-          theme: 'rallyWhite',
+        cta: {
+          ctaType: 'url',
+          ctaText: 'Check it Out!',
+          ctaValue: 'http://google.com'
         },
-      ].sample(rand(3) + 1)
-  ].flatten.each_with_object({}) { |el, agg| agg[el[:placementType]] = el }
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'advantage_mobile_home_featured_programs',
+        productType: 'advantage',
+        productPlacementCategory: 'advantage_mobile_placements',
+        priority: 100,
+        headline: 'Something go here',
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyWhite',
+      },
+    ]
+
+    arcade_placements = [
+      {
+        placementType: 'arcade_carousel',
+        productType: 'arcade',
+        productPlacementCategory: 'arcade_dashboard_placements',
+        priority: 600,
+        headline: 'Do all placements have headlines?',
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'arcade_rx',
+        productType: 'arcade',
+        productPlacementCategory: 'arcade_secondary_placements',
+        priority: 300,
+        headline: 'Do all placements have headlines?',
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyWhite',
+      },
+      {
+        placementType: 'arcade_resources_text',
+        productType: 'arcade',
+        productPlacementCategory: 'arcade_resource_page_placements',
+        priority: 100,
+        headline: "Hi! I'm an Arcade Resource Page headline!",
+        colorPair: {
+          background: 'white',
+          foreground: 'black',
+        },
+        theme: 'rallyRedMedium',
+      }
+    ].sample(rand(1..4))
+
+    case product
+    when 'advantage'
+      advantage_placements
+    when 'arcade'
+      arcade_placements
+    when 'both'
+      advantage_placements + arcade_placements
+    else
+      []
+    end.each_with_object({}) { |el, agg| agg[el[:placementType]] = el }
   end
 
-  def assignment_criteria_arr
-    [
-      # Great West Life/All Clients
+  def assignment_criteria_arr(product)
+    advantage_criteria = [
+      # Optum/Babcock Power
       {
-        "product": "engage",
-        "partner": "great_west_life",
-        "membershipCategories": [],
-        "coverageTypeCodes": [],
-        "affiliations": [],
-        "policyNumbers": [],
-        "pvrcCodes": [],
-        "excludeClientIds": [],
-        "validPlacements": [],
-        "startDate": 1500854400000,
-        "timeZone": "UTC",
-        "overrides": {}
-      },
-      # Rally/Rally Employees
-      {
-        product: 'advantage',
-        partner: 'rally',
-        client: 'rally_employees',
-        membershipCategories: [],
-        coverageTypeCodes: [],
-        affiliations: [],
-        policyNumbers: [],
-        pvrcCodes: [],
-        excludeClientIds: [],
-        validPlacements: [],
-        startDate: 1500854400000,
-        timeZone: 'UTC',
-        overrides: {},
-      },
-      #  Optum/All Clients
-      {
-        product: 'arcade',
-        partner: 'optum',
-        membershipCategories: [],
-        coverageTypeCodes: [],
         affiliations: [
           'optum_babcock_power_aff_201512335_213537_OFor',
           'optum_babcock_power_aff_201512335_213537_TN1L',
           'optum_babcock_power_aff_201512335_213537_cQKN'
         ],
-        policyNumbers: [],
-        pvrcCodes: [],
-        excludeClientIds: [],
-        startDate: 1598632180684,
-        timeZone: 'UTC',
-        overrides: {},
-      },
-      # All partners/all clients
-      {
-        product: 'advantage',
-        lineOfBusiness: 'M&R',
-        membershipCategories: [
-          'MEDICA',
-          'PCP',
-        ],
+        client: "babcock_power",
         coverageTypeCodes: [],
-        affiliations: [],
-        policyNumbers: [],
-        pvrcCodes: [],
         excludeClientIds: [],
-        validPlacements: [],
-        startDate: 1513486800000,
-        timeZone: 'UTC',
+        membershipCategories: [],
         overrides: {},
+        partner: "optum",
+        policyNumbers: [],
+        product: "advantage",
+        pvrcCodes: [],
+        startDate: 1500854400000,
+        timeZone: "UTC",
+        validPlacements: [],
+      },
+      # All Partners/All Clients
+      {
+        affiliations: [],
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        membershipCategories: [],
+        overrides: {},
+        policyNumbers: [],
+        product: "advantage",
+        pvrcCodes: [],
+        startDate: 1500854400000,
+        timeZone: "UTC",
+        validPlacements: [],
+      },
+      # Rally/Rally Employees
+      {
+        affiliations: [],
+        client: 'rally_employees',
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        membershipCategories: [],
+        overrides: {},
+        partner: 'rally',
+        policyNumbers: [],
+        product: 'advantage',
+        pvrcCodes: [],
+        startDate: 1500854400000,
+        timeZone: 'UTC',
+        validPlacements: [],
       },
       # Kaiser Permanente/Kaiser Base (the only client in our dev tenant)
       {
+        affiliations: [],
+        client: 'kaiser_base',
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        membershipCategories: [],
+        overrides: {},
+        partner: 'kaiser_permanente',
+        policyNumbers: [],
         product: 'advantage',
+        pvrcCodes: [],
+        startDate: 1599038800058,
+        timeZone: 'UTC',
+        validPlacements: [],
+      },
+      # Another real-ish example generated using v1 UI
+      {
+        product: 'engage',
         partner: 'kaiser_permanente',
         client: 'kaiser_base',
+        affiliations: [
+          'kaiser_base_default'
+        ],
         membershipCategories: [],
         coverageTypeCodes: [],
-        affiliations: [],
         policyNumbers: [],
         pvrcCodes: [],
         excludeClientIds: [],
         validPlacements: [],
-        startDate: 1599038800058,
+        startDate: 1628410080000,
         timeZone: 'UTC',
-        overrides: {}
+        overrides: {
+          resources_page_featured_promo: {
+            priority: 800,
+          },
+          advantage_dashboard_banner: {
+            priority: 400,
+            ctaValue: 'https://weather.com',
+          }
+        },
       }
-    ].sample(rand(4) + 2) # pick 2 to 5 of the above assignments
+    ].sample(rand(1..4)) # pick 1 to 4 of the above 4 assignments
+
+    arcade_criteria = [
+      #  Optum/all clients M&R
+      {
+        affiliations: [],
+        coverageTypeCodes: ['HIP', 'HIPRIDER', 'MA', 'MAPD'],
+        excludeClientIds: [],
+        lineOfBusiness: 'M&R',
+        membershipCategories: ['MEDICA', 'UHC', 'TEXAS ERS'],
+        overrides: {},
+        partner: 'optum',
+        policyNumbers: ['1234'],
+        product: 'arcade',
+        pvrcCodes: ['abcd'],
+        startDate: 1598632180684,
+        timeZone: 'UTC',
+        validPlacements: [],
+      },
+      # Optum/all clients C&S
+      {
+        affiliations: [],
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        lineOfBusiness: 'C&S',
+        membershipCategories: [],
+        overrides: {},
+        partner: 'optum',
+        policyNumbers: ['12345'],
+        product: 'arcade',
+        pvrcCodes: ['edcba'],
+        startDate: 1513486800000,
+        timeZone: 'UTC',
+        validPlacements: [],
+      },
+      #  Optum/all clients E&I
+      {
+        affiliations: [],
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        lineOfBusiness: 'E&I',
+        membershipCategories: ['JPMC', 'OXFORD', 'UHC West'],
+        overrides: {},
+        partner: 'optum',
+        policyNumbers: ['1234'],
+        product: 'arcade',
+        pvrcCodes: ['abcd'],
+        startDate: 1598632180684,
+        timeZone: 'UTC',
+        validPlacements: [],
+      },
+      # Optum/all clients
+      {
+        affiliations: [],
+        coverageTypeCodes: [],
+        excludeClientIds: [],
+        lineOfBusiness: 'M&R',
+        membershipCategories: ['AARP', 'MEDICA', 'RETIREE'],
+        overrides: {},
+        partner: 'optum',
+        policyNumbers: ['12345'],
+        product: 'arcade',
+        pvrcCodes: ['edcba'],
+        startDate: 1513486800000,
+        timeZone: 'UTC',
+        validPlacements: [],
+      },
+    ].sample(rand(1..4)) # pick 1 to 4 of the above 4 assignments
+
+    case product
+    when 'advantage'
+      advantage_criteria
+    when 'arcade'
+      arcade_criteria
+    when 'both'
+      advantage_criteria + arcade_criteria
+    else
+      []
+    end
   end
 
-  def create
+  # Another real-ish campaign to model off of
+  # REQUEST PAYLOAD
+  # {
+  #   "id": "6108f6c56a7422000168c047",
+  #   "name": "Eligibility reqs test",
+  #   "labels": [],
+  #   "comment": "Where do these stage 1 comments show up?",
+  #   "assignmentCriteria": [
+  #     {
+  #       "affiliations": [
+  #         "kaiser_base_default"
+  #       ],
+  #       "membershipCategories": [],
+  #       "coverageTypeCodes": [],
+  #       "policyNumbers": [],
+  #       "pvrcCodes": [],
+  #       "excludeClientIds": [],
+  #       "validPlacements": [],
+  #       "startDate": 1628410080000,
+  #       "timeZone": "UTC",
+  #       "overrides": {
+  #         "resources_page_featured_promo": {
+  #           "ctaValue": "https://weather.com"
+  #         },
+  #         "advantage_dashboard_banner": {
+  #           "ctaValue": "https://weather.com"
+  #         }
+  #       },
+  #       "product": "engage",
+  #       "partner": "kaiser_permanente",
+  #       "client": "kaiser_base"
+  #     }
+  #   ],
+  #   "placements": {
+  #     "advantage_dashboard_banner": {
+  #       "placementType": "advantage_dashboard_banner",
+  #       "productType": "advantage",
+  #       "productPlacementCategory": "advantage_dashboard_placements",
+  #       "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Banzai-Shenzi-The-Lion-King-Mufasa.gif",
+  #       "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/Immortan_joe_insignia.png",
+  #       "headline": "Stupid headline",
+  #       "body": "Required body text blah blah blah.",
+  #       "priority": 800,
+  #       "colorPair": {
+  #         "background": "white",
+  #         "foreground": "black"
+  #       },
+  #       "cta": {
+  #         "ctaType": "phone",
+  #         "ctaText": "This is the text for the a[type=tel] tag, idntit?",
+  #         "ctaValue": "1-312-555-1234"
+  #       },
+  #       "theme": "rallyOrange"
+  #     },
+  #     "resources_page_featured_promo": {
+  #       "placementType": "resources_page_featured_promo",
+  #       "productType": "resources",
+  #       "productPlacementCategory": "resources_page_placements",
+  #       "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Dashboard-Promo-money.png",
+  #       "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/DashboardBanner_JPMC_Icon_60x30 (1).png",
+  #       "headline": "A required headline",
+  #       "body": "Another required body section.",
+  #       "priority": 200,
+  #       "colorPair": {
+  #         "background": "white",
+  #         "foreground": "black"
+  #       },
+  #       "cta": {
+  #         "ctaType": "url",
+  #         "ctaText": "Click me!",
+  #         "ctaValue": "https://downtherabbitholegame.com/"
+  #       },
+  #       "theme": "rallyRedDark"
+  #     }
+  #   },
+  #   "metadata": {
+  #     "activityId": {
+  #       "id": "BCBS.SC.BIOMETRIC.DIASTOLIC.VALUE"
+  #     }
+  #   },
+  #   "tagApplicationLogic": {
+  #     "includedTags": {
+  #       "criteria": [
+  #         "eligibleForDonations",
+  #         "eligibleForSweepstakes",
+  #         "eligibleForIncentives"
+  #       ],
+  #       "logicalOperator": "OR"
+  #     },
+  #     "excludedTags": {
+  #       "criteria": [
+  #         "noDrugUse"
+  #       ],
+  #       "logicalOperator": "AND"
+  #     }
+  #   }
+  # }
+
+  # RESPONSE BODY
+  # {
+  #   "contentType": "StarshipCampaign",
+  #   "contentId": "0000017b-0b03-427e-89b9-d2a88cf35839",
+  #   "normalizedToken": "17f641cf7701b6c7233ffe6ae24395d0ed1cd167",
+  #   "descriptor": null,
+  #   "version": 1,
+  #   "isDraft": true,
+  #   "currentEnvironments": [],
+  #   "data": {
+  #     "id": "6108f6c56a7422000168c047",
+  #     "name": "Eligibility reqs test",
+  #     "labels": [],
+  #     "comment": "Where do these stage 1 comments show up?",
+  #     "assignmentCriteria": [
+  #       {
+  #         "product": "engage",
+  #         "partner": "kaiser_permanente",
+  #         "client": "kaiser_base",
+  #         "membershipCategories": [],
+  #         "coverageTypeCodes": [],
+  #         "affiliations": [
+  #           "kaiser_base_default"
+  #         ],
+  #         "policyNumbers": [],
+  #         "pvrcCodes": [],
+  #         "excludeClientIds": [],
+  #         "validPlacements": [],
+  #         "startDate": 1628410080000,
+  #         "timeZone": "UTC",
+  #         "overrides": {
+  #           "resources_page_featured_promo": {
+  #             "ctaValue": "https://weather.com"
+  #           },
+  #           "advantage_dashboard_banner": {
+  #             "ctaValue": "https://weather.com"
+  #           }
+  #         }
+  #       }
+  #     ],
+  #     "placements": {
+  #       "advantage_dashboard_banner": {
+  #         "placementType": "advantage_dashboard_banner",
+  #         "productType": "advantage",
+  #         "productPlacementCategory": "advantage_dashboard_placements",
+  #         "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Banzai-Shenzi-The-Lion-King-Mufasa.gif",
+  #         "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/Immortan_joe_insignia.png",
+  #         "headline": "Stupid headline",
+  #         "body": "Required body text blah blah blah.",
+  #         "priority": 800,
+  #         "colorPair": {
+  #           "background": "white",
+  #           "foreground": "black"
+  #         },
+  #         "cta": {
+  #           "ctaType": "phone",
+  #           "ctaText": "This is the text for the a[type=tel] tag, idntit?",
+  #           "ctaValue": "1-312-555-1234"
+  #         },
+  #         "theme": "rallyOrange"
+  #       },
+  #       "resources_page_featured_promo": {
+  #         "placementType": "resources_page_featured_promo",
+  #         "productType": "resources",
+  #         "productPlacementCategory": "resources_page_placements",
+  #         "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Dashboard-Promo-money.png",
+  #         "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/DashboardBanner_JPMC_Icon_60x30 (1).png",
+  #         "headline": "A required headline",
+  #         "body": "Another required body section.",
+  #         "priority": 200,
+  #         "colorPair": {
+  #           "background": "white",
+  #           "foreground": "black"
+  #         },
+  #         "cta": {
+  #           "ctaType": "url",
+  #           "ctaText": "Click me!",
+  #           "ctaValue": "https://downtherabbitholegame.com/"
+  #         },
+  #         "theme": "rallyRedDark"
+  #       }
+  #     },
+  #     "metadata": {
+  #       "activityId": {
+  #         "id": "BCBS.SC.BIOMETRIC.DIASTOLIC.VALUE"
+  #       }
+  #     },
+  #     "tagApplicationLogic": {
+  #       "includedTags": {
+  #         "criteria": [
+  #           "eligibleForDonations",
+  #           "eligibleForSweepstakes",
+  #           "eligibleForIncentives"
+  #         ],
+  #         "logicalOperator": "OR"
+  #       },
+  #       "excludedTags": {
+  #         "criteria": [
+  #           "noDrugUse"
+  #         ],
+  #         "logicalOperator": "AND"
+  #       }
+  #     }
+  #   },
+  #   "createdBy": "4edf6b3c-b435-4259-87ca-6627826bba73",
+  #   "createdOn": "2021-08-03T07:56:53.275Z",
+  #   "lastModifiedBy": "4edf6b3c-b435-4259-87ca-6627826bba73",
+  #   "lastModifiedOn": "2021-08-03T08:18:07.786Z",
+  #   "futurePublishOn": null,
+  #   "futurePublishedBy": null,
+  #   "isValidated": null
+  # }
+
+
+  def create(product: 'both')
     uuid = random_x_digit_number 7
     {
       id: "12345-abcd-#{uuid}",
       name: "#{@name} Campaign",
       labels: [],
       comment: '',
-      assignmentCriteria: assignment_criteria_arr,
-      placements: placements_hash,
+      assignmentCriteria: assignment_criteria_arr(product),
+      placements: placements_hash(product),
       metadata: {
         activityId: {
           id: 'OPTUM.ENGAGE.GOTFLUSHOT.ATTEST',
         },
       },
-      tagApplicationLogic: {
-        includedTags: {
-          criteria: [
-            'realAge=23',
-            'realAge=24',
-          ],
-          logicalOperator: 'OR',
-        },
-        excludedTags: {
-          criteria: [
-            'realAge=22',
-            'realAge=21',
-          ],
-          logicalOperator: 'OR',
-        },
-      },
+      tagApplicationLogic: (rand(2).zero? ?
+        {
+          includedTags: {
+            criteria: [
+              'realAge=23',
+              'realAge=24',
+            ],
+            logicalOperator: 'OR',
+          },
+          excludedTags: {
+            criteria: [
+              'realAge=22',
+              'realAge=21',
+            ],
+            logicalOperator: 'OR',
+          },
+        } : {
+          includedTags: {
+            criteria: [
+              'eligibleForDonations',
+              'eligibleForSweepstakes',
+              'eligibleForIncentives'
+            ],
+            logicalOperator: 'OR'
+          },
+          excludedTags: {
+            criteria: [
+              'noDrugUse'
+            ],
+            logicalOperator: 'AND'
+          }
+        }
+      ),
       status: 'draft' # this prop isn't really used anymore, but without it, or with an invalid value the req fails
     }
   end
 end
 
-class V2CampaignManagerClient
+class CmanApiClient
   CURL_CMAN_V2_ROOT_DIR ||= `echo $HOME/.curlcmanv2`.chomp.freeze
   LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
   FILE_DELIMITER ||= '<:::>'.freeze
@@ -262,9 +623,10 @@ class V2CampaignManagerClient
     $stdout.puts(`cat #{file_path}`)
   end
 
-  def initialize(last_used: false, verbose: false, **kwargs)
-    $stdout.puts("Initializing with kwargs: \n#{{ last_used: last_used, verbose: verbose, kwargs: kwargs }}\n\n")
+  def initialize(last_used: false, reset: [], verbose: false, **kwargs)
+    $stdout.puts("Initializing with kwargs: \n#{{ last_used: last_used, reset: reset, verbose: verbose, kwargs: kwargs }}\n\n")
     @verbose = verbose
+    @reset = reset
     last_used_values = last_used ? fetch_last_used_values : {}
 
     # Process kwargs
@@ -297,6 +659,7 @@ class V2CampaignManagerClient
     FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
     File.readlines("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
       ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
+      next if @reset.include? ivar_name[1..-1]
       obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_requests" ? ivar_val.to_i : ivar_val
     end
   end
@@ -334,7 +697,9 @@ class V2CampaignManagerClient
       data = @data || (
         @no_data ?
           '' :
-          V2CampaignTemplate.new(name: titlecase(Faker::Company.catch_phrase)).create
+          V2CampaignTemplate
+            .new(name: titlecase(Faker::Company.catch_phrase))
+            .create(product: %w(arcade advantage both).sample)
       )
 
       if @verbose
@@ -344,7 +709,7 @@ class V2CampaignManagerClient
         $stdout.puts "\tpath => #{@path}"
         $stdout.puts "\txsrf_token => #{@xsrf_token}"
         $stdout.puts "\tcookie => #{@cookie}"
-        $stdout.puts "\tdata => #{data}"
+        $stdout.puts "\tdata => #{data.to_json}"
         $stdout.puts
       end
 
@@ -378,16 +743,26 @@ class V2CampaignManagerClient
       end
 
       # TODO track successes/failures and generate a report
-      $stdout.puts '**************************************************************'
-      $stdout.puts "RESPONSE #{iter}"
-      $stdout.puts "code: #{resp.code}"
-      $stdout.puts "msg:  #{resp.body}" if @verbose
+      $stdout.puts '------------------------------'
+      $stdout.puts "RESPONSE #{iter} of #{@num_requests}"
+      $stderr.puts "Something happened! :(" if resp.code.to_i >= 300
+      $stdout.puts "Resp code: #{resp.code}"
+      $stdout.puts "Resp msg:  #{resp.body}" if @verbose
 
       if resp.code.to_i >= 300
-        $stderr.puts "Something happened! :("
-        $stderr.puts "Response: #{resp.code} #{resp.body}"
+        begin
+          # Pretty print the description part of the error message
+          missing_keys = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
+          $stderr.puts
+          $stderr.puts('Error description:')
+          $stderr.send(:pp, missing_keys)
+        rescue JSON::ParserError
+          $stderr.puts('(JSON Parse Error while trying to pretty-print part of response body)')
+        end
         exit 3
       end
+
+      $stdout.puts '**************************************************************'
 
       break if @data # if custom data was passed in, don't make same request multiple times
     end
@@ -411,8 +786,17 @@ if $PROGRAM_NAME == __FILE__
       options[:cookie] = cookie
     end
 
-    opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do
-      options[:data] = true
+    opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do |data|
+      begin
+        options[:data] = JSON.parse(data)
+      rescue JSON::ParserError
+        $stderr.puts('JSON Parse Error')
+        $stdout.puts('Try again! Paste you stringified JSON here (without quotes around it)')
+        $stdout.print('> ')
+        data = $stdin.gets.chomp
+
+        retry
+      end
     end
 
     opts.on('-D', '--no-data', 'Do not include a data object with the request') do
@@ -444,8 +828,25 @@ if $PROGRAM_NAME == __FILE__
     end
 
 
-    opts.on('-pPATH', '--path=PATH', 'The endpoint to CURL') do |path|
+    opts.on('-pPATH', '--path=PATH', "The endpoint to CURL. Default: #{CmanApiClient::KWARG_DEFAULTS[:path]}") do |path|
       options[:path] = path
+    end
+
+    opts.on('-rKEYS', '--reset-cached-val=KEYS', "Reset last used values for the provided keys:\n#{' ' * 41}D=>data; M=>http_method; N=>num_requests; P=>path; T=>tenant\n#{' ' * 41}Ex: `-rDPT` to reset data, path, and tenant") do |keys|
+      options[:reset] = keys.split('').map do |key|
+        case key.upcase
+        when 'D'
+          'data'
+        when 'M'
+          'http_method'
+        when 'N'
+          'num_requests'
+        when 'P'
+          'path'
+        when 'T'
+          'tenant'
+        end
+      end
     end
 
     opts.on('-s', '--show-last-used-args', 'Display the stored args used in the last call') do
@@ -477,12 +878,12 @@ if $PROGRAM_NAME == __FILE__
   $stdout.puts(options) if options[:verbose]
 
   if options[:edit_last_used]
-    V2CampaignManagerClient.edit_last_used_args
+    CmanApiClient.edit_last_used_args
     exit
   end
 
   if options[:show_last_used]
-    V2CampaignManagerClient.show_last_used_args
+    CmanApiClient.show_last_used_args
     exit
   end
 
@@ -506,19 +907,19 @@ if $PROGRAM_NAME == __FILE__
     ## Optional values
     unless options[:no_prompts]
       if options[:path].nil?
-        $stdout.print "\nPath defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
+        $stdout.print "\nPath defaults to '#{CmanApiClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
         path_input = $stdin.gets.chomp
         options[:path] = path_input unless path_input.empty?
       end
 
       if options[:tenant].nil?
-        $stdout.print "\nTenant defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:\n> "
+        $stdout.print "\nTenant defaults to '#{CmanApiClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:\n> "
         tenant_input = $stdin.gets.chomp
         options[:tenant] = tenant_input unless tenant_input.empty?
       end
 
       if options[:http_method].nil?
-        $stdout.print "\nMethod defaults to '#{V2CampaignManagerClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:\n> "
+        $stdout.print "\nMethod defaults to '#{CmanApiClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:\n> "
         method_input = $stdin.gets.chomp.upcase
         options[:http_method] = method_input unless method_input.empty?
         options[:no_data] = true if method_input == 'GET'
@@ -539,5 +940,5 @@ if $PROGRAM_NAME == __FILE__
     end # end optional section
   end
 
-  V2CampaignManagerClient.new(**options).run
+  CmanApiClient.new(**options).run
 end
