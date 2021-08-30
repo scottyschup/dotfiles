@@ -905,17 +905,17 @@ if $PROGRAM_NAME == __FILE__
     # end
 
     ## Optional values
-    unless options[:no_prompts]
-      if options[:path].nil?
-        $stdout.print "\nPath defaults to '#{CmanApiClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
-        path_input = $stdin.gets.chomp
-        options[:path] = path_input unless path_input.empty?
-      end
-
+    unless options[:no_prompt]
       if options[:tenant].nil?
         $stdout.print "\nTenant defaults to '#{CmanApiClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:\n> "
         tenant_input = $stdin.gets.chomp
         options[:tenant] = tenant_input unless tenant_input.empty?
+      end
+
+      if options[:path].nil?
+        $stdout.print "\nPath defaults to '#{CmanApiClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
+        path_input = $stdin.gets.chomp
+        options[:path] = path_input unless path_input.empty?
       end
 
       if options[:http_method].nil?

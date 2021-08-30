@@ -66,7 +66,7 @@ class TokenRefrigerator
     @refresh_interval = refresh_interval.to_i == 0 ?
       DEFAULT_REFRESH_INTERVAL :
       refresh_interval.to_i
-    @client = V2CampaignManagerClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
+    @client = CmanApiClient.new(**kwargs, **DEFAULT_OPTION_OVERRIDES)
   end
 
   def minutes_seconds_until_next_call(last_call_time)
