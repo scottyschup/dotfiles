@@ -867,6 +867,7 @@ if $PROGRAM_NAME == __FILE__
       'DEPRECATED: no longer necessary as script will extract this value from the cookie'
     ) do |xsrf_token|
       options[:xsrf_token] = xsrf_token
+      $stdout.puts('The `-x` flag is DEPRECATED as that value is automatically extracted from the cookie') if xsrf_token
     end
 
     opts.on_tail('-h', '--help', 'Show this help message') do
