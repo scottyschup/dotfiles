@@ -752,19 +752,20 @@ class CmanApiClient
       if resp.code.to_i >= 300
         begin
           # Pretty print the description part of the error message
-          missing_keys = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
+          json_errors = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
           $stderr.puts
           $stderr.puts('Error description:')
-          $stderr.send(:pp, missing_keys)
-        rescue JSON::ParserError
+          $stderr.send(:pp, json_errors)
+        rescue JSON::ParserError => err
           $stderr.puts('(JSON Parse Error while trying to pretty-print part of response body)')
+          $stderr.puts("Error: #{err}")
+          $stdout.puts
+          $stdout.puts("Response body: #{resp.body}")
         end
         exit 3
       end
 
       $stdout.puts '**************************************************************'
-
-      break if @data # if custom data was passed in, don't make same request multiple times
     end
 
     # Return last response
