@@ -714,7 +714,16 @@ class CmanApiClient
       end
 
       uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
-      request = @http_method == 'POST' ? Net::HTTP::Post.new(uri) : Net::HTTP::Get.new(uri)
+      request = case @http_method
+        when 'POST'
+          Net::HTTP::Post.new(uri)
+        when 'PUT'
+          Net::HTTP::Put.new(uri)
+        when 'GET'
+          Net::HTTP::Get.new(uri)
+        else
+          Net::HTTP::Get.new(uri)
+        end
       request['Accept'] = 'application/json, text/plain, */*'
       request['Accept-Language'] = 'en-US,en;q=0.9'
       request['Cache-Control'] = 'no-cache'
