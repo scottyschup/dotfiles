@@ -150,7 +150,7 @@ function git_branch_delete_remote {
       branch="$remote_and_or_branch"
     fi
 
-    git push $remote --delete $branch
+    git push --no-verify $remote --delete $branch
     git remote prune origin
   done
 }

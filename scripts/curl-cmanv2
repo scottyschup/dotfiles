@@ -542,7 +542,7 @@ class V2CampaignTemplate
     {
       id: "12345-abcd-#{uuid}",
       name: "#{@name} Campaign",
-      labels: [],
+      labels: [rand(2).zero? ? 'isEmployerBuyUp' : nil].compact,
       comment: '',
       assignmentCriteria: assignment_criteria_arr(product),
       placements: placements_hash(product),
@@ -623,8 +623,12 @@ class CmanApiClient
     $stdout.puts(`cat #{file_path}`)
   end
 
-  def initialize(last_used: false, reset: [], verbose: false, **kwargs)
-    $stdout.puts("Initializing with kwargs: \n#{{ last_used: last_used, reset: reset, verbose: verbose, kwargs: kwargs }}\n\n")
+  def initialize(last_used: false, reset: [], verbose: false, no_data: false, **kwargs)
+    $stdout.puts(
+      "Initializing with kwargs: \n#{
+        { last_used: last_used, reset: reset, verbose: verbose, no_data: no_data, kwargs: kwargs }
+      }\n\n"
+    )
     @verbose = verbose
     @reset = reset
     last_used_values = last_used ? fetch_last_used_values : {}
@@ -641,7 +645,8 @@ class CmanApiClient
     # Post-processing
     @path = @path.start_with?('/') ? @path[1..-1] : @path
     @http_method = @http_method.upcase
-    @no_data ||= @http_method == 'GET'
+    @no_data = no_data || @http_method == 'GET'
+    @data = nil if @no_data
     extract_xsrf_token_from_cookie
 
     missing_required_arg? ? raise_missing_required_arg : update_last_used_values
@@ -694,12 +699,10 @@ class CmanApiClient
 
     @num_requests.to_i.times do |i|
       iter = i + 1
-      data = @data || (
-        @no_data ?
-          '' :
-          V2CampaignTemplate
-            .new(name: titlecase(Faker::Company.catch_phrase))
-            .create(product: %w(arcade advantage both).sample)
+      data = @no_data ? nil : (@data ||
+        V2CampaignTemplate
+          .new(name: titlecase(Faker::Company.catch_phrase))
+          .create(product: %w(arcade advantage both).sample)
       )
 
       if @verbose
@@ -734,7 +737,7 @@ class CmanApiClient
       request['Referer'] = "https://rallyengine.#{@tenant}.rally-dev.com"
       request['X-XSRF-TOKEN'] = @xsrf_token
       request['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
-      request.body = @no_data ? nil : JSON.dump(data)
+      request.body = (data && !@no_data) ? JSON.dump(data) : nil
 
       req_options = {
         use_ssl: uri.scheme == 'https',
@@ -785,13 +788,21 @@ end
 ################
 # Shell script #
 ################
-# def usage; end
+def get_user_input(options, key)
+  (options[key.to_sym].nil? || options[key.to_sym].empty?) &&
+    (!options[:last_used] || options[:reset]&.include?(key.to_s))
+end
 
 if $PROGRAM_NAME == __FILE__
   # OPTIONS PARSING
   options = {}
   OptionParser.new do |opts|
     # opts.banner = usage
+    opts.on('-a', '--use-stored-auth', 'Use the stored cookie and XSRF token only') do
+      options[:last_used] = true
+      options[:reset] = %w(data http_method num_requests path tenant)
+    end
+
     opts.on('-cCOOKIE', '--cookie=COOKIE', 'A valid cookie') do |cookie|
       options[:cookie] = cookie
     end
@@ -842,9 +853,17 @@ if $PROGRAM_NAME == __FILE__
       options[:path] = path
     end
 
-    opts.on('-rKEYS', '--reset-cached-val=KEYS', "Reset last used values for the provided keys:\n#{' ' * 41}D=>data; M=>http_method; N=>num_requests; P=>path; T=>tenant\n#{' ' * 41}Ex: `-rDPT` to reset data, path, and tenant") do |keys|
+    opts.on(
+      '-rKEYS',
+      '--reset-cached-val=KEYS',
+      "Reset last used values for the provided keys:\n#{' ' * 41}A=>Reset All; C=>cookie; D=>data; M=>http_method; N=>num_requests; P=>path; T=>tenant; U=>All But Auth\n#{' ' * 41}Ex: `-rDPT` to reset data, path, and tenant"
+    ) do |keys|
       options[:reset] = keys.split('').map do |key|
         case key.upcase
+        when 'A'
+          %w(cookie xsrf_token data http_method num_requests path tenant)
+        when 'C'
+          %w(cookie xsrf_token)
         when 'D'
           'data'
         when 'M'
@@ -855,8 +874,10 @@ if $PROGRAM_NAME == __FILE__
           'path'
         when 'T'
           'tenant'
+        when 'U'
+          %w(data http_method num_requests path tenant)
         end
-      end
+      end.flatten.uniq
     end
 
     opts.on('-s', '--show-last-used-args', 'Display the stored args used in the last call') do
@@ -899,54 +920,45 @@ if $PROGRAM_NAME == __FILE__
   end
 
   # DATA COLLECTION
-  unless options[:last_used]
-    ## Required values
-    options[:cookie] ||= ''
-    # options[:xsrf_token] ||= ''
-
-    while options[:cookie].empty?
+  unless options[:last_used] && !options[:reset]
+    ## Required value
+    while get_user_input(options, :cookie)
       $stdout.print "\nEnter a valid cookie [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):\n> "
       options[:cookie] = $stdin.gets.strip
     end
 
-    # DEPRECATED: this value can be extracted from the cookie string
-    # while options[:xsrf_token].empty?
-    #   $stdout.puts "\nEnter a valid xsrf_token [REQUIRED] (paste from the headers of a recent RallyEngine call to the desired tenant):"
-    #   options[:xsrf_token] = $stdin.gets.strip
-    # end
-
     ## Optional values
     unless options[:no_prompt]
-      if options[:tenant].nil?
+      if get_user_input(options, :tenant)
         $stdout.print "\nTenant defaults to '#{CmanApiClient::KWARG_DEFAULTS[:tenant]}'; press <return> to use this tenant or enter a different tenant name:\n> "
         tenant_input = $stdin.gets.chomp
         options[:tenant] = tenant_input unless tenant_input.empty?
       end
 
-      if options[:path].nil?
+      if get_user_input(options, :path)
         $stdout.print "\nPath defaults to '#{CmanApiClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
         path_input = $stdin.gets.chomp
         options[:path] = path_input unless path_input.empty?
       end
 
-      if options[:http_method].nil?
+      if get_user_input(options, :http_method)
         $stdout.print "\nMethod defaults to '#{CmanApiClient::KWARG_DEFAULTS[:http_method]}'; press <return> to use the default value or enter a different HTTP verb:\n> "
         method_input = $stdin.gets.chomp.upcase
         options[:http_method] = method_input unless method_input.empty?
         options[:no_data] = true if method_input == 'GET'
       end
 
-      if options[:num_requests].nil?
+      if get_user_input(options, :num_requests)
         $stdout.print "\nThe request will be sent once by default; press <return> to use the default value or enter a number >1 to send the request multiple times:\n> "
         num_requests_input = $stdin.gets.chomp
         options[:num_requests] = num_requests_input.to_i unless num_requests_input.empty?
       end
 
-      if !options[:no_data] && options[:data].nil?
+      if !options[:no_data] && get_user_input(options, :data)
         $stdout.print "\nSemi-random data will be generated by default; press <return> to use the default data, <n> to send no data, or enter a different stringified JSON data object:\n> "
         data_input = $stdin.gets.chomp
         options[:no_data] = true if data_input == 'n'
-        options[:data] = data_input unless data_input.empty?
+        options[:data] = data_input unless data_input.empty? || data_input == 'n'
       end
     end # end optional section
   end
