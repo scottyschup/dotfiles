@@ -252,7 +252,7 @@ class V2CampaignTemplate
         affiliations: [],
         coverageTypeCodes: ['HIP', 'HIPRIDER', 'MA', 'MAPD'],
         excludeClientIds: [],
-        lineOfBusiness: 'M&R',
+        lineOfBusiness: 'MnR',
         membershipCategories: ['MEDICA', 'UHC', 'TEXAS ERS'],
         overrides: {},
         partner: 'optum',
@@ -268,7 +268,7 @@ class V2CampaignTemplate
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
-        lineOfBusiness: 'C&S',
+        lineOfBusiness: 'CnS',
         membershipCategories: [],
         overrides: {},
         partner: 'optum',
@@ -284,7 +284,7 @@ class V2CampaignTemplate
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
-        lineOfBusiness: 'E&I',
+        lineOfBusiness: 'EnI',
         membershipCategories: ['JPMC', 'OXFORD', 'UHC West'],
         overrides: {},
         partner: 'optum',
@@ -300,7 +300,7 @@ class V2CampaignTemplate
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
-        lineOfBusiness: 'M&R',
+        lineOfBusiness: 'MnR',
         membershipCategories: ['AARP', 'MEDICA', 'RETIREE'],
         overrides: {},
         partner: 'optum',
@@ -653,7 +653,7 @@ class CmanApiClient
   end
 
   def extract_xsrf_token_from_cookie(cookie = nil)
-    @xsrf_token ||= (cookie || @cookie)&.split('XSRF-TOKEN=')&.last
+    @xsrf_token ||= (cookie || @cookie)&.split('XSRF-TOKEN=')&.last&.split('; ')&.first
   end
 
   def ivarize(str)
