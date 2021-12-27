@@ -123,7 +123,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-iINTERVAL',
       '--interval=INTERVAL',
-      "The amount of time between API calls (in minutes); defaults to #{TokenRefrigerator.DEFAULT_REFRESH_INTERVAL}.",
+      "The amount of time between API calls (in minutes); defaults to #{TokenRefrigerator::DEFAULT_REFRESH_INTERVAL}.",
     ) do |refresh_interval|
       options[:refresh_interval] = refresh_interval
     end
