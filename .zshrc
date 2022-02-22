@@ -41,6 +41,7 @@ plugins+=(k) # pimped out version of `l`; aliased as `l+` in the navigation sect
 # To get rid of "'numfmt' or 'gnumfmt' command not found..." error
 # brew install coreutils # Done in install/env_setup.sh
 
+plugins+=(rails)
 plugins+=(z) # frecency based navigation; bundled with oh-my-zsh
 
 plugins+=(zsh-syntax-highlighting) # syntax highlighting for shell scripting
