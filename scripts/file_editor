@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+class FileEditor
+  def initialize(**kwargs)
+    process_kwargs(**kwargs)
+  end
+
+  def process_kwargs(**kwargs)
+    kwargs.map do |kwarg, val|
+      # do stuff
+    end
+  end
+
+  def run; end
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  options = {}
+
+  OptionParser.new do |opts|
+    opts.on('-fNAME', '--filename=NAME', 'The full path and name of the file to write to.') do |filename|
+      opts[:filename] = filename
+    end
+
+    opts.on('-aACTION', '--action=ACTION', 'R => read, W => write, ') do |action|
+      options[:action] = action.upcase.to_sym
+    end
+
+    opts.on('-wWRITE_TYPE', '--write-type=WRITE_TYPE',
+            'A => append (default), O => overwrite all, R => replace existing, C => clear') do |write_type|
+      options[:write_type] = write_type.upcase.to_sym
+    end
+
+    opts.on('-dDATA', '--data=DATA', 'Data to write.') do |data|
+      options[:data] = data
+    end
+
+    opts.on('-tDATA_TYPE', '--data-type=DATA_TYPE',
+            'L => list (default), K => key-value pair, J => JSON, R => Ruby') do |data_type|
+      options[:data_type] = data_type.upcase.to_sym
+    end
+
+    opts.on('-sSPLIT_CHAR', '--split-on=SPLIT_CHAR',
+            "Character to split on. Note: for space use `-s\\\\s` or `-s'\\s'` (default); same for new line (\\n) and tab (\\t)") do |char|
+      options[:split_on] = /#{char}/
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      pp options
+      pp ARGV
+      exit
+    end
+  end.parse!
+
+  pp ARGV
+
+  options[:filename] ||= ARGV.shift
+
+  pp options
+
+  unless options[:filename]
+    puts "Error: No filename provided\nSend it as the first arg or using the -fNAME or --filename=NAME flags"
+    exit 1
+  end
+
+  FileEditor.new(**options).run
+end

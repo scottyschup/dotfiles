@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require_relative '../lib/rb/cli_utils.rb'
+  require 'colorize'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+# goes here
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  numer, denom = ARGV.map(&:to_i)
+
+  num_args = numer ?
+    denom ? 2 : 1 :
+    denom ? 1 : 0
+
+  if num_args < 2
+    CLIUtils.message_block(
+      [ArgumentError.new("ArgumentError: wrong number of arguments (given #{num_args}, expected 2)")],
+      type: :error,
+    )
+    exit 1
+  end
+
+  quot, mod = numer.divmod(denom)
+
+  CLIUtils.message_block(
+    [
+      ["Numerator:   ", :partial], [numer, :info],
+      ["Denominator: ", :partial], [denom, :info],
+      "",
+      ["Quotient:    ", :partial], [quot.to_s.magenta, :log],
+      ["Modulus:     ", :partial], [mod.to_s.magenta, :log],
+    ],
+    type: :log,
+  )
+end

@@ -14,16 +14,16 @@ unless gem_installed? 'activesupport'
   $stdout.puts "Installing `activesupport` gem"
   `gem install activesupport 1>&2`
 end
-require 'active_support/core_ext/numeric/time.rb'
+require 'active_support/core_ext/numeric/time'
 
 def clock_number(n)
   n.to_s.rjust(2, '0')
 end
 
-def run_wxr_widget(zip_code = 60640)
+def run_wxr_widget(zip_code = 60_640)
   last_update = 5.hours.ago
 
-  while true
+  loop do
     if last_update > 4.hours.ago
       next_in_secs = (last_update + 4.hours) - Time.now
       hours, mins_in_secs = next_in_secs.round.divmod(3600)
@@ -45,9 +45,9 @@ def run_wxr_widget(zip_code = 60640)
 end
 
 def usage
-  "Get forecast from wttr.in" +
-  "\tUsage: `#{__FILE__}` [ZIP_CODE]" +
-  "\tZIP_CODE defaults to 60640"
+  "Get forecast from wttr.in" \
+    "\tUsage: `#{__FILE__}` [ZIP_CODE]" \
+    "\tZIP_CODE defaults to 60640"
 end
 
 ################

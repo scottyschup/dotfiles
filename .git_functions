@@ -85,6 +85,21 @@ function git_add_commit_push {
 }
 alias gacp='git_add_commit_push'
 
+function git_add_commit_push_no_verify {
+  git_add_commit $@
+  g_branch=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+  git push --no-verify --set-upstream origin $g_branch
+}
+alias gacpnv=git_add_commit_push_no_verify
+
+function git_add_commit_push_set_upstream_no_verify {
+  git_add_commit $1 "$2"
+  shift
+  shift
+  git_push_set_upstream $@ --no-verify
+}
+alias gacpsunv=git_add_commit_push_set_upstream_no_verify
+
 function git_branch_delete {
   case $1 in
   '-l')

@@ -16,10 +16,10 @@ pids.each do |pid|
   count += 1
 end
 $stdout.puts case count
-when 1
-  "1 #{target} process terminated: #{pids}"
-when 0
-  "No #{target} processes found."
-else
-  "#{count} #{target} processes terminated: #{pids}"
-end
+             when 1
+               "1 #{target} process terminated: #{pids}"
+             when 0
+               "No #{target} processes found."
+             else
+               "#{count} #{target} processes terminated: #{pids}"
+             end

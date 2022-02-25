@@ -12,7 +12,7 @@ class HandyURLMapper
 
   def main
     read_file!
-    if ARGV.length == 0
+    if ARGV.length.zero?
       list_all
       return
     end
@@ -65,7 +65,7 @@ class HandyURLMapper
   end
 
   def valid_url?(url)
-    url =~ %r(^https?://\w*\.\w*$)
+    url =~ %r{^https?://\w*\.\w*$}
   end
 
   def write_to_file!

@@ -21,9 +21,8 @@ end
 
 class RailsLauncher
   def initialize
-    if ARGV.length > 1
-      raise ArgumentError.new("Only one argument expected but got: #{ARGV.join(', ')}")
-    end
+    raise ArgumentError.new("Only one argument expected but got: #{ARGV.join(', ')}") if ARGV.length > 1
+
     @args = ARGV
   end
 

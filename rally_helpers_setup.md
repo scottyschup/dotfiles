@@ -10,18 +10,18 @@ curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/curl-c
 chmod +x $curlcmanv2_script
 ```
 
-## `token-fridge`
+## `rally_token_fridge`
 ### Keep your token fresh and crisp all day long!
 This needs the `curl-cmanv2` script from the same `scripts` directory to work (see setup instructions above).
 ```sh
-token_fridge_script="$curlcmanv2_root_dir/token-fridge"
+token_fridge_script="$curlcmanv2_root_dir/rally_token_fridge"
 curl "https://raw.githubusercontent.com/scottyschup/dotfiles/main/scripts/token-fridge" > $token_fridge_script
 chmod +x $token_fridge_script
 ```
 
 ## Final steps
 The following adds the `.curlcmanv2` dir to your path so you can run the scripts with `curl-cmanv2`
-and `token-fridge` rather than having to type `~/.curlcmanv2/curl-cmanv2` or `~/.curlcmanv2/curl-cmanv2`
+and `rally_token_fridge` rather than having to type `~/.curlcmanv2/curl-cmanv2` or `~/.curlcmanv2/rally_token_fridge`
 respectively each time.
 
 **Note**: change the path/name for your `.zshrc` if it's not in your home dir, it's named something else, or
@@ -57,12 +57,12 @@ you can use the `-l` flag to use the same values from the previous call.
 curl-cmanv2 -l
 ```
 
-Since `token-fridge` is just a long-running script that uses `curl-cmanv2` in a very specific way,
+Since `rally_token_fridge` is just a long-running script that uses `curl-cmanv2` in a very specific way,
 you will only need to provide a valid cookie. The same `-c` flag can be used to pass the cookie in,
 and the same `-l` flag can be added to reuse the values from the previous call.
 
 Run each command with the `-h` flag for options help.
 ```sh
 curl-cmanv2 -h
-token-fridge -h
+rally_token_fridge -h
 ```

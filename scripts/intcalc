@@ -31,7 +31,7 @@ end
 #############
 
 class InterestCalculator
-  REQUIRED_OPTS = %i(interest terms amount).freeze
+  REQUIRED_OPTS = %i[interest terms amount].freeze
   TIME_PERIODS = {
     days: :days,
     weeks: :weeks,
@@ -43,7 +43,7 @@ class InterestCalculator
     weeks: :weekly,
     months: :monthly,
     years: :annually,
-  }
+  }.freeze
   DEFAULT_VALUES = {
     term_period: TIME_PERIODS[:months],
     interest_period: TIME_PERIODS[:months],
@@ -68,7 +68,7 @@ class InterestCalculator
       return msg += "\n\tterm: #{@term_period}\n\tinterest: #{@interest_period}"
     end
 
-    amount_rjust = ('%.2f' % @amount).length + 1
+    amount_rjust = format('%.2f', @amount).length + 1
     terms_rjust = @terms.to_s.length + 1
 
     result = @amount
@@ -77,20 +77,20 @@ class InterestCalculator
     )
     @terms.times do |i|
       n = i + 1
-      result *= (1 + @interest / 100)
+      result *= (1 + (@interest / 100))
       result = result.round(2)
 
-      if @verbose || n == @terms
-        gain = result - @amount
-        gain_str = ('%.2f' % gain).rjust(amount_rjust)
-        percent_gain_str = ('%.2f' % (gain / @amount * 100)).rjust(7)
-        term_str = n.to_s.rjust(terms_rjust)
+      next unless @verbose || n == @terms
 
-        msg = "#{term_str}: $#{('%.2f' % result).rjust(amount_rjust)}  "
-        msg += "Total gain: $#{gain_str} — #{percent_gain_str}%"
+      gain = result - @amount
+      gain_str = ('%.2f' % gain).rjust(amount_rjust)
+      percent_gain_str = (format('%.2f', (gain / @amount * 100))).rjust(7)
+      term_str = n.to_s.rjust(terms_rjust)
 
-        $stdout.puts(msg)
-      end
+      msg = "#{term_str}: $#{('%.2f' % result).rjust(amount_rjust)}  "
+      msg += "Total gain: $#{gain_str} — #{percent_gain_str}%"
+
+      $stdout.puts(msg)
     end
   end
 

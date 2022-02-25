@@ -42,22 +42,22 @@ class V2CampaignTemplate
   end
 
   def random_x_digit_number(x)
-    (rand * (10 ** x)).floor
+    (rand * (10**x)).floor
   end
 
   def placements_hash(product)
     advantage_placements = [
       {
-        placementType: 'advantage_dashboard_banner',
+        placementType: 'dashboard_targeted_content',
         productType: 'advantage',
         productPlacementCategory: 'advantage_dashboard_placements',
-        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
-        headline: 'Manic Monday',
-        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
+        imageUrl: 'https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/hero-07.png',
+        headline: 'Monday Refresh',
+        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and enjoy the benefits all week long!',
         priority: 800,
         colorPair: {
-          background: 'black',
-          foreground: 'white',
+          background: 'white',
+          foreground: 'black',
         },
         cta: {
           ctaType: 'url',
@@ -66,38 +66,26 @@ class V2CampaignTemplate
         },
         theme: 'rallyWhite',
       },
-      {
-        placementType: 'dashboard_targeted_content',
-        productType: 'advantage',
-        productPlacementCategory: 'advantage_dashboard_placements',
-        imageUrl: 'https://rally-prod.s3.amazonaws.com/campaign/engage/pod/hero-07.png',
-        headline: 'Monday Refresh',
-        body: 'Start every week in a positive frame of mind. Begin with the Monday Refresh practice and\\nenjoy the benefits all week long!',
-        priority: 800,
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
+      rand() >= 0.5 ? nil : {
+        "placementType": "advantage_dashboard_banner",
+        "productType": "advantage",
+        "productPlacementCategory": "advantage_dashboard_placements",
+        "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/hero-07.png",
+        "headline": "Questions about COVID-19?",
+        "body": "Stay informed and get all the latest health updates.",
+        "priority": 800,
+        "colorPair": {
+          "background": "white",
+          "foreground": "black"
         },
-        cta: {
-          ctaType: 'url',
-          ctaText: 'Check it Out!',
-          ctaValue: 'http://google.com'
+        "cta": {
+          "ctaType": "url",
+          "ctaText": "Let’s Go",
+          "ctaValue": "http://google.com"
         },
-        theme: 'rallyWhite',
+        "theme": "rallyWhite"
       },
-      {
-        placementType: 'advantage_mobile_home_featured_programs',
-        productType: 'advantage',
-        productPlacementCategory: 'advantage_mobile_placements',
-        priority: 100,
-        headline: 'Something go here',
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
-        },
-        theme: 'rallyWhite',
-      },
-    ]
+    ].compact
 
     arcade_placements = [
       {
@@ -106,37 +94,29 @@ class V2CampaignTemplate
         productPlacementCategory: 'arcade_dashboard_placements',
         priority: 600,
         headline: 'Do all placements have headlines?',
+        body: 'This is required, even though it says optional in the UI :(',
+        imageUrl: 'https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/hero-07.png',
         colorPair: {
           background: 'white',
           foreground: 'black',
         },
         theme: 'rallyWhite',
       },
-      {
+      rand() >= 0.5 ? nil : {
         placementType: 'arcade_rx',
         productType: 'arcade',
         productPlacementCategory: 'arcade_secondary_placements',
         priority: 300,
         headline: 'Do all placements have headlines?',
+        body: 'This is required, even though it says optional in the UI :(',
+        imageUrl: 'https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/hero-07.png',
         colorPair: {
           background: 'white',
           foreground: 'black',
         },
         theme: 'rallyWhite',
       },
-      {
-        placementType: 'arcade_resources_text',
-        productType: 'arcade',
-        productPlacementCategory: 'arcade_resource_page_placements',
-        priority: 100,
-        headline: "Hi! I'm an Arcade Resource Page headline!",
-        colorPair: {
-          background: 'white',
-          foreground: 'black',
-        },
-        theme: 'rallyRedMedium',
-      }
-    ].sample(rand(1..4))
+    ].compact
 
     case product
     when 'advantage'
@@ -152,28 +132,8 @@ class V2CampaignTemplate
 
   def assignment_criteria_arr(product)
     advantage_criteria = [
-      # Optum/Babcock Power
-      {
-        affiliations: [
-          'optum_babcock_power_aff_201512335_213537_OFor',
-          'optum_babcock_power_aff_201512335_213537_TN1L',
-          'optum_babcock_power_aff_201512335_213537_cQKN'
-        ],
-        client: "babcock_power",
-        coverageTypeCodes: [],
-        excludeClientIds: [],
-        membershipCategories: [],
-        overrides: {},
-        partner: "optum",
-        policyNumbers: [],
-        product: "advantage",
-        pvrcCodes: [],
-        startDate: 1500854400000,
-        timeZone: "UTC",
-        validPlacements: [],
-      },
       # All Partners/All Clients
-      {
+      rand() >= 0.5 ? {
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
@@ -182,27 +142,28 @@ class V2CampaignTemplate
         policyNumbers: [],
         product: "advantage",
         pvrcCodes: [],
-        startDate: 1500854400000,
+        startDate: 1_500_854_400_000,
         timeZone: "UTC",
         validPlacements: [],
-      },
-      # Rally/Rally Employees
-      {
+      } : {
         affiliations: [],
-        client: 'rally_employees',
         coverageTypeCodes: [],
         excludeClientIds: [],
         membershipCategories: [],
-        overrides: {},
-        partner: 'rally',
+        overrides: {
+          dashboard_targeted_content: {
+            priority: 400,
+            ctaValue: 'https://weather.com',
+          },
+        },
         policyNumbers: [],
-        product: 'advantage',
+        product: "advantage",
         pvrcCodes: [],
-        startDate: 1500854400000,
-        timeZone: 'UTC',
+        startDate: 1_500_854_400_000,
+        timeZone: "UTC",
         validPlacements: [],
       },
-      # Kaiser Permanente/Kaiser Base (the only client in our dev tenant)
+      # Kaiser Permanente/Kaiser Base (the only partner with a client in dev tenants)
       {
         affiliations: [],
         client: 'kaiser_base',
@@ -214,17 +175,16 @@ class V2CampaignTemplate
         policyNumbers: [],
         product: 'advantage',
         pvrcCodes: [],
-        startDate: 1599038800058,
+        startDate: 1_599_038_800_058,
         timeZone: 'UTC',
         validPlacements: [],
       },
-      # Another real-ish example generated using v1 UI
       {
         product: 'engage',
         partner: 'kaiser_permanente',
         client: 'kaiser_base',
         affiliations: [
-          'kaiser_base_default'
+          'kaiser_base_default',
         ],
         membershipCategories: [],
         coverageTypeCodes: [],
@@ -232,50 +192,74 @@ class V2CampaignTemplate
         pvrcCodes: [],
         excludeClientIds: [],
         validPlacements: [],
-        startDate: 1628410080000,
+        startDate: 1_628_410_080_000,
         timeZone: 'UTC',
         overrides: {
-          resources_page_featured_promo: {
+          dashboard_targeted_content: {
             priority: 800,
+            ctaValue: 'http://google.com',
           },
-          advantage_dashboard_banner: {
-            priority: 400,
-            ctaValue: 'https://weather.com',
-          }
         },
-      }
-    ].sample(rand(1..4)) # pick 1 to 4 of the above 4 assignments
+      },
+    ].sample(rand(1..3))
 
     arcade_criteria = [
       #  Optum/all clients M&R
-      {
+      rand() >= 0.5 ? {
         affiliations: [],
-        coverageTypeCodes: ['HIP', 'HIPRIDER', 'MA', 'MAPD'],
+        coverageTypeCodes: %w[HIP HIPRIDER MA MAPD],
         excludeClientIds: [],
-        lineOfBusiness: 'MnR',
+        lineOfBusiness: 'M&R',
         membershipCategories: ['MEDICA', 'UHC', 'TEXAS ERS'],
         overrides: {},
         partner: 'optum',
         policyNumbers: ['1234'],
         product: 'arcade',
         pvrcCodes: ['abcd'],
-        startDate: 1598632180684,
+        startDate: 1_598_632_180_684,
         timeZone: 'UTC',
         validPlacements: [],
+      } : {
+        "affiliations": [],
+        "membershipCategories": [
+          "UHC"
+        ],
+        "coverageTypeCodes": [
+          "PDP",
+          "SSP",
+          "MEDSUPP"
+        ],
+        "policyNumbers": [
+          "12341234"
+        ],
+        "pvrcCodes": [
+          "asdffdsa"
+        ],
+        "excludeClientIds": [],
+        "validPlacements": [],
+        "startDate": 1641016800000,
+        "timeZone": "America/Chicago",
+        "overrides": {
+          "dashboard_targeted_content": {
+            "priority": 800
+          }
+        },
+        "product": "arcade",
+        "lineOfBusiness": "M&R"
       },
       # Optum/all clients C&S
       {
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
-        lineOfBusiness: 'CnS',
+        lineOfBusiness: 'C&S',
         membershipCategories: [],
         overrides: {},
         partner: 'optum',
         policyNumbers: ['12345'],
         product: 'arcade',
         pvrcCodes: ['edcba'],
-        startDate: 1513486800000,
+        startDate: 1_513_486_800_000,
         timeZone: 'UTC',
         validPlacements: [],
       },
@@ -284,34 +268,18 @@ class V2CampaignTemplate
         affiliations: [],
         coverageTypeCodes: [],
         excludeClientIds: [],
-        lineOfBusiness: 'EnI',
+        lineOfBusiness: 'E&I',
         membershipCategories: ['JPMC', 'OXFORD', 'UHC West'],
         overrides: {},
         partner: 'optum',
         policyNumbers: ['1234'],
         product: 'arcade',
         pvrcCodes: ['abcd'],
-        startDate: 1598632180684,
+        startDate: 1_598_632_180_684,
         timeZone: 'UTC',
         validPlacements: [],
       },
-      # Optum/all clients
-      {
-        affiliations: [],
-        coverageTypeCodes: [],
-        excludeClientIds: [],
-        lineOfBusiness: 'MnR',
-        membershipCategories: ['AARP', 'MEDICA', 'RETIREE'],
-        overrides: {},
-        partner: 'optum',
-        policyNumbers: ['12345'],
-        product: 'arcade',
-        pvrcCodes: ['edcba'],
-        startDate: 1513486800000,
-        timeZone: 'UTC',
-        validPlacements: [],
-      },
-    ].sample(rand(1..4)) # pick 1 to 4 of the above 4 assignments
+    ].sample(rand(1..3)) # pick 2 to 3 of the above 3 assignments
 
     case product
     when 'advantage'
@@ -325,222 +293,9 @@ class V2CampaignTemplate
     end
   end
 
-  # Another real-ish campaign to model off of
-  # REQUEST PAYLOAD
-  # {
-  #   "id": "6108f6c56a7422000168c047",
-  #   "name": "Eligibility reqs test",
-  #   "labels": [],
-  #   "comment": "Where do these stage 1 comments show up?",
-  #   "assignmentCriteria": [
-  #     {
-  #       "affiliations": [
-  #         "kaiser_base_default"
-  #       ],
-  #       "membershipCategories": [],
-  #       "coverageTypeCodes": [],
-  #       "policyNumbers": [],
-  #       "pvrcCodes": [],
-  #       "excludeClientIds": [],
-  #       "validPlacements": [],
-  #       "startDate": 1628410080000,
-  #       "timeZone": "UTC",
-  #       "overrides": {
-  #         "resources_page_featured_promo": {
-  #           "ctaValue": "https://weather.com"
-  #         },
-  #         "advantage_dashboard_banner": {
-  #           "ctaValue": "https://weather.com"
-  #         }
-  #       },
-  #       "product": "engage",
-  #       "partner": "kaiser_permanente",
-  #       "client": "kaiser_base"
-  #     }
-  #   ],
-  #   "placements": {
-  #     "advantage_dashboard_banner": {
-  #       "placementType": "advantage_dashboard_banner",
-  #       "productType": "advantage",
-  #       "productPlacementCategory": "advantage_dashboard_placements",
-  #       "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Banzai-Shenzi-The-Lion-King-Mufasa.gif",
-  #       "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/Immortan_joe_insignia.png",
-  #       "headline": "Stupid headline",
-  #       "body": "Required body text blah blah blah.",
-  #       "priority": 800,
-  #       "colorPair": {
-  #         "background": "white",
-  #         "foreground": "black"
-  #       },
-  #       "cta": {
-  #         "ctaType": "phone",
-  #         "ctaText": "This is the text for the a[type=tel] tag, idntit?",
-  #         "ctaValue": "1-312-555-1234"
-  #       },
-  #       "theme": "rallyOrange"
-  #     },
-  #     "resources_page_featured_promo": {
-  #       "placementType": "resources_page_featured_promo",
-  #       "productType": "resources",
-  #       "productPlacementCategory": "resources_page_placements",
-  #       "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Dashboard-Promo-money.png",
-  #       "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/DashboardBanner_JPMC_Icon_60x30 (1).png",
-  #       "headline": "A required headline",
-  #       "body": "Another required body section.",
-  #       "priority": 200,
-  #       "colorPair": {
-  #         "background": "white",
-  #         "foreground": "black"
-  #       },
-  #       "cta": {
-  #         "ctaType": "url",
-  #         "ctaText": "Click me!",
-  #         "ctaValue": "https://downtherabbitholegame.com/"
-  #       },
-  #       "theme": "rallyRedDark"
-  #     }
-  #   },
-  #   "metadata": {
-  #     "activityId": {
-  #       "id": "BCBS.SC.BIOMETRIC.DIASTOLIC.VALUE"
-  #     }
-  #   },
-  #   "tagApplicationLogic": {
-  #     "includedTags": {
-  #       "criteria": [
-  #         "eligibleForDonations",
-  #         "eligibleForSweepstakes",
-  #         "eligibleForIncentives"
-  #       ],
-  #       "logicalOperator": "OR"
-  #     },
-  #     "excludedTags": {
-  #       "criteria": [
-  #         "noDrugUse"
-  #       ],
-  #       "logicalOperator": "AND"
-  #     }
-  #   }
-  # }
-
-  # RESPONSE BODY
-  # {
-  #   "contentType": "StarshipCampaign",
-  #   "contentId": "0000017b-0b03-427e-89b9-d2a88cf35839",
-  #   "normalizedToken": "17f641cf7701b6c7233ffe6ae24395d0ed1cd167",
-  #   "descriptor": null,
-  #   "version": 1,
-  #   "isDraft": true,
-  #   "currentEnvironments": [],
-  #   "data": {
-  #     "id": "6108f6c56a7422000168c047",
-  #     "name": "Eligibility reqs test",
-  #     "labels": [],
-  #     "comment": "Where do these stage 1 comments show up?",
-  #     "assignmentCriteria": [
-  #       {
-  #         "product": "engage",
-  #         "partner": "kaiser_permanente",
-  #         "client": "kaiser_base",
-  #         "membershipCategories": [],
-  #         "coverageTypeCodes": [],
-  #         "affiliations": [
-  #           "kaiser_base_default"
-  #         ],
-  #         "policyNumbers": [],
-  #         "pvrcCodes": [],
-  #         "excludeClientIds": [],
-  #         "validPlacements": [],
-  #         "startDate": 1628410080000,
-  #         "timeZone": "UTC",
-  #         "overrides": {
-  #           "resources_page_featured_promo": {
-  #             "ctaValue": "https://weather.com"
-  #           },
-  #           "advantage_dashboard_banner": {
-  #             "ctaValue": "https://weather.com"
-  #           }
-  #         }
-  #       }
-  #     ],
-  #     "placements": {
-  #       "advantage_dashboard_banner": {
-  #         "placementType": "advantage_dashboard_banner",
-  #         "productType": "advantage",
-  #         "productPlacementCategory": "advantage_dashboard_placements",
-  #         "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Banzai-Shenzi-The-Lion-King-Mufasa.gif",
-  #         "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/Immortan_joe_insignia.png",
-  #         "headline": "Stupid headline",
-  #         "body": "Required body text blah blah blah.",
-  #         "priority": 800,
-  #         "colorPair": {
-  #           "background": "white",
-  #           "foreground": "black"
-  #         },
-  #         "cta": {
-  #           "ctaType": "phone",
-  #           "ctaText": "This is the text for the a[type=tel] tag, idntit?",
-  #           "ctaValue": "1-312-555-1234"
-  #         },
-  #         "theme": "rallyOrange"
-  #       },
-  #       "resources_page_featured_promo": {
-  #         "placementType": "resources_page_featured_promo",
-  #         "productType": "resources",
-  #         "productPlacementCategory": "resources_page_placements",
-  #         "imageUrl": "https://s3.amazonaws.com/rally-non-prod/campaign/engage/pod/Dashboard-Promo-money.png",
-  #         "logo": "https://s3.amazonaws.com/rally-non-prod/campaign/logos/DashboardBanner_JPMC_Icon_60x30 (1).png",
-  #         "headline": "A required headline",
-  #         "body": "Another required body section.",
-  #         "priority": 200,
-  #         "colorPair": {
-  #           "background": "white",
-  #           "foreground": "black"
-  #         },
-  #         "cta": {
-  #           "ctaType": "url",
-  #           "ctaText": "Click me!",
-  #           "ctaValue": "https://downtherabbitholegame.com/"
-  #         },
-  #         "theme": "rallyRedDark"
-  #       }
-  #     },
-  #     "metadata": {
-  #       "activityId": {
-  #         "id": "BCBS.SC.BIOMETRIC.DIASTOLIC.VALUE"
-  #       }
-  #     },
-  #     "tagApplicationLogic": {
-  #       "includedTags": {
-  #         "criteria": [
-  #           "eligibleForDonations",
-  #           "eligibleForSweepstakes",
-  #           "eligibleForIncentives"
-  #         ],
-  #         "logicalOperator": "OR"
-  #       },
-  #       "excludedTags": {
-  #         "criteria": [
-  #           "noDrugUse"
-  #         ],
-  #         "logicalOperator": "AND"
-  #       }
-  #     }
-  #   },
-  #   "createdBy": "4edf6b3c-b435-4259-87ca-6627826bba73",
-  #   "createdOn": "2021-08-03T07:56:53.275Z",
-  #   "lastModifiedBy": "4edf6b3c-b435-4259-87ca-6627826bba73",
-  #   "lastModifiedOn": "2021-08-03T08:18:07.786Z",
-  #   "futurePublishOn": null,
-  #   "futurePublishedBy": null,
-  #   "isValidated": null
-  # }
-
-
   def create(product: 'both')
-    uuid = random_x_digit_number 7
     {
-      id: "12345-abcd-#{uuid}",
+      id: "6108f6c56a74220001#{random_x_digit_number 6}",
       name: "#{@name} Campaign",
       labels: [rand(2).zero? ? 'isEmployerBuyUp' : nil].compact,
       comment: '',
@@ -551,65 +306,55 @@ class V2CampaignTemplate
           id: 'OPTUM.ENGAGE.GOTFLUSHOT.ATTEST',
         },
       },
-      tagApplicationLogic: (rand(2).zero? ?
-        {
-          includedTags: {
-            criteria: [
-              'realAge=23',
-              'realAge=24',
-            ],
-            logicalOperator: 'OR',
-          },
-          excludedTags: {
-            criteria: [
-              'realAge=22',
-              'realAge=21',
-            ],
-            logicalOperator: 'OR',
-          },
-        } : {
-          includedTags: {
-            criteria: [
-              'eligibleForDonations',
-              'eligibleForSweepstakes',
-              'eligibleForIncentives'
-            ],
-            logicalOperator: 'OR'
-          },
-          excludedTags: {
-            criteria: [
-              'noDrugUse'
-            ],
-            logicalOperator: 'AND'
-          }
-        }
-      ),
-      status: 'draft' # this prop isn't really used anymore, but without it, or with an invalid value the req fails
+      tagApplicationLogic: rand() >= 0.8 ? {
+        includedTags: {
+          criteria: [],
+          logicalOperator: 'AND',
+        },
+        excludedTags: {
+          criteria: [
+            'realAge=18',
+            'realAge=19',
+            'realAge=20',
+          ],
+          logicalOperator: 'OR',
+        },
+      } : {
+        includedTags: {
+          criteria: [],
+          logicalOperator: 'OR',
+        },
+        excludedTags: {
+          criteria: [],
+          logicalOperator: 'OR',
+        },
+      },
+      status: 'draft', # this prop isn't really used anymore, but without it, or with an invalid value the req fails
     }
   end
 end
 
 class CmanApiClient
-  CURL_CMAN_V2_ROOT_DIR ||= `echo $HOME/.curlcmanv2`.chomp.freeze
-  LAST_USED_FILE_NAME ||= 'last_used_values.txt'.freeze
-  FILE_DELIMITER ||= '<:::>'.freeze
+  CURL_CMAN_V2_ROOT_DIR = `echo $HOME/.curlcmanv2`.chomp.freeze
+  LAST_USED_FILE_NAME = 'last_used_values.txt'.freeze
+  FILE_DELIMITER = '<:::>'.freeze
 
-  KWARG_DEFAULTS ||= {
+  KWARG_DEFAULTS = {
     http_method: 'POST'.freeze,
     num_requests: 1,
-    path: 'rest/campaignmanager/v2/versionedCampaign'.freeze,
+    paths: ['rest/campaignmanager/v2/versionedCampaign'.freeze].freeze,
     tenant: 'thankful-diet'.freeze,
-  }
+  }.freeze
 
-  KWARG_NAMES = %i(
+  KWARG_NAMES = %i[
     cookie
     xsrf_token
     http_method
     data
     num_requests
-    path
+    paths
     tenant
-  ).freeze
+  ].freeze
 
   def self.edit_last_used_args
     file_path = "#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}"
@@ -643,7 +388,7 @@ class CmanApiClient
     end
 
     # Post-processing
-    @path = @path.start_with?('/') ? @path[1..-1] : @path
+    @paths = @paths.map { |path| path.start_with?('/') ? path[1..-1] : path }
     @http_method = @http_method.upcase
     @no_data = no_data || @http_method == 'GET'
     @data = nil if @no_data
@@ -665,6 +410,7 @@ class CmanApiClient
     File.readlines("#{CURL_CMAN_V2_ROOT_DIR}/#{LAST_USED_FILE_NAME}").each_with_object({}) do |line, obj|
       ivar_name, ivar_val = line.chomp.split(FILE_DELIMITER)
       next if @reset.include? ivar_name[1..-1]
+
       obj[ivar_name[1..-1].to_sym] = ivar_name == "@num_requests" ? ivar_val.to_i : ivar_val
     end
   end
@@ -682,13 +428,13 @@ class CmanApiClient
   end
 
   def missing_required_arg?
-    [@cookie, @tenant, @path, @xsrf_token].any? { |ivar| ivar.nil? || ivar.empty? }
+    [@cookie, @tenant, @paths, @xsrf_token].any? { |ivar| ivar.nil? || ivar.empty? }
   end
 
   def raise_missing_required_arg
     $stderr.puts 'Missing a required argument:'
     $stderr.puts "\tcookie     => #{@cookie}"
-    $stderr.puts "\tpath       => #{@path}"
+    $stderr.puts "\tpaths       => #{@paths}"
     $stderr.puts "\ttenant     => #{@tenant}"
     $stderr.puts "\txsrf_token => #{@xsrf_token}"
     exit 2
@@ -696,88 +442,94 @@ class CmanApiClient
 
   def run
     resp = nil
+    total_num_reqs = @num_requests * @paths.length
 
     @num_requests.to_i.times do |i|
-      iter = i + 1
-      data = @no_data ? nil : (@data ||
-        V2CampaignTemplate
-          .new(name: titlecase(Faker::Company.catch_phrase))
-          .create(product: %w(arcade advantage both).sample)
-      )
-
-      if @verbose
-        $stdout.puts "\nGenerating request #{iter} of #{@num_requests} with args:"
-        $stdout.puts "\ttenant => #{@tenant}"
-        $stdout.puts "\tmethod => #{@http_method}"
-        $stdout.puts "\tpath => #{@path}"
-        $stdout.puts "\txsrf_token => #{@xsrf_token}"
-        $stdout.puts "\tcookie => #{@cookie}"
-        $stdout.puts "\tdata => #{data.to_json}"
-        $stdout.puts
-      end
-
-      uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{@path}")
-      request = case @http_method
-        when 'POST'
-          Net::HTTP::Post.new(uri)
-        when 'PUT'
-          Net::HTTP::Put.new(uri)
-        when 'GET'
-          Net::HTTP::Get.new(uri)
+      data = if @no_data
+          nil
         else
-          Net::HTTP::Get.new(uri)
+          (@data || V2CampaignTemplate
+            .new(name: titlecase(Faker::Company.catch_phrase))
+            .create(product: %w[arcade advantage both].sample)
+          )
         end
-      request['Accept'] = 'application/json, text/plain, */*'
-      request['Accept-Language'] = 'en-US,en;q=0.9'
-      request['Cache-Control'] = 'no-cache'
-      request['Connection'] = 'keep-alive'
-      request['Content-Type'] = 'application/x-www-form-urlencoded'
-      request['Cookie'] = @cookie
-      request['Pragma'] = 'no-cache'
-      request['Referer'] = "https://rallyengine.#{@tenant}.rally-dev.com"
-      request['X-XSRF-TOKEN'] = @xsrf_token
-      request['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
-      request.body = (data && !@no_data) ? JSON.dump(data) : nil
 
-      req_options = {
-        use_ssl: uri.scheme == 'https',
-        verify_mode: OpenSSL::SSL::VERIFY_NONE,
-      }
+      @paths.each_with_index do |path, j|
+        iter = (i * 2) + j + 1
 
-      $stdout.puts '**************************************************************'
-      $stdout.puts "REQUEST #{iter} of #{@num_requests}"
-      $stdout.puts "method:    #{request.method}"
-      $stdout.puts "has data?: #{request.response_body_permitted? && !!request.body}"
-      $stdout.puts "endpoint:  #{request.uri}"
-
-      resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-        http.request(request)
-      end
-
-      # TODO track successes/failures and generate a report
-      $stdout.puts '------------------------------'
-      $stdout.puts "RESPONSE #{iter} of #{@num_requests}"
-      $stderr.puts "Something happened! :(" if resp.code.to_i >= 300
-      $stdout.puts "Resp code: #{resp.code}"
-      $stdout.puts "Resp msg:  #{resp.body}" if @verbose
-
-      if resp.code.to_i >= 300
-        begin
-          # Pretty print the description part of the error message
-          json_errors = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
-          $stderr.puts
-          $stderr.puts('Error description:')
-          $stderr.send(:pp, json_errors)
-        rescue JSON::ParserError => err
-          $stderr.puts('(JSON Parse Error while trying to pretty-print part of response body)')
-          $stderr.puts("Error: #{err}")
+        if @verbose
+          $stdout.puts "\nGenerating request #{iter} of #{total_num_reqs} with args:"
+          $stdout.puts "\ttenant => #{@tenant}"
+          $stdout.puts "\tmethod => #{@http_method}"
+          $stdout.puts "\tpaths => #{@paths}"
+          $stdout.puts "\txsrf_token => #{@xsrf_token}"
+          $stdout.puts "\tcookie => #{@cookie}"
+          $stdout.puts "\tdata => #{data.to_json}"
           $stdout.puts
-          $stdout.puts("Response body: #{resp.body}")
         end
-        exit 3
-      end
 
-      $stdout.puts '**************************************************************'
+        uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{path}")
+        request = case @http_method
+                  when 'POST'
+                    Net::HTTP::Post.new(uri)
+                  when 'PUT'
+                    Net::HTTP::Put.new(uri)
+                  else
+                    Net::HTTP::Get.new(uri)
+                  end
+        request['Accept'] = 'application/json, text/plain, */*'
+        request['Accept-Language'] = 'en-US,en;q=0.9'
+        request['Cache-Control'] = 'no-cache'
+        request['Connection'] = 'keep-alive'
+        request['Content-Type'] = 'application/x-www-form-urlencoded'
+        request['Cookie'] = @cookie
+        request['Pragma'] = 'no-cache'
+        request['Referer'] = "https://rallyengine.#{@tenant}.rally-dev.com"
+        request['X-XSRF-TOKEN'] = @xsrf_token
+        request['User-Agent'] =
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'
+        request.body = data && !@no_data ? JSON.dump(data) : nil
+
+        req_options = {
+          use_ssl: uri.scheme == 'https',
+          verify_mode: OpenSSL::SSL::VERIFY_NONE,
+        }
+
+        $stdout.puts '**************************************************************'
+        $stdout.puts "REQUEST #{iter} of #{total_num_reqs}"
+        $stdout.puts "method:    #{request.method}"
+        $stdout.puts "has data?: #{request.response_body_permitted? && !request.body.nil?}"
+        $stdout.puts "endpoint:  #{request.uri}"
+
+        resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+          http.request(request)
+        end
+
+        # TODO: track successes/failures and generate a report
+        $stdout.puts '------------------------------'
+        $stdout.puts "RESPONSE #{iter} of #{total_num_reqs}"
+        $stderr.puts "Something happened! :(" if resp.code.to_i >= 300
+        $stdout.puts "Resp code: #{resp.code}"
+        $stdout.puts "Resp msg:  #{resp.body}" if @verbose
+
+        if resp.code.to_i >= 300
+          begin
+            # Pretty print the description part of the error message
+            json_errors = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
+            $stderr.puts
+            $stderr.puts('Error description:')
+            $stderr.send(:pp, json_errors)
+          rescue JSON::ParserError => err
+            $stderr.puts('(JSON Parse Error while trying to pretty-print part of response body)')
+            $stderr.puts("Error: #{err}")
+            $stdout.puts
+            $stdout.puts("Response body: #{resp.body}")
+          end
+          exit 3
+        end
+
+        $stdout.puts '**************************************************************'
+      end
     end
 
     # Return last response
@@ -800,7 +552,7 @@ if $PROGRAM_NAME == __FILE__
     # opts.banner = usage
     opts.on('-a', '--use-stored-auth', 'Use the stored cookie and XSRF token only') do
       options[:last_used] = true
-      options[:reset] = %w(data http_method num_requests path tenant)
+      options[:reset] = %w[data http_method num_requests paths tenant]
     end
 
     opts.on('-cCOOKIE', '--cookie=COOKIE', 'A valid cookie') do |cookie|
@@ -808,16 +560,14 @@ if $PROGRAM_NAME == __FILE__
     end
 
     opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do |data|
-      begin
-        options[:data] = JSON.parse(data)
-      rescue JSON::ParserError
-        $stderr.puts('JSON Parse Error')
-        $stdout.puts('Try again! Paste you stringified JSON here (without quotes around it)')
-        $stdout.print('> ')
-        data = $stdin.gets.chomp
+      options[:data] = JSON.parse(data)
+    rescue JSON::ParserError
+      $stderr.puts('JSON Parse Error')
+      $stdout.puts('Try again! Paste you stringified JSON here (without quotes around it)')
+      $stdout.print('> ')
+      data = $stdin.gets.chomp
 
-        retry
-      end
+      retry
     end
 
     opts.on('-D', '--no-data', 'Do not include a data object with the request') do
@@ -843,27 +593,27 @@ if $PROGRAM_NAME == __FILE__
     opts.on(
       '-P',
       '--no-prompt-if-optional',
-      'Disable interactive prompts for missing values if a default value exists',
+      'Disable interactive prompts for missing values if a default value exists'
     ) do
       options[:no_prompt] = true
     end
 
-
-    opts.on('-pPATH', '--path=PATH', "The endpoint to CURL. Default: #{CmanApiClient::KWARG_DEFAULTS[:path]}") do |path|
-      options[:path] = path
+    opts.on('-pPATHS', '--paths=PATHS',
+            "The endpoints to CURL. Pass multiple separate by spaces. Default: #{CmanApiClient::KWARG_DEFAULTS[:paths]}") do |paths|
+      options[:paths] = (paths || '').split
     end
 
     opts.on(
       '-rKEYS',
       '--reset-cached-val=KEYS',
-      "Reset last used values for the provided keys:\n#{' ' * 41}A=>Reset All; C=>cookie; D=>data; M=>http_method; N=>num_requests; P=>path; T=>tenant; U=>All But Auth\n#{' ' * 41}Ex: `-rDPT` to reset data, path, and tenant"
+      "Reset last used values for the provided keys:\n#{' ' * 41}A=>Reset All; C=>cookie; D=>data; M=>http_method; N=>num_requests; P=>paths; T=>tenant; U=>All But Auth\n#{' ' * 41}Ex: `-rDPT` to reset data, paths, and tenant"
     ) do |keys|
-      options[:reset] = keys.split('').map do |key|
+      options[:reset] = keys.chars.map do |key|
         case key.upcase
         when 'A'
-          %w(cookie xsrf_token data http_method num_requests path tenant)
+          %w[cookie xsrf_token data http_method num_requests paths tenant]
         when 'C'
-          %w(cookie xsrf_token)
+          %w[cookie xsrf_token]
         when 'D'
           'data'
         when 'M'
@@ -871,11 +621,11 @@ if $PROGRAM_NAME == __FILE__
         when 'N'
           'num_requests'
         when 'P'
-          'path'
+          'paths'
         when 'T'
           'tenant'
         when 'U'
-          %w(data http_method num_requests path tenant)
+          %w[data http_method num_requests paths tenant]
         end
       end.flatten.uniq
     end
@@ -897,7 +647,7 @@ if $PROGRAM_NAME == __FILE__
       '--xsrf-token=TOKEN',
       'DEPRECATED: no longer necessary as script will extract this value from the cookie'
     ) do |xsrf_token|
-      options[:xsrf_token] = xsrf_token
+      # options[:xsrf_token] = xsrf_token
       $stdout.puts('The `-x` flag is DEPRECATED as that value is automatically extracted from the cookie') if xsrf_token
     end
 
@@ -935,10 +685,10 @@ if $PROGRAM_NAME == __FILE__
         options[:tenant] = tenant_input unless tenant_input.empty?
       end
 
-      if get_user_input(options, :path)
-        $stdout.print "\nPath defaults to '#{CmanApiClient::KWARG_DEFAULTS[:path]}'; press <return> to use this path or enter a different one:\n> "
+      if get_user_input(options, :paths)
+        $stdout.print "\nPaths defaults to #{CmanApiClient::KWARG_DEFAULTS[:paths]}; press <return> to use these paths or enter different ones:\n> "
         path_input = $stdin.gets.chomp
-        options[:path] = path_input unless path_input.empty?
+        options[:paths] = path_input.split unless path_input.empty?
       end
 
       if get_user_input(options, :http_method)
@@ -960,7 +710,7 @@ if $PROGRAM_NAME == __FILE__
         options[:no_data] = true if data_input == 'n'
         options[:data] = data_input unless data_input.empty? || data_input == 'n'
       end
-    end # end optional section
+    end
   end
 
   CmanApiClient.new(**options).run

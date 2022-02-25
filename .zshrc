@@ -6,6 +6,17 @@ export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
 export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+ORIGINAL_PROMPT=$PROMPT
+TIMESTAMP_PROMPT='%{$fg[yellow]%}[%D{%f/%m/%y} %D{%L:%M:%S}] '$PROMPT
+
+function toggle_prompt {
+  if [ "$PROMPT" = "$ORIGINAL_PROMPT" ]
+  then
+    PROMPT="$TIMESTAMP_PROMPT"
+  else
+    PROMPT="$ORIGINAL_PROMPT"
+  fi
+}
 # For compilers to find openssl@1.1
 export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
 export CFLAGS="-I/usr/local/opt/openssl@1.1/include"

@@ -20,7 +20,7 @@ SKIP_DIRS = {
   'Photos Library.photoslibrary' => true,
   'tmp' => true,
   'Volumes' => true,
-}
+}.freeze
 
 # Helper functions
 def dir_contents(dir)
@@ -39,7 +39,7 @@ def dirs_in_dir(dir)
     .compact
 rescue StandardError => e
   puts "Rescued Exception: #{e.exception}"
-  return []
+  []
 end
 
 def found?(str, search_term)
@@ -89,7 +89,7 @@ if help
 end
 
 root = ARGV[0]
-unless (root && !root.start_with?('-'))
+unless root && !root.start_with?('-')
   $stdout.puts "No root specified"
   exit
 end
@@ -104,7 +104,7 @@ end
 
 type_idx = ARGV.index('-type')
 type = type_idx ? ARGV[type_idx + 1] : nil
-if type && !%w(d f).include?(type)
+if type && !%w[d f].include?(type)
   $stdout.puts "Invalid type: #{type}"
   exit
 end
@@ -122,22 +122,24 @@ found = 0
 $ruby_find_skipped = 0
 
 begin
-  while stack.length > 0
+  while stack.length.positive?
     i += 1
     current_dir = stack.pop
-    puts("\tCurrent location: #{current_dir} (iter: #{i})".cyan) if i % 500 == 0
-    stack += dirs_in_dir(current_dir) unless (depth && current_dir.count('/') > depth + start_depth)
+    puts("\tCurrent location: #{current_dir} (iter: #{i})".cyan) if (i % 500).zero?
+    stack += dirs_in_dir(current_dir) unless depth && current_dir.count('/') > depth + start_depth
 
-    contents = type ?
-      type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir) :
-      dir_contents(current_dir)
+    contents = if type
+                 type == 'f' ? files_in_dir(current_dir) : dirs_in_dir(current_dir)
+               else
+                 dir_contents(current_dir)
+               end
 
     contents.each do |el|
-      if found?(el, ruby_search_term)
-        found += 1
-        matches << el
-        print_result(el, ruby_search_term)
-      end
+      next unless found?(el, ruby_search_term)
+
+      found += 1
+      matches << el
+      print_result(el, ruby_search_term)
     end
   end
 rescue StandardError => e
@@ -150,7 +152,7 @@ rescue StandardError => e
 end
 
 $stdout.puts "Matches:" unless matches.empty?
-$stdout.puts(matches.map{ |el| el.green }.join("\n")) unless matches.empty?
+$stdout.puts(matches.map(&:green).join("\n")) unless matches.empty?
 $stdout.puts "Searched #{i} directories"
 $stdout.puts "Skipped #{$ruby_find_skipped} directories"
 $stdout.puts "Found #{found} matches"

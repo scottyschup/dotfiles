@@ -2,6 +2,8 @@
 
 # WIP! Needs lots of testing/UAT
 
+require 'English'
+require 'English'
 begin
   verbose = $VERBOSE
   $VERBOSE = nil # Suppress deprecation warnings and the like
@@ -43,7 +45,7 @@ unless results[:stash]
   $stderr.puts "❌\nAction `stash` failed; check output above for more details".red
   exit
 end
-stashed_changes = !(results[:stash].include?("No local changes to save"))
+stashed_changes = !results[:stash].include?("No local changes to save")
 $stdout.puts "✅ Action `stash` done!"
 
 # Checkout master
@@ -83,7 +85,7 @@ results[:merge] = `#{cmd}`
 if results[:merge].include?("Already up to date.")
   $stdout.puts "✅ Action `merge` done!"
   exit
-elsif $?.exitstatus > 0
+elsif $CHILD_STATUS.exitstatus.positive?
   $stderr.puts "❌\nAction `merge` failed; check output above for more details".red
   exit
 end
@@ -95,7 +97,7 @@ $stdout.puts "\nRunning command: '#{cmd}'"
 results[:add_commit] = system cmd
 unless results[:add_commit]
   $stderr.puts "❌\nAction `add_commit` failed; check output above for more details".red
-  $stdout.puts "#{$?}"
+  $stdout.puts $CHILD_STATUS.to_s
   exit
 end
 $stdout.puts "✅ Action `add_commit` done!"

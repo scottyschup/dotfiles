@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby -w
 
 args = ARGV.join(" ") if ARGV.length >= 1
-if args&.include?("run dev")
-  args.gsub!("run dev", "run dev || yarn run develop || yarn run start")
-end
+args.gsub!("run dev", "run dev || yarn run develop || yarn run start") if args&.include?("run dev")
 
 ############################
 # Check node compatibility #
@@ -21,7 +19,7 @@ end
 # Finger spinner #
 ##################
 i = 0
-fpi = 250000
+fpi = 250_000
 curr_pos = 0
 # positions = [
 #   ["", "\t\t\t👇", "\t\t  \t ", "\t\t\t "],
@@ -32,8 +30,8 @@ curr_pos = 0
 
 positions = ["👉", "👇", "👈", "👆"]
 
-while child.status && timeout.status do
-  if i % fpi == 0
+while child.status && timeout.status
+  if (i % fpi).zero?
     $stdout.print "\rChecking node compatibility "
     $stdout.print positions[curr_pos]
     curr_pos = (curr_pos + 1) % 4
@@ -61,7 +59,7 @@ child[:res]&.first(10)&.each do |line|
   _, versions = line.split('Expected version "')
   # expected_version, actual_version = versions.gsub(/[a-zA-Z\^"]|\.\s/, '').split(' ')
   expected_version, actual_version = versions.split('". Got "')
-  expected_major_version = expected_version.split(' ').last.split('.').first.gsub(/[a-zA-Z\^<>=]*/, '')
+  expected_major_version = expected_version.split.last.split('.').first.gsub(/[a-zA-Z\^<>=]*/, '')
 
   system "clear"
   $stdout.puts "Expected: #{expected_version}; Actual: #{actual_version}"

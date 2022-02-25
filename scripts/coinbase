@@ -126,15 +126,15 @@ class CoinbaseClient
   SECRET = ENV["CB_API_SECRET"].freeze
   PASSPHRASE = ENV["CB_API_PASSPHRASE"].freeze
 
-  def signature(request_path="", body="", timestamp=nil, method="GET")
+  def signature(request_path = "", body = "", timestamp = nil, method = "GET")
     body = body.to_json if body.is_a?(Hash)
-    timestamp = Time.now.to_i if !timestamp
+    timestamp ||= Time.now.to_i
 
-    what = "#{timestamp}#{method}#{request_path}#{body}";
+    what = "#{timestamp}#{method}#{request_path}#{body}"
 
     # create a sha256 hmac with the secret
     secret = Base64.decode64(SECRET)
-    hash  = OpenSSL::HMAC.digest("sha256", secret, what)
+    hash = OpenSSL::HMAC.digest("sha256", secret, what)
     Base64.strict_encode64(hash)
   end
 
@@ -146,7 +146,7 @@ class CoinbaseClient
     @socket = Coinbase::Exchange::Websocket.new(keepalive: true)
   end
 
-  def bid()
+  def bid
     client.bid(btc_amt, usd_amt) { |resp| @order = resp }
   end
 end

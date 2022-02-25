@@ -75,7 +75,7 @@ elsif ARGV.length == 2
   end
 elsif ARGV.length == 1
   idx_str = ARGV.shift
-  if %w(ls list show).include? idx_str
+  if %w[ls list show].include? idx_str
     print_branches
     exit
   elsif stringified_number?(idx_str)
@@ -83,7 +83,7 @@ elsif ARGV.length == 1
     exit
   end
   $stdout.puts "Invalid index: #{idx_str}"
-elsif ARGV.length == 0
+elsif ARGV.length.zero?
   print_branches
   exit
 end

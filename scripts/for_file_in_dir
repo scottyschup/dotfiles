@@ -21,44 +21,46 @@ def flags_passed_in?(flags_arr, num_args = nil)
 end
 
 # Main
-if flags_passed_in? %w(-h --h --help help)
+if flags_passed_in? %w[-h --h --help help]
   usage
   exit
 end
 
 allow_dirs = false
-allow_dirs_flags = %w(-d --allow-dirs)
+allow_dirs_flags = %w[-d --allow-dirs]
 if flags_passed_in? allow_dirs_flags
   allow_dirs = true
   allow_dirs_flags.each { |flag| ARGV.delete flag }
 end
 
 file_name_only = false
-file_name_flags = %w(-f --file-name-only)
+file_name_flags = %w[-f --file-name-only]
 if flags_passed_in? file_name_flags
   file_name_only = true
   file_name_flags.each { |flag| ARGV.delete flag }
 end
 
-if ARGV.length == 2
+case ARGV.length
+when 2
   dir = ARGV[0]
-  code_str =ARGV[1]
-elsif ARGV.length == 1
+  code_str = ARGV[1]
+when 1
   dir = '.'
   code_str = ARGV[0]
 else
   err = ArgumentError.new "ArgumentError: Wrong number of arguments: expected 1 or 2, received #{ARGV.length}"
- $stdout.puts usage(err)
+  $stdout.puts usage(err)
   exit
 end
 
 dir = dir[-1] == '/' ? dir[0...-1] : dir
 
-prc = Proc.new { |file| eval(code_str) }
+prc = proc { |_file| eval(code_str) }
 
 files = Dir.glob("#{dir}/*", File::FNM_DOTMATCH)[2..-1] || []
 files.each do |file|
   next unless allow_dirs || File.file?(file)
+
   file = file.split("/").last if file_name_only
   prc.call(file)
 end

@@ -29,21 +29,21 @@ unit_resp = conn.post do |req|
   req.url "/v1"
   req.headers['Authorization'] = "Bearer #{token}"
   req.body = {
-    query: "{ pipeline(slug: \"amount/avant-basic\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+    query: "{ pipeline(slug: \"amount/avant-basic\") { builds(first:20, branch: master) { edges { node { state } } } } }",
   }.to_json
 end
 acc_resp = conn.post do |req|
   req.url "/v1"
   req.headers['Authorization'] = "Bearer #{token}"
   req.body = {
-    query: "{ pipeline(slug: \"amount/avant-basic-acceptance\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+    query: "{ pipeline(slug: \"amount/avant-basic-acceptance\") { builds(first:20, branch: master) { edges { node { state } } } } }",
   }.to_json
 end
 docker_resp = conn.post do |req|
   req.url "/v1"
   req.headers['Authorization'] = "Bearer #{token}"
   req.body = {
-    query: "{ pipeline(slug: \"amount/basic-build\") { builds(first:20, branch: master) { edges { node { state } } } } }"
+    query: "{ pipeline(slug: \"amount/basic-build\") { builds(first:20, branch: master) { edges { node { state } } } } }",
   }.to_json
 end
 
@@ -51,16 +51,16 @@ unit_resp_hsh = JSON.parse(unit_resp.body)
 acc_resp_hsh = JSON.parse(acc_resp.body)
 docker_resp_hsh = JSON.parse(docker_resp.body)
 
-unit_builds = unit_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
-  state = node.dig(*%w(node state))
+unit_builds = unit_resp_hsh.dig(*%w[data pipeline builds edges]).map do |node|
+  state = node.dig(*%w[node state])
   convert_state(state)
 end
-acc_builds = acc_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
-  state = node.dig(*%w(node state))
+acc_builds = acc_resp_hsh.dig(*%w[data pipeline builds edges]).map do |node|
+  state = node.dig(*%w[node state])
   convert_state(state)
 end
-docker_builds = docker_resp_hsh.dig(*%w(data pipeline builds edges)).map do |node|
-  state = node.dig(*%w(node state))
+docker_builds = docker_resp_hsh.dig(*%w[data pipeline builds edges]).map do |node|
+  state = node.dig(*%w[node state])
   convert_state(state)
 end
 

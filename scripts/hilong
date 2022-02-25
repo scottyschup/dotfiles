@@ -29,7 +29,7 @@ require 'optparse'
 OptionParser.new do |options|
   # This banner is the first line of your help documentation.
   options.set_banner "Usage: hilong [options] [files]\n" \
-    "Show character count for each line of input and highlight long lines."
+                     "Show character count for each line of input and highlight long lines."
 
   # Separator just adds a new line with the specified text.
   options.separator ""

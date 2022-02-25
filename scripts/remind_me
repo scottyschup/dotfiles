@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+# begin
+#   verbose = $VERBOSE
+#   $VERBOSE = nil # Suppress deprecation warnings and the like
+
+#   require_relative '../lib/rb/cli-utils.rb'
+#   # add more requires here
+# rescue LoadError => err
+#   # Error example:
+#   #   pry(main)> require 'fake_gem/with/path'
+#   #   LoadError: cannot load such file -- fake-gem/with/path
+#   #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+#   dependency = err.message.split(' -- ').last
+#   # Remove '/with/path' from the gem name; noop for all others
+#   dependency = dependency.split('/').first
+#   warn "Missing dependency: #{dependency}"
+#   warn 'Make sure the following command completes successfully before using this script.'
+#   warn "\tgem install #{dependency}"
+#   exit 1
+# ensure
+#   $VERBOSE = verbose
+# end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  msg = ARGV.join(' ')
+  system('clear')
+  $stdout.puts("*" * (msg.length + 8))
+  $stdout.puts("*   #{msg}   *")
+  $stdout.puts("*" * (msg.length + 8))
+end

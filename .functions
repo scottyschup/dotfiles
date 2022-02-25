@@ -259,13 +259,18 @@ function z_ll {
 }
 alias zl='z_ll'
 
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
 echo 'Sourced .functions'
 
 #############
 # Shareable #
 #############
 ## DEPRECATED: see die/omni_killer above
-function kill_all {
+function __kill_all {
   # Usage:
   # kill_all redis
   # ^ will `kill -9` all process IDs with the word "redis" in the `ps aux` line

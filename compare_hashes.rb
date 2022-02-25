@@ -1,18 +1,17 @@
 require "colorize"
 
 class HashCompare
-
   def compare(a, b, lvl: [], stop: false, verbose: false)
     @verbose = verbose
     @stop = stop
     broken = false
     [a, b].each do |obj|
-      unless obj.respond_to? :keys
-        err = "ERR: Not a hash: #{obj}"
-        puts err.red
-        broken = true
-        break if @stop
-      end
+      next if obj.respond_to? :keys
+
+      err = "ERR: Not a hash: #{obj}"
+      puts err.red
+      broken = true
+      break if @stop
     end
     return false if broken && @stop
 
@@ -26,7 +25,7 @@ class HashCompare
     end
     return false if broken && @stop
 
-    a.keys.each do |k|
+    a.each_key do |k|
       matches, err = match?(k, a, b, lvl)
       broken = true unless matches
       break if @stop && broken
@@ -45,17 +44,17 @@ class HashCompare
     v = a[k]
     v2 = b[k]
     curr_lvl = lvl + [k]
-    printf "#{"\t" * curr_lvl.length}#match? #{curr_lvl.join(".")}: "
+    printf "#{"\t" * curr_lvl.length}#match? #{curr_lvl.join('.')}: "
     if v == v2
       puts "true".green
       [true, nil]
     elsif !a.key?(k) || !b.key?(k)
-      err = "ERR: one hash is missing key `#{curr_lvl.join(".")}`"
+      err = "ERR: one hash is missing key `#{curr_lvl.join('.')}`"
       puts "false".red
       puts err.red if @verbose
       [false, err]
     elsif v.class != v2.class
-      err = "ERR: Mismatched class for #{curr_lvl.join(".")}"
+      err = "ERR: Mismatched class for #{curr_lvl.join('.')}"
       err += "\n\tExpected: #{v.class}"
       err += "\n\tGot:      #{v2.class}"
       puts err.red if @verbose
@@ -73,7 +72,6 @@ class HashCompare
       [false, err]
     end
   end
-
 end
 
 # Simple tests
@@ -88,16 +86,16 @@ hashes = [
   {
     type: :small,
     data: small,
-  },{
+  }, {
     type: :regular,
     data: regular,
-  },{
+  }, {
     type: :rearranged_base,
     data: rearranged_base,
-  },{
+  }, {
     type: :diff_sub_val,
     data: diff_sub_val,
-  },{
+  }, {
     type: :diff_sub_type,
     data: diff_sub_type,
   },
@@ -105,6 +103,7 @@ hashes = [
 
 hashes.each_with_index do |info_hash, idx|
   break if idx == hashes.length - 1
+
   next_info_hash = hashes[idx + 1]
 
   hash_type = info_hash[:type]

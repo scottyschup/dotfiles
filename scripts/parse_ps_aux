@@ -16,7 +16,7 @@
 verbose = ARGV.any? { |arg| arg == "-v" }
 ARGV.delete "-v" if verbose
 
-if ARGV.length == 0
+if ARGV.length.zero?
   $stdout.puts "Specify the search term to use to filter processes."
   exit
 elsif ARGV.length > 1
@@ -37,6 +37,7 @@ res = `ps aux | grep "#{arg}"`.split("\n")
 res.shift # Remove column headers
 res.map! do |ps_line|
   next if ps_line.include?("grep")
+
   arr = ps_line.split(/\s+/)
   user = arr[0]
   pid = arr[1]

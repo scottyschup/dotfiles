@@ -45,7 +45,8 @@ if $PROGRAM_NAME == __FILE__
     #   options[:verbose] = true
     # end
 
-    opts.on("-dDELIMITER", "--delimiter=DELIMITER", 'Delimiter used to split/join string; defaults to "\n"') do |delimiter|
+    opts.on("-dDELIMITER", "--delimiter=DELIMITER",
+            'Delimiter used to split/join string; defaults to "\n"') do |delimiter|
       options[:delimiter] = delimiter
     end
 

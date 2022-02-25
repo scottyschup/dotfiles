@@ -60,15 +60,15 @@ class Graph
 
   def input_arr
     @input_arr ||= case @input
-    when  Integer
-      (0..@input).to_a
-    when Range
-      @input.to_a
-    when Array
-      @input.sort
-    else
-      @input.respond_to?(:sort) ? @input.sort : raise_invalid_input
-    end
+                   when Integer
+                     (0..@input).to_a
+                   when Range
+                     @input.to_a
+                   when Array
+                     @input.sort
+                   else
+                     @input.respond_to?(:sort) ? @input.sort : raise_invalid_input
+                   end
   end
 
   def raise_invalid_input
@@ -112,6 +112,6 @@ if $PROGRAM_NAME == __FILE__
     width: options[:width],
     equation: equation,
     input: options[:input],
-    input_axis: options[:input_axis],
+    input_axis: options[:input_axis]
   )
 end

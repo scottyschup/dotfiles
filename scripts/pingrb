@@ -73,7 +73,7 @@ class PingRb
     res = single_ping
     return { url: url, time: 'LOST' } if res.nil?
 
-    time = res.split(' ')[6]
+    time = res.split[6]
     time ||= 'LOST'
     time.gsub!('time=', '')
     { url: url, time: time }
@@ -123,12 +123,12 @@ class PingRb
     if resp.include?('packets')
       resp                                # '3 packets transmitted, 3 packets received, 0.0% packet loss'
         .split(', ')                      # ['3 packets transmitted', '3 packets received', '0.0% packet loss']
-        .map { |el| el.split(' ').first } # ['3', '3', '0.0%']
+        .map { |el| el.split.first } # ['3', '3', '0.0%']
     elsif resp.include?('stddev')
       resp                                # 'round-trip min/avg/max/stddev = 43.535/59.527/74.010/12.487 ms'
         .split(' = ')                     # ['round-trip min/avg/max/stddev', '43.535/59.527/74.010/12.487 ms']
         .last                             # '43.535/59.527/74.010/12.487 ms'
-        .split(' ')                       # ['43.535/59.527/74.010/12.487', 'ms']
+        .split # ['43.535/59.527/74.010/12.487', 'ms']
         .first                            # '43.535/59.527/74.010/12.487'
         .split('/')                       # ['43.535', '59.527', '74.010', '12.487']
     end
@@ -208,12 +208,12 @@ class PingTracker
     until @thr_q.empty?
       curr_thr = @thr_q.shift
 
-      if !curr_thr.status
-        curr_thr.join
-        output << curr_thr[:output]
-      else
+      if curr_thr.status
         pending << [curr_thr[:idx], Time.now.to_i - curr_thr[:time_epoch]]
         re_q << curr_thr
+      else
+        curr_thr.join
+        output << curr_thr[:output]
       end
     end
 

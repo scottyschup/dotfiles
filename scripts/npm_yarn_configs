@@ -1,0 +1,324 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  require 'colorize'
+  require 'json'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+class ConfigDebugger
+  BACKUP_DIR = "#{ENV['HOME']}/.config-backups".freeze
+  CLI_TOOLS = %w[node npm yarn].freeze
+
+  def initialize(**kwargs)
+    return if kwargs.empty?
+
+    send(kwargs[:method], *kwargs[:args])
+  end
+
+  # Display helpers
+  def print_frame(content, title = nil)
+    if title
+      $stdout.puts("\n*************** #{title} ***************".white.bold)
+      $stdout.puts
+    end
+
+    $stdout.puts(content.respond_to?(:map) ? content.map(&:to_s).map(&:green) : content.green)
+  end
+
+  def print_cli_tool_versions
+    print_frame(cli_tool_versions, 'CLI tool versions')
+  end
+
+  def print_methods_list(public_only = false)
+    print_frame(list_methods(public_only), 'ConfigDebugger methods')
+  end
+
+  def print_raw_config(filepath)
+    print_frame(`cat #{filepath}`, filepath)
+  end
+
+  def print_all_raw_configs
+    $stdout.puts('************** All config files ***************')
+    all_raw_configs.each do |filepath, config|
+      print_frame(config, filepath)
+    end
+    nil
+  end
+
+  def print_latest_raw_backup_configs
+    $stdout.puts('************** All backup config files ***************')
+    latest_raw_backup_configs.each do |filepath, config|
+      print_frame(config, filepath)
+    end
+
+    return
+  end
+
+  def print_all_raw_backup_configs
+    $stdout.puts('************** All backup config files ***************')
+    all_raw_backup_configs.each do |filepath, config|
+      print_frame(config, filepath)
+    end
+
+    return
+  end
+
+  def print_npm
+    print_frame(list_npm, 'NPM Config')
+  end
+
+  def print_yarn
+    print_frame(list_yarn, 'Yarn Config')
+  end
+
+  def print_configs
+    print_frame(list_npm, 'NPM Config')
+    print_frame(list_yarn, 'Yarn Config')
+  end
+
+  # Main public methods
+  def cli_tool_versions
+    CLI_TOOLS.each_with_object({}) do |tool, agg|
+      agg[tool] = `#{tool} --version`.chomp
+    end
+  end
+
+  def list_methods(public_only = false)
+    pub_meths = public_methods(false).sort
+    priv_meths = public_only ? [] : private_methods(false).sort
+    pub_meths + priv_meths
+  end
+
+  def list_configs(verbose = false)
+    list_npm verbose
+    list_yarn verbose
+  end
+
+  def list_npm(verbose = false)
+    `npm config #{'--verbose' if verbose}ls`
+  end
+
+  def list_yarn(verbose = false)
+    `yarn config #{'--verbose' if verbose}list`
+  end
+
+  def raw_config(filepath)
+    `cat #{filepath}`
+  end
+
+  def all_raw_configs
+    config_locations.each_with_object({}) do |filepath, agg|
+      agg[filepath] = raw_config(filepath)
+    end
+  end
+
+  def latest_raw_backup_configs
+    backup_filepaths.each_with_object({}) do |filepath, agg|
+      agg[filepath] = raw_config(filepath)
+    end
+  end
+
+  def all_raw_backup_configs
+    all_backup_filepaths.each_with_object({}) do |filepath, agg|
+      agg[filepath] = raw_config(filepath)
+    end
+  end
+
+  def remove_all_configs
+    $stdout.puts config_locations
+
+    new_backup_dir = "#{BACKUP_DIR}/#{Time.now.to_i}"
+    `mkdir -p "#{new_backup_dir}"`
+
+    config_locations.each do |filepath|
+      `mv #{filepath} #{new_backup_dir}/#{backup_filename_from_filepath(filepath)}`
+    end
+
+    $stdout.puts config_locations
+  end
+
+  def restore_all_configs(dir = nil)
+    $stdout.puts config_locations
+
+    backup_filenames(dir).each do |filename|
+      `mv #{backup_filepath_from_backup_filename(filename, dir)} #{filepath_from_backup_filename(filename)}`
+    end
+
+    `rm -rf #{backup_dirpath(dir) || latest_backup_dir}` if backup_filepaths(dir).empty?
+
+    $stdout.puts config_locations
+  end
+
+  def set(key, val, verbose = false)
+    set_npm key, val, verbose
+    set_yarn key, val, verbose
+  end
+
+  def set_npm(key, val, verbose = false)
+    `npm config #{'--verbose' if verbose}set "#{key}" "#{val}"`
+  end
+
+  def set_yarn(key, val, verbose = false)
+    `yarn config #{'--verbose' if verbose}set "#{key}" "#{val}"`
+  end
+
+  private
+
+  def backup_dirpath(dir = nil)
+    curr_dir = (dir || latest_backup_dir).gsub(%r{^/}, '')
+    "#{BACKUP_DIR}/#{curr_dir}"
+  end
+
+  def backup_filenames(dir = nil)
+    `ls -a "#{BACKUP_DIR}/#{dir || latest_backup_dir}"`
+      .split("\n")
+      .filter { |str| !str.start_with?('.') }
+  end
+
+  def backup_filename_from_filepath(filepath)
+    filepath.gsub('/', '__')
+  end
+
+  def backup_filepath_from_backup_filename(filename, dir = nil)
+    "#{BACKUP_DIR}/#{dir || latest_backup_dir}/#{filename}"
+  end
+
+  def backup_filepaths(dir = nil)
+    backup_filenames(dir).map do |filename|
+      backup_filepath_from_backup_filename(filename, dir)
+    end
+  end
+
+  def all_backup_filepaths
+    all_backup_dirs.map do |dirpath|
+      backup_filenames(dirpath).map do |filename|
+        backup_filepath_from_backup_filename(filename, dirpath)
+      end
+    end.flatten
+  end
+
+  def config_locations
+    `yarn --verbose config list`
+      .split("\n")
+      .filter { |el| el.include?('Found') }
+      .map { |el| el.split.last.gsub(/"/, '').gsub(/\.$/, '') }
+      .uniq
+  end
+
+  def filepath_from_backup_filename(filename)
+    filename.gsub('__', '/')
+  end
+
+  def latest_backup_dir
+    `ls "#{BACKUP_DIR}"`
+      .split("\n")
+      .max
+  end
+
+  def all_backup_dirs
+    `ls "#{BACKUP_DIR}"`.split
+      # .map { |dir| "#{BACKUP_DIR}/#{dir}" }
+  end
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    opts.on('-mMETHOD', '--method=METHOD', 'ConfigDebugger method') do |method|
+      confd = ConfigDebugger.new
+      if confd.list_methods.include?(method.to_sym)
+        options[:method] = method.to_sym
+      else
+        $stdout.send(:warn, "Invalid method name: #{method}\nAvailable methods:")
+        confd.print_methods_list
+        exit
+      end
+    end
+
+    opts.on('-aARGS', '--args=ARGS', 'Optional args to pass to method') do |args|
+      options[:args] = args.split(/(?<!\\),\s*/).map { |str| str.gsub(/\\,/, ',') }
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  conf_dbug = ConfigDebugger.new(**options)
+
+  exit unless options.empty?
+
+  # input_history = []
+
+  loop do
+    $stdout.puts "\nINPUT FORMAT: method_name, arg1, arg2, ... <enter>\n(Type '?' for a list of methods; press <enter> to quit)"
+    input = $stdin.gets.chomp
+    # input_history << input
+
+    # Match commas and any following spaces, unless comma is backslash-escaped
+    cmd, *args = input.split(/(?<!\\),\s*/).map { |str| str.gsub(/\\,/, ',') }
+
+    break unless cmd
+
+    system 'clear'
+    $stdout.puts("cmd: #{cmd}")
+    $stdout.puts("args: #{args}") if args
+
+    begin
+      result = conf_dbug.send(cmd == '?' ? :print_methods_list : cmd, *args)
+    rescue NoMethodError => e
+      if cmd.start_with?('print_')
+        result = nil
+        begin
+          try_instead = cmd.to_s.gsub(/^print_/, '').to_sym
+          puts "#{cmd} not found--trying `#{try_instead}` instead".yellow
+          content = conf_dbug.send(try_instead, *args)
+          conf_dbug.send(:print_frame, content, "#{try_instead}#{': ' + args unless args.empty?}")
+        rescue NoMethodError => e2
+          result = "#{e}\n\n#{e2}".red
+        end
+      else
+        result = e.to_s.red
+      end
+    rescue ArgumentError => e
+      result = e.to_s.red
+    end
+
+    $stdout.print "\nRESULT:".bold.white
+    $stdout.puts "\n#{result}" if result
+    $stdout.puts "\n"
+  end
+end

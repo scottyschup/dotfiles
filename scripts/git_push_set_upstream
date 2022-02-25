@@ -10,16 +10,18 @@ if ARGV[0]&.include?("-h")
 end
 
 remote = branch = nil
+args = ARGV.select { |el| !el.start_with?('--') }
+flags = ARGV.select { |el| el.start_with?('--') }
 
-case ARGV.length
+case args.length
 when 2
-  remote = ARGV[0]
-  branch = ARGV[1]
+  remote = args.shift
+  branch = args.shift
 when 1
-  branch = ARGV[0]
+  branch = args.shift
 end
 
 remote ||= "origin"
 branch ||= `git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3`
 
-`git push --set-upstream #{remote} #{branch}`
+`git push #{flags} --set-upstream #{remote} #{branch}`

@@ -15,7 +15,6 @@ else
   $stdout.puts input
 end
 
-
 # begin
 # rescue Errno::ENOENT
 # end
@@ -27,7 +26,6 @@ end
 # a = gets
 # puts "From stdin: #{a}"
 
-
 # begin
 #   if ARGV[0] && File.exist?(ARGV[0])
 #     $stdout.puts ARGF.read
@@ -37,7 +35,6 @@ end
 # rescue Errno::EPIPE
 #   exit(74)
 # end
-
 
 # begin
 #

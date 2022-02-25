@@ -7,3 +7,4 @@
 !.gitignore_global
 .ruby-version
 .vscode
+scripts/rally_*

@@ -25,9 +25,7 @@ class GitBranchHistory
 
   def initialize(args:)
     @file_name = `2> /dev/null git rev-parse --show-toplevel`.chomp.split('/')[-1]
-    if @file_name&.include?("Not a git repository")
-      raise NotGitRepoError, "#{Dir.pwd} is not a git repository"
-    end
+    raise NotGitRepoError, "#{Dir.pwd} is not a git repository" if @file_name&.include?("Not a git repository")
 
     @args = args
     @file_path = "#{DIR_NAME}/#{@file_name}"
@@ -69,7 +67,7 @@ class GitBranchHistory
       exit
     end
     @branches ||= begin
-      file = File.open("#{@file_path}", "r+")
+      file = File.open(@file_path.to_s, "r+")
       branches = file.readlines.map(&:strip).compact
       file.close
       branches
@@ -99,8 +97,9 @@ class GitBranchHistory
   def list_branches(cmd)
     branches = branches_arr.dup
     grep = @args.shift
-    branches.select! { |branch| !!branch.match(/#{grep}/) } unless grep.nil?
+    branches.select! { |branch| branch.match(/#{grep}/).nil? } unless grep.nil?
     return branches.join(", ") if cmd == "csv"
+
     branches.map! do |branch|
       current_branch == branch ? "#{branch} (current)".cyan : branch
     end
@@ -109,23 +108,24 @@ class GitBranchHistory
   def remove_branch!
     str = @args.shift
     old_branches = branches_arr.dup
-    branches_arr.select! { |branch| !branch.include?(str) }
+    branches_arr.reject! { |branch| branch.include?(str) }
     deleted_branches = old_branches - branches_arr
     $stdout.puts "Deleted branches:\n\t#{deleted_branches.join("\n\t")}"
     update_file!
   end
 
   def update_file!
-    file = File.open("#{@file_path}", "w+")
+    file = File.open(@file_path.to_s, "w+")
     branches_arr.each do |branch|
       next if branch.empty?
+
       file.puts branch
     end
     file.close
   end
 
   def main
-    if @args.length == 0 || @args[0] == "help"
+    if @args.length.zero? || @args[0] == "help"
       usage
       return
     end

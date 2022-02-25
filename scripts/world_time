@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+  require_relative '../lib/rb/cli-utils.rb'
+
+#############
+# Ruby code #
+#############
+TIMEZONES_MAP = {
+  ET: 'America/New_York',
+  CT: 'America/Chicago',
+  MT: 'America/Denver',
+  PT: 'America/Los_Angeles',
+  AT: 'America/Anchorage',
+  ZULU: 'Eurpoe/London',
+  GMT: 'Eurpoe/London',
+  UTC: 'Eurpoe/London',
+}
+
+def date(tz)
+  timezone = TIMEZONES_MAP(tz.to_sym)
+
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+
+end

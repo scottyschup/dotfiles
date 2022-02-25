@@ -36,6 +36,7 @@ if language == "ruby"
       $VERBOSE = nil # Suppress deprecation warnings and the like
 
       require 'optparse'
+      require_relative '../lib/rb/cli-utils.rb'
       # add more requires here
     rescue LoadError => err
       # Error example:
@@ -62,26 +63,21 @@ if language == "ruby"
     ################
     # Shell script #
     ################
-    def usage; end
-
     if $PROGRAM_NAME == __FILE__
       options = {}
       OptionParser.new do |opts|
-        # These are mostly just here as examples
-
-        # opts.banner = usage
-        # opts.on('-v', '--verbose', 'More loquacious') do
-        #   options[:verbose] = true
-        # end
+        opts.on('-v', '--verbose', 'More loquacious') do
+          options[:verbose] = true
+        end
 
         # opts.on('-oVAL', '--option-with-value=VAL', 'Option with value message') do |val|
         #   options[:value] = val
         # end
 
-        # opts.on_tail('-h', '--help', 'Show this help message') do
-        #   puts opts
-        #   exit
-        # end
+        opts.on_tail('-h', '--help', 'Show this help message') do
+          puts opts
+          exit
+        end
       end.parse!
     end
   BODY
@@ -93,9 +89,13 @@ f.puts
 f.puts body
 f.close
 
+`chmod +x #{file_name}`
+
 # rubocop:disable Style/MultilineTernaryOperator, Style/NestedTernaryOperator
-editor_cmd = !`which code`.empty? ?
-  'code' : !`which atom`.empty? ?
-    'atom' : !`which subl`.empty? ?
-      'subl' : 'vim'
+editor_cmd = `which code`.empty? ?
+  `which atom`.empty? ?
+    `which subl`.empty? ?
+      `which vim`.empty? ?
+        'vi': 'vim' : 'subl' : 'atom' : 'code'
+
 `#{editor_cmd} #{file_name}`
