@@ -36,7 +36,7 @@ if language == "ruby"
       $VERBOSE = nil # Suppress deprecation warnings and the like
 
       require 'optparse'
-      require_relative '../lib/rb/cli-utils.rb'
+      require_relative '../lib/rb/cli_utils.rb'
       # add more requires here
     rescue LoadError => err
       # Error example:

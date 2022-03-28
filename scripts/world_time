@@ -3,7 +3,7 @@
 ################
 # Dependencies #
 ################
-  require_relative '../lib/rb/cli-utils.rb'
+  require_relative '../lib/rb/cli_utils.rb'
 
 #############
 # Ruby code #

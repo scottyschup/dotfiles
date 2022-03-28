@@ -180,7 +180,7 @@ class V2CampaignTemplate
         validPlacements: [],
       },
       {
-        product: 'engage',
+        product: 'advantage',
         partner: 'kaiser_permanente',
         client: 'kaiser_base',
         affiliations: [

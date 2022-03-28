@@ -1,0 +1,148 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  require_relative '../lib/rb/cli_utils.rb'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  puts "Missing dependency: #{dependency}"
+  puts 'Make sure the following command completes successfully before using this script.'
+  puts "\tgem install #{dependency}"
+
+  if ARGV.include?('--debug')
+    puts err
+  end
+
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+KELVIN_CELSIUS_OFFSET = 273.15
+CELSIUS_FAHRENHEIT_OFFSET = 32
+CELSIUS_FAHRENHEIT_RATIO = 5.0 / 9
+
+def f2c(f)
+  (f - CELSIUS_FAHRENHEIT_OFFSET) * CELSIUS_FAHRENHEIT_RATIO
+end
+
+def c2f(c)
+  c / CELSIUS_FAHRENHEIT_RATIO + CELSIUS_FAHRENHEIT_OFFSET
+end
+
+def c2k(c)
+  c + KELVIN_CELSIUS_OFFSET
+end
+
+def k2c(k)
+  k - KELVIN_CELSIUS_OFFSET
+end
+
+def f2k(f)
+  c2k(f2c f)
+end
+
+def k2f(k)
+  c2f(k2c k)
+end
+
+INPUT_OUTPUT_TO_FUNCTION_MAP = {
+  [:c, :f] => :c2f,
+  [:c, :k] => :c2k,
+  [:f, :c] => :f2c,
+  [:f, :k] => :f2k,
+  [:k, :c] => :k2c,
+  [:k, :f] => :k2f,
+}.freeze
+
+SCALE_LABEL_MAP = {
+  c: 'ºC',
+  f: 'ºF',
+  k: 'K',
+}.freeze
+
+SCALE_COMBO_OPTS = %i[cf ck fc fk kc kf]
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    opts.on('-iINPUT', '--input=INPUT', 'Temperature scale to be converted from') do |input|
+      scale = input[0].downcase.to_sym
+      val = [:c, :f, :k].include?(scale) ? scale : nil
+
+      if !val
+        puts 'ArgumentError: you must supply an input temperature scale.'
+        puts '  Options => [F]ahrenheit, [C]elsius, or [K]elvin'
+        exit 1
+      end
+
+      options[:input] = val
+    end
+
+    opts.on('-oOUTPUT', '--output=OUTPUT', 'Temperature scale to be converted to') do |output|
+      scale = output[0].downcase.to_sym
+      val = [:c, :f, :k].include?(scale) ? scale : nil
+
+      if !val
+        puts 'ArgumentError: you must supply an output temperature scale.'
+        puts '  Options => [F]ahrenheit, [C]elsius, or [K]elvin'
+        exit 1
+      end
+
+      options[:output] = val
+    end
+
+    opts.on('-cCONVERT', '--convert=CONVERT', "2-letter designation for conversion\n\topts: #{SCALE_COMBO_OPTS}") do |combo|
+      unless SCALE_COMBO_OPTS.include?(combo.to_sym)
+        puts "'#{combo}' is not a valid conversion option. Valid values are: #{SCALE_COMBO_OPTS}"
+        exit 2
+      end
+
+      options[:input] = combo[0].to_sym
+      options[:output] = combo[1].to_sym
+    end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit 0
+    end
+  end.parse!
+
+  # RUN
+  unless n = ARGV.last
+    puts "Enter the temperature in #{SCALE_LABEL_MAP[options[:input]]} you want to convert: "
+    n = gets.chomp
+  end
+
+  begin
+    result = send INPUT_OUTPUT_TO_FUNCTION_MAP[[options[:input], options[:output]]], n.to_f
+    puts "#{n}#{SCALE_LABEL_MAP[options[:input]]} => #{result.round(2)}#{SCALE_LABEL_MAP[options[:output]]}"
+  rescue StandardError => e
+    puts e
+    puts "Vars: parsed options => #{options}; ARGV => #{ARGV}; value to convert => #{n}; attempted result => #{result}"
+    exit 3
+  end
+end
