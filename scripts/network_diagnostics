@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-source $DOTFILES/.aliases >/dev/null 2>&1
+source .zshenv
 
-mkdir -p "~/.netd"
+mkdir -p "$HOME/.netd"
 filename="$HOME/.netd/fulldiagnostic-$(date +%s)"
 
 touch $filename
-
 echo "localip:\n\t$(localip)" >> $filename
 echo "\n" >> $filename
 echo "remoteip:\n\t$(remoteip)" >> $filename

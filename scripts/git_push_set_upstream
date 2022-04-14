@@ -11,7 +11,7 @@ end
 
 remote = branch = nil
 args = ARGV.select { |el| !el.start_with?('--') }
-flags = ARGV.select { |el| el.start_with?('--') }
+flags = ARGV.select { |el| el.start_with?('--') }.join(' ')
 
 case args.length
 when 2
@@ -23,5 +23,7 @@ end
 
 remote ||= "origin"
 branch ||= `git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3`
+
+$stdout.puts("Flags: #{flags}\nRemote: #{remote}\nBranch: #{branch}")
 
 `git push #{flags} --set-upstream #{remote} #{branch}`

@@ -501,8 +501,15 @@ class CmanApiClient
         $stdout.puts "has data?: #{request.response_body_permitted? && !request.body.nil?}"
         $stdout.puts "endpoint:  #{request.uri}"
 
-        resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-          http.request(request)
+        begin
+          resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+            http.request(request)
+          end
+        rescue Net::OpenTimeout => e
+          $stdout.puts '------------------------------'
+          $stdout.puts "RESPONSE #{iter} of #{total_num_reqs}"
+          $stderr.puts "Something happened! :("
+          $stdout.puts(@verbose ? e.full_message : e.message)
         end
 
         # TODO: track successes/failures and generate a report
@@ -527,6 +534,7 @@ class CmanApiClient
           end
           exit 3
         end
+
 
         $stdout.puts '**************************************************************'
       end

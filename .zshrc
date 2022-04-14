@@ -148,20 +148,8 @@ bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
 tabs -2
 
-# Functions
-source $DOTFILES/.git_functions
-source $DOTFILES/.functions
-
-# Scripts
-export PATH="$DOTFILES/scripts:$PATH"
-(for file in $(ls -A "$DOTFILES/scripts"); do
-  chmod +x "$DOTFILES/scripts/$file"
-done &&
-  echo 'Sourced scripts/* and appended dir to PATH') ||
-  echo 'Something happened :/ ^^^'
-
-# Aliases
-source $DOTFILES/.aliases
+# Functions, git functions, aliases, scripts
+source .zshenv
 
 # Set custom default applications with `duti`
 duti $DOTFILES/.duti && echo 'Set custom default applications'

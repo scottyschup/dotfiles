@@ -33,29 +33,22 @@ alias gaa="git add -A" # using `-A` instead of `.` to include deleted files
 alias garc="git add . && git rebase --continue"
 alias gb="git branch"
 alias gba="git branch -a" # list all branches
-alias gbh="git_branch_history"
-alias gbhl="gbh list"
-alias gbhc="gbh csv"
-alias gbml="git_backmerge_latest_master"
-alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbr="git branch -r" # list remote branches
-unalias gbs 2>/dev/null # git bisect; silence output to prevent warnings when re-sourcing file
-unalias gbsb 2>/dev/null # git bisect bad; silence output to prevent warnings when re-sourcing file
-unalias gbsg 2>/dev/null # git bisect good; silence output to prevent warnings when re-sourcing file
-unalias gbsr 2>/dev/null # git bisect reset; silence output to prevent warnings when re-sourcing file
-unalias gbss 2>/dev/null # git bisect start; silence output to prevent warnings when re-sourcing file
-alias gbsu="git_branch_set_upstream"
+if [[ $(which gbs) != "gbs not found" && $(which gbs) != '' ]]; then unalias gbs; fi
+if [[ $(which gbsb) != "gbsb not found" && $(which gbsb) != '' ]]; then unalias gbsb; fi
+if [[ $(which gbsg) != "gbsg not found" && $(which gbsg) != '' ]]; then unalias gbsg; fi
+if [[ $(which gbsr) != "gbsr not found" && $(which gbsr) != '' ]]; then unalias gbsr; fi
+if [[ $(which gbss) != "gbss not found" && $(which gbss) != '' ]]; then unalias gbss; fi
 alias gca="git commit --amend"
-alias gcb="git_current_branch"
 alias gcfm="git checkout --force master"
 alias gcm="git commit -m"
 alias gcmp="git_commit_push"
 alias gco="git_checkout"
 alias gcob="gco -b"
 alias gcof="gco --force"
-gcofm () { gcof main || gcof trunk || gcof master }
+gcofm () { gcof main || gcof trunk || gcof master; }
 alias gcog="gco gh-pages"
-gcom () { gco main || gco trunk || gco master }
+gcom () { gco main || gco trunk || gco master; }
 alias gcol="git_checkout_last"
 alias gconf="git config -l"
 alias gconfg="git config --global -l"
@@ -71,12 +64,10 @@ alias ghl="cat .git/refs/heads/master" # full hash
 alias gho="open_on_github"
 alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
 alias gin="git init"
-alias glb="echo `gbh last`"
 alias glp="git log -p" # also `gdh`
 alias glpf="git log -p --follow" # also `gdhf`
 alias gm="git merge"
 alias gma="git merge --abort; git add .; git stash; git checkout -- .; echo 'Check stash if missing data.'"
-alias gmlc='gacp . "Merge $(gbh last) into $(gbh current)"'
 alias gmdr="git merge --no-commit --no-ff"
 alias gmp="git_merge_push"
 alias gp="git push"
@@ -105,7 +96,7 @@ alias grsv="git remote -v show"
 alias gs="git status -sb"
 alias gst="git stash"
 alias gsta="git stash apply"
-unalias gstaa 2>/dev/null # not sure where this one is coming from; silence output to prevent warnings when re-sourcing file
+if [[ $(which gstaa) != "gstaa not found" && $(which gstaa) != "" ]]; then unalias gstaa; fi
 alias gstai="git stash apply --index"
 alias gstb="git stash branch"
 alias gstl="git stash list"
@@ -154,36 +145,21 @@ alias wp="$(npm bin)/webpack"
 
 # Aliases for my scripts/miscellany
 alias aliases_for="grep_alias"
-alias bks=buildkite_state
 alias chrome="open -a 'Google Chrome'"
 alias clr="clear"
 alias cls="clear"
 alias curli="curl -I"
-alias fe="file_editor"
 alias grepi="grep -i"
 alias grep_alias="alias | grep -i" # zsh only
 alias grepa=grep_alias # zsh only
-alias hurls=handy_urls
-alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
-alias lss="list_scripts"
 alias now="ruby -e 'puts Time.now'"
-alias psaux="parse_ps_aux"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"
-alias rebuild_indices="rebuild_open_with_index && rebuild_spotlight_index"
-alias rbi="rebuild_indices"
-alias rbfind="ruby_find"
 alias symlinksrc="stat -f %Y"
 alias symsrc="stat -f %Y"
-alias update_slack_theme="add_custom_theme_to_slack"
-alias w2f="file_editor"
-alias wxr=weather
 
 # networking
 alias localip="ipconfig getifaddr en0 || ipconfig getifaddr en1"
-alias netd="network_diagnostics"
-alias on_port=port_checker_local
-alias open_ports=port_checker_remote
 alias remoteip="curl ifconfig.me/all"
 
 # navigation
