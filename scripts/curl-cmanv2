@@ -348,12 +348,13 @@ class CmanApiClient
 
   KWARG_NAMES = %i[
     cookie
-    xsrf_token
-    http_method
     data
+    do_not_update_stored_auth
+    http_method
     num_requests
     paths
     tenant
+    xsrf_token
   ].freeze
 
   def self.edit_last_used_args
@@ -416,6 +417,7 @@ class CmanApiClient
   end
 
   def update_last_used_values
+    return if @do_not_update_stored_auth
     $stdout.puts("\nUpdating last used values") if @verbose
 
     FileUtils.mkdir_p(CURL_CMAN_V2_ROOT_DIR) unless File.directory?(CURL_CMAN_V2_ROOT_DIR)
@@ -438,6 +440,10 @@ class CmanApiClient
     $stderr.puts "\ttenant     => #{@tenant}"
     $stderr.puts "\txsrf_token => #{@xsrf_token}"
     exit 2
+  end
+
+  def is_tenant_prod_or_bs?
+    @tenant.include?('uat') || @tenant.include?('prod')
   end
 
   def run
@@ -468,7 +474,7 @@ class CmanApiClient
           $stdout.puts
         end
 
-        uri = URI.parse("https://rallyengine.#{@tenant}.rally-dev.com/#{path}")
+        uri = URI.parse("https://rallyengine.#{@tenant}.#{is_tenant_prod_or_bs? ? 'rally-prod'  : 'rally-dev'}.com/#{path}")
         request = case @http_method
                   when 'POST'
                     Net::HTTP::Post.new(uri)
@@ -496,45 +502,60 @@ class CmanApiClient
         }
 
         $stdout.puts '**************************************************************'
-        $stdout.puts "REQUEST #{iter} of #{total_num_reqs}"
-        $stdout.puts "method:    #{request.method}"
-        $stdout.puts "has data?: #{request.response_body_permitted? && !request.body.nil?}"
-        $stdout.puts "endpoint:  #{request.uri}"
+        $stdout.puts "  REQUEST #{iter} of #{total_num_reqs} @ #{Time.now}"
+        $stdout.puts "  method:    #{request.method}"
+        $stdout.puts "  has data?: #{request.response_body_permitted? && !request.body.nil?}"
+        $stdout.puts "  endpoint:  #{request.uri}"
+
+        $stdout.puts '  ------------------------------------------------------------'
+        $stdout.print "  RESPONSE #{iter} of #{total_num_reqs} @ #{Time.now}"
 
         begin
           resp = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
             http.request(request)
           end
         rescue Net::OpenTimeout => e
-          $stdout.puts '------------------------------'
-          $stdout.puts "RESPONSE #{iter} of #{total_num_reqs}"
-          $stderr.puts "Something happened! :("
-          $stdout.puts(@verbose ? e.full_message : e.message)
+          $stdout.puts(resp ? ": #{resp&.code}: #{resp&.msg}" : " (no response object)")
+          $stderr.puts "\n  Timeout Error: #{@verbose ? e.full_message : e.message}"
+          $stdout.puts("This usually means the tenant is not responding and may be down.")
+          next
+        rescue SocketError => e
+          $stdout.puts(resp ? ": #{resp&.code}: #{resp&.msg}" : "(no response object)")
+          $stderr.puts "\n  Socket Error: #{@verbose ? e.full_message : e.message}"
+          $stdout.puts("This usually means the VPN connection was lost.")
+          next
         end
+
+        $stdout.puts(resp ? ": #{resp&.code}: #{resp&.msg}" : "(no response object)")
+
+        exit 401 if resp&.code.to_i == 401
 
         # TODO: track successes/failures and generate a report
-        $stdout.puts '------------------------------'
-        $stdout.puts "RESPONSE #{iter} of #{total_num_reqs}"
-        $stderr.puts "Something happened! :(" if resp.code.to_i >= 300
-        $stdout.puts "Resp code: #{resp.code}"
-        $stdout.puts "Resp msg:  #{resp.body}" if @verbose
-
-        if resp.code.to_i >= 300
-          begin
-            # Pretty print the description part of the error message
-            json_errors = JSON.parse(JSON.parse(resp.body)['description'].split('JsonErrors: ').last)
-            $stderr.puts
-            $stderr.puts('Error description:')
-            $stderr.send(:pp, json_errors)
-          rescue JSON::ParserError => err
-            $stderr.puts('(JSON Parse Error while trying to pretty-print part of response body)')
-            $stderr.puts("Error: #{err}")
-            $stdout.puts
-            $stdout.puts("Response body: #{resp.body}")
-          end
-          exit 3
+        begin
+          parsed_body = JSON.parse(resp.body)
+          $stdout.puts(parsed_body) if @verbose
+        rescue JSON::ParserError => err
+          $stderr.puts
+          $stderr.puts("  JSON parse error: #{err}")
+          $stderr.puts() if @verbose
+          $stderr.puts("  Response body: #{resp.body}") if @verbose
+          $stdout.puts '**************************************************************'
+          next
         end
 
+        if resp&.code.to_i >= 300
+          begin
+            # Pretty print the description part of the error message
+            json_errors = parsed_body&.[]('description')&.split('JsonErrors: ')&.last
+            $stderr.puts
+            $stderr.puts('  Response error description:')
+            $stderr.send(:pp, json_errors)
+          rescue StandardError => err
+            $stderr.puts("  Parse error: #{err}")
+            $stderr.puts
+            $stderr.puts("  Response body: #{parsed_body}")
+          end
+        end
 
         $stdout.puts '**************************************************************'
       end
@@ -640,6 +661,10 @@ if $PROGRAM_NAME == __FILE__
 
     opts.on('-s', '--show-last-used-args', 'Display the stored args used in the last call') do
       options[:show_last_used] = true
+    end
+
+    opts.on('-S', '--do-not-update-stored-auth', 'Make the request without changing the last used values') do
+      options[:do_not_update_stored_auth] = true
     end
 
     opts.on('-tTENANT', '--tenant=TENANT', 'The dev tenant to send the CURL req to') do |tenant|

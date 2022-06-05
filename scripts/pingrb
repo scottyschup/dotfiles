@@ -386,7 +386,7 @@ if $PROGRAM_NAME == __FILE__
   }
 
   if options[:named_sets].nil?
-    ping_args = nil
+    ping_args = ARGV.empty? ? nil : ARGV.map { |arg| { url: arg, name: arg } }
   else
     ping_args = []
     options[:named_sets].each do |named|
@@ -394,7 +394,7 @@ if $PROGRAM_NAME == __FILE__
     end
   end
 
-  pt = PingTracker.new(ping_args.flatten!)
+  pt = PingTracker.new(ping_args.flatten)
   if options[:run]
     pt.run
   else

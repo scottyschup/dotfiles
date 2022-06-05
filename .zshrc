@@ -149,7 +149,7 @@ bindkey -s "^[OX" "="
 tabs -2
 
 # Functions, git functions, aliases, scripts
-source .zshenv
+source $DOTFILES/.zshenv
 
 # Set custom default applications with `duti`
 duti $DOTFILES/.duti && echo 'Set custom default applications'
