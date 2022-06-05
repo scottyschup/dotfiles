@@ -568,14 +568,16 @@ if $PROGRAM_NAME == __FILE__
     end
 
     opts.on('-dDATA', '--data=DATA', 'A stringified JSON data object to send with request') do |data|
-      options[:data] = JSON.parse(data)
-    rescue JSON::ParserError
-      $stderr.puts('JSON Parse Error')
-      $stdout.puts('Try again! Paste you stringified JSON here (without quotes around it)')
-      $stdout.print('> ')
-      data = $stdin.gets.chomp
+      begin
+        options[:data] = JSON.parse(data)
+      rescue JSON::ParserError
+        $stderr.puts('JSON Parse Error')
+        $stdout.puts('Try again! Paste your stringified JSON here (without quotes around it)')
+        $stdout.print('> ')
+        data = $stdin.gets.chomp
 
-      retry
+        retry
+      end
     end
 
     opts.on('-D', '--no-data', 'Do not include a data object with the request') do
