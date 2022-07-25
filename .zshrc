@@ -116,8 +116,10 @@ if [[ `which rbenv` != *"not found" ]]; then
 fi
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
-  eval "$(pyenv init - zsh)"
+  eval "$(pyenv init --path)"
+  # eval "$(pyenv init - zsh)"
 fi
+
 ## Add rbenv/pyenv/npm bin to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$(npm bin):$PATH"
 export PATH="$HOME/.pyenv/bin:$PATH"

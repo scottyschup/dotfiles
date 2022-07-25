@@ -1,0 +1,129 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  require 'optparse'
+  require_relative '../lib/rb/cli_utils.rb'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+class Array
+  def average
+    sum.to_f / length
+  end
+end
+
+SPEEDTEST_FILE ||= "#{ENV['HOME']}/.speedtest"
+
+def cat_file
+  `cat #{SPEEDTEST_FILE}`
+end
+
+def is_date_line?(str)
+  str.end_with?('2022')
+end
+
+def is_upload_line?(str)
+  str.start_with?('Upload:')
+end
+
+def is_download_line?(str)
+  str.start_with?('Download:')
+end
+
+def filter_lines(str = nil)
+  (str || cat_file).split("\n").select do |line|
+    [:is_date_line?, :is_upload_line?, :is_download_line?].any? do |func|
+      send(func, line)
+    end
+  end
+end
+
+def lines_to_hashes(lines = nil)
+  (lines || filter_lines).reduce({}) do |agg, line|
+    if is_date_line?(line)
+      agg[line] = { upload: nil, download: nil }
+    elsif is_download_line?(line)
+      agg.values.last[:download] = line.split(': ').last.split(' ').first.to_f
+    elsif is_upload_line?(line)
+      agg.values.last[:upload] = line.split(': ').last.split(' ').first.to_f
+    end
+
+    agg
+  end
+end
+
+def hashes_to_table(hshs = nil)
+  cols = (hshs || lines_to_hashes).reduce({ dates: [], ups: [], downs: [] }) do |agg, (k, v)|
+    next agg if (v[:upload].nil? || v[:download].nil?)
+
+    agg[:dates] << k
+    agg[:ups] << v[:upload]
+    agg[:downs] << v[:download]
+
+    agg
+  end
+
+  # max_date = cols[:dates].map(&:length)
+  # max_up = cols[:ups].map(&:length)
+  # max_down = cols[:downs].map(&:length)
+
+  num_rows = cols[:dates].length
+
+  puts "# Tests: #{num_rows}"
+  puts "Avg DL (Mbps):  #{cols[:downs].average}"
+  puts "Avg UL (Mbps):  #{cols[:ups].average}"
+end
+
+def print_results(lines = nil)
+  (lines || filter_lines).each do |line|
+
+  end
+end
+
+def parse_log
+  print_results(filter_lines(cat_file))
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-v', '--verbose', 'More loquacious') do
+      options[:verbose] = true
+    end
+
+    # opts.on('-oVAL', '--option-with-value=VAL', 'Option with value message') do |val|
+    #   options[:value] = val
+    # end
+
+    opts.on_tail('-h', '--help', 'Show this help message') do
+      puts opts
+      exit
+    end
+  end.parse!
+end

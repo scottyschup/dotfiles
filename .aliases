@@ -155,6 +155,7 @@ alias grepa=grep_alias # zsh only
 alias now="ruby -e 'puts Time.now'"
 alias rebuild_open_with_index="/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain user; killall Finder"
 alias rebuild_spotlight_index="sudo mdutil -i on /"
+alias run_speedtest='stfile="$HOME/.speedtest"; touch $stfile; tail -f $stfile & while true; do date >> "$stfile"; speedtest >> "$stfile"; echo >> $stfile; sleep 60; done;'
 alias symlinksrc="stat -f %Y"
 alias symsrc="stat -f %Y"
 
