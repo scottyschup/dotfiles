@@ -1,29 +1,39 @@
 {
-  "atlascode.bitbucket.explorer.enabled": false,
-  "atlascode.bitbucket.enabled": false,
-  "atlascode.jira.jqlList": [{
-    "id": "6b1c353f-08bc-4772-96b7-875d6520d8d4",
-    "enabled": true,
-    "name": "My jira.rallyhealth.com Issues",
-    "query": "assignee = currentUser() AND resolution = Unresolved ORDER BY lastViewed DESC",
-    "siteId": "jira.rallyhealth.com",
-    "monitor": true
-  }],
+  "_my_comments": {
+    "js format on save": "https://stackoverflow.com/a/52259752/3251463"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
   "atomKeymap.promptV3Features": true,
+  "bracketPairColorizer.depreciation-notice": false,
   "breadcrumbs.enabled": true,
+  "stylelint.enable": true,
+  "css.validate": false,
+  "scss.validate": false,
   "editor.acceptSuggestionOnCommitCharacter": false,
   "editor.acceptSuggestionOnEnter": "off",
-  "editor.autoIndent": "advanced",
+  "editor.autoIndent": "full",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": false,
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
   "editor.dragAndDrop": false,
   "editor.find.seedSearchStringFromSelection": true,
   "editor.fontFamily": "'Fira Code', 'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
-  "editor.fontLigatures": true,
-  "editor.fontSize": 14,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": false,
   "editor.minimap.enabled": true,
   "editor.multiCursorModifier": "alt",
-  "editor.quickSuggestions": true,
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
   "editor.renderWhitespace": "all",
   "editor.rulers": [
     80,
@@ -35,37 +45,60 @@
   "editor.tabCompletion": "on",
   "editor.tabSize": 2,
   "editor.tokenColorCustomizations": {
-    "textMateRules": [{
-      "scope": [
-        "punctuation.definition.comment",
-        "comment.block",
-        "comment.line",
-        "comment.block.documentation"
-      ],
-      "settings": {
-        "foreground": "#999999"
+    "textMateRules": [
+      {
+        "scope": [
+          "punctuation.definition.comment",
+          "comment.block",
+          "comment.line",
+          "comment.block.documentation"
+        ],
+        "settings": {
+          "foreground": "#999999"
+        }
       }
-    }]
+    ]
   },
   "editor.wordBasedSuggestions": true,
   "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
   "editor.wordWrap": "off",
+  "eslint.alwaysShowStatus": true,
+  "eslint.options": {
+    "extensions": [
+      ".html",
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx"
+    ]
+  },
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "javascriptreact"
+  ],
   "explorer.compactFolders": false,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 100,
   "files.associations": {
-    ".zshrc*": "shellscript"
+    ".zshrc*": "shellscript",
+    "Jenkinsfile": "groovy"
+  },
+  "files.exclude": {
+    "**/.git": false
   },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "files.watcherExclude": {
+    "**/.ammonite": true,
     "**/.bloop": true,
-    "**/.metals": true,
-    "**/.ammonite": true
+    "**/.metals": true
   },
+  "git.path": "/usr/local/bin/git",
   "git.suggestSmartCommit": false,
   "gitlens.advanced.messages": {
+    "suppressGitMissingWarning": true,
     "suppressGitVersionWarning": true
   },
   "gitlens.blame.dateFormat": "YYYY/MM/DD HH:mm:ss",
@@ -76,93 +109,27 @@
   "gitlens.statusBar.dateFormat": "YYYY/MM/DD HH:mm:ss",
   "gitlens.statusBar.format": "${id} ${date} ${author}",
   "html.format.indentInnerHtml": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "javascript.format.insertSpaceAfterCommaDelimiter": false,
+  "javascript.format.enable": false,
   "javascript.preferences.quoteStyle": "single",
-  "[markdown]": {
-    "files.trimTrailingWhitespace": false
-  },
-  "peacock.color": "#0c0c0c",
-  "peacock.favoriteColors": [{
-      "name": "Angular Red",
-      "value": "#b52e31"
-    },
-    {
-      "name": "Auth0 Orange",
-      "value": "#eb5424"
-    },
-    {
-      "name": "Azure Blue",
-      "value": "#007fff"
-    },
-    {
-      "name": "C# Purple",
-      "value": "#68217A"
-    },
-    {
-      "name": "Gatsby Purple",
-      "value": "#639"
-    },
-    {
-      "name": "Go Cyan",
-      "value": "#5dc9e2"
-    },
-    {
-      "name": "Java Blue-Gray",
-      "value": "#557c9b"
-    },
-    {
-      "name": "JavaScript Yellow",
-      "value": "#f9e64f"
-    },
-    {
-      "name": "Mandalorian Blue",
-      "value": "#1857a4"
-    },
-    {
-      "name": "Node Green",
-      "value": "#215732"
-    },
-    {
-      "name": "React Blue",
-      "value": "#00b3e6"
-    },
-    {
-      "name": "Something Different",
-      "value": "#832561"
-    },
-    {
-      "name": "Vue Green",
-      "value": "#42b883"
-    }
-  ],
-  "prettier.jsxSingleQuote": true,
-  "prettier.singleQuote": true,
-  "prettier.trailingComma": "all",
-  "ruby.codeCompletion": "rcodetools",
-  "ruby.format": "rubocop",
-  "ruby.intellisense": "rubyLocate",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "markdown.preview.fontSize": 12,
+  "problems.showCurrentInStatus": true,
+  "redhat.telemetry.enabled": true,
   "search.collapseResults": "alwaysExpand",
+  "search.searchEditor.defaultNumberOfContextLines": 3,
   "search.showLineNumbers": true,
   "search.useGlobalIgnoreFiles": false,
   "terminal.external.osxExec": "iTerm.app",
+  "terminal.integrated.allowChords": false,
   "terminal.integrated.enableBell": false,
-  "terminal.integrated.shell.osx": "/bin/zsh",
   "terminal.integrated.scrollback": 1000000,
-  "typescript.format.insertSpaceAfterKeywordsInControlFlowStatements": false,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
-  "typescript.format.insertSpaceAfterSemicolonInForStatements": false,
-  "typescript.format.insertSpaceBeforeAndAfterBinaryOperators": false,
+  "terminal.integrated.shell.osx": "/bin/zsh",
   "typescript.preferences.quoteStyle": "single",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "window.openFoldersInNewWindow": "on",
   "window.title": "${activeEditorFull}${separator}${rootName}",
-  "window.zoomLevel": 0,
   "workbench.colorCustomizations": {
-    "statusBar.background": "#0c0c0c",
-    "statusBar.debuggingBackground": "#2a4639",
-    "statusBar.noFolderBackground": "#2d134e",
     "activityBar.activeBackground": "#252525",
     "activityBar.activeBorder": "#606020",
     "activityBar.background": "#252525",
@@ -170,15 +137,18 @@
     "activityBar.inactiveForeground": "#e7e7e799",
     "activityBarBadge.background": "#606020",
     "activityBarBadge.foreground": "#e7e7e7",
+    "statusBar.background": "#0c0c0c",
+    "statusBar.debuggingBackground": "#2a4639",
     "statusBar.foreground": "#e7e7e7",
+    "statusBar.noFolderBackground": "#2d134e",
     "statusBarItem.hoverBackground": "#252525",
     "titleBar.activeBackground": "#0c0c0c",
     "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#0c0c0c99",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "workbench.commandPalette.history": 500,
   "workbench.colorTheme": "Community Material Theme Darker High Contrast",
+  "workbench.commandPalette.history": 500,
   "workbench.editor.closeOnFileDelete": true,
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.labelFormat": "short",
@@ -194,10 +164,12 @@
     "!interpolated"
   ],
   "yaml.format.singleQuote": true,
-  "[yaml]": {
-    "editor.autoIndent": "advanced"
-  },
   "yaml.schemas": {
-    "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.8.2/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
-  }
+    "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.9.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
+  "workbench.editor.untitled.hint": "hidden",
+  "gitlens.advanced.fileHistoryFollowsRenames": true
 }

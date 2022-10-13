@@ -1,5 +1,6 @@
 // Place your key bindings in this file to override the defaultsauto[]
-[{
+[
+  {
     "key": "ctrl+cmd+t",
     "command": "workbench.action.terminal.openNativeConsole",
     "when": "!terminalFocus"
@@ -22,7 +23,7 @@
     "command": "workbench.action.openGlobalKeybindings"
   },
   {
-    "key": "ctrl+cmd+right",
+    "key": "ctrl+shift+cmd+right",
     "command": "workbench.action.terminal.split",
     "when": "terminalFocus"
   },
@@ -80,7 +81,7 @@
     "command": "-workbench.action.toggleSidebarVisibility"
   },
   {
-    "key": "cmd+k cmd+k",
+    "key": "cmd+k",
     "command": "workbench.action.terminal.clear",
     "when": "terminalFocus"
   },
@@ -129,5 +130,84 @@
     "key": "ctrl+shift+cmd+down",
     "command": "workbench.action.toggleMaximizedPanel",
     "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+alt+cmd+down",
+    "command": "workbench.action.terminal.resizePaneDown",
+    "when": "terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "ctrl+cmd+down",
+    "command": "-workbench.action.terminal.resizePaneDown",
+    "when": "terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "ctrl+alt+cmd+up",
+    "command": "workbench.action.terminal.resizePaneUp",
+    "when": "terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "ctrl+cmd+up",
+    "command": "-workbench.action.terminal.resizePaneUp",
+    "when": "terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "shift+cmd+r",
+    "command": "-workbench.action.showAllSymbols"
+  },
+  {
+    "key": "shift+cmd+r",
+    "command": "-rerunSearchEditorSearch",
+    "when": "inSearchEditor"
+  },
+  {
+    "key": "cmd+k cmd+z",
+    "command": "editor.action.formatSelection",
+    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+k cmd+f",
+    "command": "-editor.action.formatSelection",
+    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+k cmd+f",
+    "command": "editor.foldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "cmd+k cmd+0",
+    "command": "-editor.foldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "cmd+k cmd+v",
+    "command": "editor.action.removeCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+k cmd+u",
+    "command": "-editor.action.removeCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "shift+cmd+k shift+cmd+u",
+    "command": "editor.action.transformToUppercase",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+k cmd+u",
+    "command": "-editor.action.transformToUppercase",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+k cmd+u",
+    "command": "editor.unfoldAll",
+    "when": "editorTextFocus && foldingEnabled"
+  },
+  {
+    "key": "cmd+k cmd+j",
+    "command": "-editor.unfoldAll",
+    "when": "editorTextFocus && foldingEnabled"
   }
 ]
