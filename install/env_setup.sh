@@ -1,22 +1,12 @@
 #! /bin/sh
 
-# See also (Rally employees only): https://wiki.audaxhealth.com/display/ENG/Development+Environment+Setup
-
 # This gist also has some interesting things in it: https://gist.github.com/obatiuk/7be332c88bf6ead4bde7e48329e55f0f
-
-#############################
-# Miscellaneous pre-install #
-#############################
-# To be able to run this script you must first:
-## Install Xcode through App Store and launch it once to accept agreement. Then:
-sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-# This was necessary for ~Yosemite, but didn't seem to be for Catalina
 
 ############
 # Homebrew #
 ############
 # ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" # old way
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" # new way
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" # new way; this will also prompt for XCode if needed
 
 ##############
 # Git/Github #
@@ -31,8 +21,8 @@ echo "Press [y] when done, or press any key to continue without creating new SSH
 echo "Note some git clone commands will not work if you do not complete this step"
 read -qs hasSSHkey
 brew install git # system git would be fine for this, but might as well just do it now
-git config --global user.name "Scott Schupbach"
-git config --global user.email "scott.schupbach@rallyhealth.com"
+git config --global user.name "Shannon Schupbach"
+git config --global user.email "ssschupbach@gmail.com"
 git config --global core.excludesfile "~/.gitignore" # assuming you've symlinked
 
 ############
