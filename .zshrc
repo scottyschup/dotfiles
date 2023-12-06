@@ -70,6 +70,14 @@ source $ZSH/oh-my-zsh.sh
 source $DOTFILES/custom_zsh_tabs.sh # TODO: this should probably go into $ZSH/custom/plugins
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+# Activate zsh-completions
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
+
 # Definitions
 source $DOTFILES/.colors
 export LANG=en_US.UTF-8
