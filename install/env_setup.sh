@@ -12,7 +12,7 @@
 # Git/Github #
 ##############
 ## Setup new SSH key with Github
-sshkeygen # save to ~/.ssh/id_rsa
+ssh-keygen # save to ~/.ssh/id_rsa
 chmod 400 ~/.ssh/id_rsa.pub # https://stackoverflow.com/a/37779390/3251463
 cat ~/.ssh/id_rsa.pub | pbcopy
 open https://github.com/settings/keys
