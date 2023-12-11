@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby -w
+require 'pry'
 
 ################
 # Dependencies #
@@ -143,7 +144,7 @@ class PingTracker
   end
 
   def add_ping(**args)
-    @pings << PingRb.new(args)
+    @pings << PingRb.new(**args)
   end
 
   def format_numerical_val(val, key = nil)
@@ -394,7 +395,7 @@ if $PROGRAM_NAME == __FILE__
     end
   end
 
-  pt = PingTracker.new(ping_args.flatten)
+  pt = PingTracker.new(ping_args&.flatten)
   if options[:run]
     pt.run
   else

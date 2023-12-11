@@ -14,6 +14,8 @@ unless gem_installed? 'activesupport'
   $stdout.puts "Installing `activesupport` gem"
   `gem install activesupport 1>&2`
 end
+
+require "active_support"
 require 'active_support/core_ext/numeric/time'
 
 def clock_number(n)

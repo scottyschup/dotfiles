@@ -17,13 +17,15 @@ function toggle_prompt {
     PROMPT="$ORIGINAL_PROMPT"
   fi
 }
+
+# These openssl hacks were needed in earlier OS versions (v10, v11) but not anymore (v14)
 # For compilers to find openssl@1.1
-export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
-export CFLAGS="-I/usr/local/opt/openssl@1.1/include"
-export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+# export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+# export CFLAGS="-I/usr/local/opt/openssl@1.1/include"
+# export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
 
 # For pkg-config to find openssl@1.1
-export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+# export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
 
 export DOTFILES=$HOME/.dotfiles
 export GITHUB_HOST=github.com
@@ -120,8 +122,8 @@ if [[ `which pyenv` != *"not found" ]]; then
   # eval "$(pyenv init - zsh)"
 fi
 
-## Add rbenv/pyenv/npm bin to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$(npm bin):$PATH"
+## Add rbenv/pyenv bin to PATH for scripting. Make sure this is the last PATH variable change.
+# export PATH="$(npm bin):$PATH" # npm bin no longer works as of NPM v9; use npx
 export PATH="$HOME/.pyenv/bin:$PATH"
 export PATH="$HOME/.rbenv/bin:$PATH"
 

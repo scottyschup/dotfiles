@@ -8,6 +8,7 @@ str = case ARGV.length
       when 5
         color, modifier, mod2, background, string = ARGV
         exit unless mod2 == "on"
+        exit unless modifiers.include? modifier
         string.send(color.to_sym).send(modifier.to_sym).send(:"on_#{background}")
       when 4
         color, modifier, background, string = ARGV

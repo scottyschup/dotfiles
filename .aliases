@@ -42,6 +42,7 @@ if [[ $(which gbss) != "gbss not found" && $(which gbss) != '' ]]; then unalias 
 alias gca="git commit --amend"
 alias gcfm="git checkout --force master"
 alias gcm="git commit -m"
+alias gcmt="git commit --allow-empty -m 'Empty commit'"
 alias gcmp="git_commit_push"
 alias gco="git_checkout"
 alias gcob="gco -b"
