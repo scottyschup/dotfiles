@@ -34,7 +34,8 @@ def main(remote: 'origin')
     exit 2
   end
 
-  remote_url = `git remote get-url #{remote}`
+  remote_url = `git remote get-url #{remote}` # E.g. git@git.enova.com:learning/baseline.git
+  hostname = remote_url&.split(':')&.first&.split('@')&.last
   project_path = remote_url&.split(':')&.last&.split('.')&.first
 
   unless project_path
@@ -42,7 +43,7 @@ def main(remote: 'origin')
     exit 3
   end
 
-  site_url = "https://github.com/#{project_path}"
+  site_url = "https://#{hostname}/#{project_path}"
   $stdout.puts("Opening #{site_url} in the default browser")
   `open #{site_url}`
 end
@@ -72,5 +73,5 @@ if $PROGRAM_NAME == __FILE__
     # end
   end.parse!
 
-  main(options)
+  main(**options)
 end

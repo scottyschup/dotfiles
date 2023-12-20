@@ -29,9 +29,19 @@
 # Shell script #
 ################
 if $PROGRAM_NAME == __FILE__
-  msg = ARGV.join(' ')
+  msg_lines = ARGV.join(' ').split('\n')
+  max_line_len = msg_lines.map(&:length).max
+  p_len = 3
+  border_len = max_line_len + (p_len * 2)
+
+  def padding(n)
+    ' ' * n
+  end
+
   system('clear')
-  $stdout.puts("*" * (msg.length + 8))
-  $stdout.puts("*   #{msg}   *")
-  $stdout.puts("*" * (msg.length + 8))
+  $stdout.puts("*" * border_len)
+  msg_lines.each do |msg|
+    $stdout.puts("*#{padding(p_len - 1)}#{msg.ljust(max_line_len)}#{padding(p_len - 1)}*")
+  end
+  $stdout.puts("*" * border_len)
 end
