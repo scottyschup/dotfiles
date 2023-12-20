@@ -234,32 +234,24 @@ class PingTracker
   end
 
   def runtime(start, curr)
-    rt_ss = curr - start
+    return "00:00:00:00" if start >= curr # not sure how it's happening, but everything is off by one second
+
+    total_secs = curr - (start - 1)
+
+    clock_fields_to_s(d_h_m_s_from_seconds(total_secs))
+  end
+
+  def d_h_m_s_from_seconds(seconds)
     # Integer#divmod returns and qrray of [QUOTIENT, MODULUS]
-    rt_hh = nil
-    rt_dd = nil
+    mins, secs = seconds.divmod 60
+    hours, mins = mins.divmod 60
+    days, hours = hours.divmod 24
 
-    # X seconds to MM:SS
-    rt_min, rt_sec = rt_ss.divmod 60
-    rt_mm, rt_ss = [rt_min, rt_sec].map { |n| n.round.to_s.rjust(2, '0') }
+    [days, hours, mins, secs]
+  end
 
-    # X minutes to HH:MM
-    if rt_min > 59
-      rt_hour, rt_min = rt_min.divmod 60
-      rt_hh, rt_mm = [rt_hour, rt_min].map { |n| n.round.to_s.rjust(2, '0') }
-
-      if rt_hour > 23
-        rt_day, rt_hour = rt_hour.divmod 24
-        rt_dd, rt_hh = [rt_day, rt_hour].map { |n| n.round.to_s.rjust(2, '0') }
-      else
-        rt_dd = '00'
-      end
-    else
-      rt_dd = '00'
-      rt_hh = '00'
-    end
-
-    "#{rt_dd}:#{rt_hh}:#{rt_mm}:#{rt_ss}"
+  def clock_fields_to_s(fields)
+    fields.map { |n| n.to_i.to_s.rjust(2, '0') }.join(":")
   end
 
   def run
