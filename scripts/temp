@@ -93,7 +93,7 @@ if $PROGRAM_NAME == __FILE__
       scale = input[0].downcase.to_sym
       val = [:c, :f, :k].include?(scale) ? scale : nil
 
-      if !val
+      unless val
         puts 'ArgumentError: you must supply an input temperature scale.'
         puts '  Options => [F]ahrenheit, [C]elsius, or [K]elvin'
         exit 1
@@ -106,7 +106,7 @@ if $PROGRAM_NAME == __FILE__
       scale = output[0].downcase.to_sym
       val = [:c, :f, :k].include?(scale) ? scale : nil
 
-      if !val
+      unless val
         puts 'ArgumentError: you must supply an output temperature scale.'
         puts '  Options => [F]ahrenheit, [C]elsius, or [K]elvin'
         exit 1

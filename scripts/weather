@@ -47,9 +47,10 @@ def run_wxr_widget(zip_code = 60_640)
 end
 
 def usage
-  "Get forecast from wttr.in" \
-    "\tUsage: `#{__FILE__}` [ZIP_CODE]" \
-    "\tZIP_CODE defaults to 60640"
+  "Get forecast from wttr.in
+    Usage: `#{__FILE__.split('/').last}` [ZIP_CODE]
+    ZIP_CODE defaults to 60640
+  "
 end
 
 ################

@@ -106,11 +106,12 @@ if $PROGRAM_NAME == __FILE__
     curr_thr = thread_q.shift
     if curr_thr.status
       thread_q.unshift(curr_thr)
-    else
-      curr_thr.join
-      open_ports << curr_thr[:port] if curr_thr[:is_open]
-      print_output(curr_thr[:host], open_ports, curr_thr[:port])
+      next
     end
+
+    curr_thr.join
+    open_ports << curr_thr[:port] if curr_thr[:is_open]
+    print_output(curr_thr[:host], open_ports, curr_thr[:port])
   end
 
   $stdout.puts

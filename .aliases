@@ -109,21 +109,21 @@ alias gstu="git stash show -p | git apply -R" # git stash unapply
 alias gviz="git log --oneline --decorate --graph --all"
 alias gwb="git_working_branches"
 alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
-            git config --global user.name 'Scott Schupbach'; \
+            git config --global user.name 'Shannon Schupbach'; \
             echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
 alias upgl="git config user.email 'ssschupbach@gmail.com'; \
-            git config user.name 'Scott Schupbach'; \
+            git config user.name 'Shannon Schupbach'; \
             echo 'Switched to personal git user/email settings.\nRemember to set remote host to $GITHUB_HOST_PERSONAL.'"
 # These should be overridden in work `.zshrc_<VARIANT>`s
 alias uwgg="echo 'You need to set this up in your current .zshrc_<VARIANT> for work' && \
             echo 'Use the following as a template:\n' && \
             echo 'git config --global user.email \"shannon.schupbach@some-company.com\";' && \
-            echo 'git config --global user.name \"Scott Schupbach\"; # or however it appears in your work account' && \
+            echo 'git config --global user.name \"Shannon Schupbach\"; # or however it appears in your work account' && \
             echo 'echo \"Switched to work git user/email settings. Remember to set remote host to $""GITHUB_HOST.\"'"
 alias uwgl="echo 'You need to set this up in your current .zshrc_<VARIANT> for work' && \
             echo 'Use the following as a template:\n' && \
             echo 'git config user.email \"shannon.schupbach@some-company.com\";' && \
-            echo 'git config user.name \"Scott Schupbach\"; # or however it appears in your work account' && \
+            echo 'git config user.name \"Shannon Schupbach\"; # or however it appears in your work account' && \
             echo 'echo \"Switched to work git user/email settings. Remember to set remote host to $""GITHUB_HOST.\"'"
 
 # heroku
