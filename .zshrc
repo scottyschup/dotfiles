@@ -3,7 +3,6 @@
 source `brew --prefix`/etc/profile.d/z.sh &>/dev/null
 export LANG=en_US.UTF-8
 export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
-export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 ORIGINAL_PROMPT=$PROMPT
@@ -20,13 +19,12 @@ function toggle_prompt {
 
 # These openssl hacks were needed in earlier OS versions (v10, v11) but not anymore (v14)
 # For compilers to find openssl@1.1
-# export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
-# export CFLAGS="-I/usr/local/opt/openssl@1.1/include"
-# export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
-
+export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 # For pkg-config to find openssl@1.1
-# export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 
+# General
 export DOTFILES=$HOME/.dotfiles
 export GITHUB_HOST=github.com
 export GITHUB_HOST_PERSONAL=github.com.personal
@@ -121,9 +119,14 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
 ## Ruby
-if [[ `which rbenv` != *"not found" ]]; then
-  eval "$(rbenv init - zsh)"
-fi
+# Using chruby now :/
+# if [[ `which rbenv` != *"not found" ]]; then
+#   eval "$(rbenv init - zsh)"
+# fi
+source $HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh
+source $HOMEBREW_PREFIX/share/chruby/auto.sh
+chruby ruby-3.2.2
+
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init --path)"
@@ -133,7 +136,8 @@ fi
 ## Add rbenv/pyenv bin to PATH for scripting. Make sure this is the last PATH variable change.
 # export PATH="$(npm bin):$PATH" # npm bin no longer works as of NPM v9; use npx
 export PATH="$HOME/.pyenv/bin:$PATH"
-export PATH="$HOME/.rbenv/bin:$PATH"
+# Using chruby now :/
+# export PATH="$HOME/.rbenv/bin:$PATH"
 
 # Use Keypad in terminal
 # 0 . Enter
@@ -174,25 +178,12 @@ if [ -e ~/.gitignore ]; then
 fi
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked to $DOTFILES/.gitignore_global"
 
-###################################################################
+####################################################################
 # Remove duplicates from PATH in the event of re-sourcing dotfiles #
-###################################################################
+####################################################################
 # Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
 # slower each time, so duplicates are being removed here.
-# Because it's being done with Ruby, there are 2 additional paths that have to
-# be removed from the top: one for rbenv executables and one for the bin dir of
-# the current version of Ruby.
-# E.g. from Rally laptop:
-# Original PATH (at time of writing):
-# /Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-# Modified PATH (with rbenv-added paths):
-# /Users/shannon.schupbach/.rbenv/versions/2.6.5/bin:/usr/local/Cellar/rbenv/1.1.2/libexec:/Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-# Modified PATH (without rbenv-added paths):
-# /Users/shannon.schupbach/.dotfiles/scripts:/Users/shannon.schupbach/.rbenv/bin:/Users/shannon.schupbach/.pyenv/bin:/Users/shannon.schupbach/.dotfiles/node_modules/.bin:/Users/shannon.schupbach/.pyenv/shims:/Users/shannon.schupbach/.rbenv/shims:/Users/shannon.schupbach/.nvm/versions/node/v14.9.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-# Since switching versions of Ruby/Node modifies the path by prepending the current
-# version, this should be turned into a script that also checks for and removes
-# earlier versions that are being overridden.
-export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq[2..-1].join(":")')
+export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq[0..-1].join(":")')
 echo "PATH uniqified!"
 
 echo 'Sourced .zshrc'
