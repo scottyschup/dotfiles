@@ -143,7 +143,6 @@ alias react_install="npm install --save react react-dom"
 alias react_webpack="cp $DOTFILES/templates/webpack.config.js ./webpack.config.js && npm install --save webpack"
 alias react_babel_install="npm install --save babel-core babel-loader babel-preset-env"
 alias wpdev="./bin/webpack-dev-server --watch --colors --progress"
-alias wp="$(npm bin)/webpack"
 
 # Aliases for my scripts/miscellany
 alias aliases_for="grep_alias"

@@ -124,8 +124,8 @@ load-nvmrc
 #   eval "$(rbenv init - zsh)"
 # fi
 source $HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh
-source $HOMEBREW_PREFIX/share/chruby/auto.sh
-chruby ruby-3.2.2
+source $HOMEBREW_PREFIX/share/chruby/auto.sh # automatically switches to the version specified in a .ruby_version file
+chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby_version file exists
 
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
@@ -164,8 +164,23 @@ bindkey -s "^[Oo" "/"
 bindkey -s "^[OX" "="
 tabs -2
 
-# Functions, git functions, aliases, scripts
-source $DOTFILES/.zshenv
+# Custom functions
+source $DOTFILES/.git_functions
+source $DOTFILES/.functions
+
+# Aliases
+source $DOTFILES/.aliases
+
+# Scripts
+export PATH="$DOTFILES/scripts:$PATH"
+(for file in $(ls -A "$DOTFILES/scripts"); do
+  chmod +x "$DOTFILES/scripts/$file"
+done &&
+  echo 'scripts/* have been chmoded and added to PATH') ||
+  echo 'Something happened with the scripts loop :/ ^^^'
+
+# Aliases that depend on scripts
+source $DOTFILES/.aliases-post-scripts
 
 # Set custom default applications with `duti`
 duti $DOTFILES/.duti && echo 'Set custom default applications'

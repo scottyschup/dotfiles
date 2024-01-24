@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.atom-keybindings",
+    "eamodio.gitlens",
+    "xabikos.JavaScriptSnippets",
+    "esbenp.prettier-vscode",
+    "mechatroner.rainbow-csv",
+    "Shopify.ruby-extensions-pack",
+    "Shopify.ruby-lsp",
+    "misogi.ruby-rubocop",
+    "Tyriar.sort-lines",
+    "stylelint.vscode-stylelint",
+    "vscodevim.vim",
+    "rayhanw.erb-helpers"
+  ]
+}
