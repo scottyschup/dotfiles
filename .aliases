@@ -55,6 +55,8 @@ alias gconf="git config -l"
 alias gconfg="git config --global -l"
 alias gcp="git cherry-pick"
 alias gd="git diff"
+gdg () { git diff $(git diff --name-only HEAD | grep -E $@); }
+gdsg () { git diff --stat $(git diff --name-only HEAD | grep -E $@); }
 alias gdh="git log -p" # git diff history
 alias gdhf="git log -p --follow" # git diff history including renames
 alias gds="git diff --stat"

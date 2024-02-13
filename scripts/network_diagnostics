@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source .zshenv
-
 mkdir -p "$HOME/.netd"
 filename="$HOME/.netd/fulldiagnostic-$(date +%s)"
 

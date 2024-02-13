@@ -136,8 +136,12 @@ fi
 ## Add rbenv/pyenv bin to PATH for scripting. Make sure this is the last PATH variable change.
 # export PATH="$(npm bin):$PATH" # npm bin no longer works as of NPM v9; use npx
 export PATH="$HOME/.pyenv/bin:$PATH"
+
 # Using chruby now :/
 # export PATH="$HOME/.rbenv/bin:$PATH"
+
+# Add GO bin to PATH
+export PATH=$PATH:$HOME/go/bin
 
 # Use Keypad in terminal
 # 0 . Enter

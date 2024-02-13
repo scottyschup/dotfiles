@@ -70,35 +70,6 @@ function my_watch {
   done
 }
 
-function new_react_project {
-  GRN='\033[0;32m'
-  NONE='\033[0m'
-
-  echo "${GRN}initialize directory${NONE}"
-  mkcd $1 &&
-  echo "${GRN}create package.json${NONE}"
-  npm init --yes &&
-  echo "${GRN}install react components${NONE}"
-  react_install &&
-  echo "${GRN}install webpack${NONE}"
-  react_webpack &&
-  echo "${GRN}install babel components${NONE}"
-  react_babel_install &&
-  echo "${GRN}create index.html${NONE}"
-  touch index.html &&
-  echo "${GRN}create lib/${NONE}"
-  mkdir lib &&
-  echo "${GRN}create lib/app.jsx${NONE}"
-  touch lib/app.jsx &&
-  echo "${GRN}initialize git repo${NONE}"
-  git init &&
-  git add .
-  git commit -m "Initial commit" &&
-  atom . &&
-  wp --watch
-}
-alias react_new='new_react_project'
-
 function omni_killer {
   count=0
   pids="$(pids_for $@)"
