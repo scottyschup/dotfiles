@@ -7,4 +7,4 @@
 !.gitignore_global
 .ruby-version
 .vscode
-scripts/rally_*
+scripts/enova_*

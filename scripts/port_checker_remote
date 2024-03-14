@@ -57,10 +57,7 @@ end
 # Shell script #
 ################
 def usage
-  $stdout.puts "$0: #{`echo $0`}"
-  $stdout.puts "$PROGRAM_NAME: #{$PROGRAM_NAME}"
-  $stdout.puts "__FILE__: #{__FILE__}"
-  $stdout.puts "Usage:  HOST_IP [OPTS]"
+  $stdout.puts "Usage: port_checker_remote HOST_IP [OPTS]"
   $stdout.puts "\t-p, --port\tPort to check (will check all form 0-9999 if none provided)"
 end
 

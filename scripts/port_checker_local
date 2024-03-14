@@ -1,45 +1,44 @@
 #! /usr/bin/env zsh
 
-if [ ! $1 ] || [ $# -gt 2 ]; then
-  echo "$RED""ArgumentError:$NONE expected 1 or 2 arguments but got $#"
-  echo "\tUsage: $0 [pid] PORT "
-  exit 1
+if [ $1 = "pid" ]
+then
+  pid_only=1
+  shift
 fi
 
-if [ $2 ]; then
-  port=$2
-  if [ $1 = "pid" ]
-  then
-    pid_only=1
-  else
-    # Catch invalid arg
-    echo "$RED""ArgumentError:$NONE invalid arg: $1" && exit 2
-  fi
-else
-  port=$1
+if [ ! $1 ]; then
+  path="$0"
+  prefix="$(pwd)/scripts/"
+  name=${path#"$prefix"}
+  echo "$RED""ArgumentError:$NONE expected 1 or more PORT arguments but got none"
+  echo "\tUsage: $name [pid] PORT [PORTs ...]"
+  exit 1
 fi
 
 # Catch non-numerical port arg
 num_re='^[0-9]+$'
 
-if [[ ! "$port" =~ "$num_re" ]]
-then
-  echo "$RED""ArgumentError:$NONE Port '$port' is not a number :/"
-  exit 3
-fi
+for port in "$@"; do
+  if [ ! $pid_only ]; then
+    printf "Checking port: $port\t\t"
+  fi
 
-# Check for open port
-line=$(lsof -nP -iTCP:$port | grep LISTEN)
-if [ ! "$line" ]
-then
-  echo "$CYN""Nothing found on port $port$NONE" 1>&2
-  exit 4
-fi
+  if [[ ! "$port" =~ "$num_re" ]]
+  then
+    echo "$RED""ArgumentError:$NONE Port '$port' is not a number :/"
+    exit 3
+  fi
 
-# Successful responses
-if [ $pid_only ]; then
-  echo $line | awk '{print $2}'
-  exit
-fi
+  # Check for open port
+  local line=$(lsof -nP -iTCP:$port | grep LISTEN)
+  if [[ ! "$line" && ! $pid_only ]]; then
+    echo "$CYN""Nothing found on port $port$NONE" 1>&2
+  # Successful response
+  elif [[ $line && $pid_only ]]; then
+    echo $line | awk '{print $2}'
+  elif [[ $line ]]; then
+    echo $line
+  fi
+done
 
-echo $line
+exit 0

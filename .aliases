@@ -66,6 +66,7 @@ alias gfp="git fetch --all --prune; git pull"
 alias ghl="cat .git/refs/heads/master" # full hash
 alias gho="open_on_github"
 alias ghor="open_on_github -r"
+ghr () { git reset --hard HEAD $@ && git clean -fd; } # git hard reset; cf grh for this command without the git clean part
 alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
 alias gin="git init"
 alias glp="git log -p" # also `gdh`
@@ -89,7 +90,7 @@ alias grb="git rebase"
 alias grbc="git rebase --continue"
 alias grbm="git rebase master"
 alias grbs="git rebase --skip"
-alias grollback="git reset HEAD~1"
+alias grh="git reset --hard HEAD" # git reset hard; cf ghr for this plus `git clean -fd`
 alias grp="git remote prune"
 alias grpo="git remote prune origin" # removes dead branches from remote origin
 alias grr="git remote remove"

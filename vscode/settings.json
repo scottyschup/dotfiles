@@ -1,6 +1,9 @@
 {
-  "_my_comments": {
+  "[[my_comments]]": {
     "js format on save": "https://stackoverflow.com/a/52259752/3251463"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
   },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
@@ -8,37 +11,47 @@
   "[markdown]": {
     "files.trimTrailingWhitespace": false
   },
-  "atomKeymap.promptV3Features": true,
-  "bracketPairColorizer.depreciation-notice": false,
+  "[ruby]": {
+    "editor.defaultFormatter": "Shopify.ruby-lsp",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+      120
+    ],
+    "editor.semanticHighlighting.enabled": true,
+    "editor.tabSize": 2,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true
+  },
   "breadcrumbs.enabled": true,
-  "stylelint.enable": true,
   "css.validate": false,
-  "scss.validate": false,
   "editor.acceptSuggestionOnCommitCharacter": false,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.autoIndent": "full",
   "editor.codeActionsOnSave": {
-    "source.fixAll": false,
-    "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
   },
   "editor.dragAndDrop": false,
   "editor.find.seedSearchStringFromSelection": true,
-  "editor.fontFamily": "'Fira Code', 'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontFamily": "'Fira Code', 'Source Code Pro', Monaco, monospace",
+  "editor.fontSize": 12,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": false,
   "editor.minimap.enabled": true,
   "editor.multiCursorModifier": "alt",
   "editor.quickSuggestions": {
     "comments": "on",
-    "strings": "on",
-    "other": "on"
+    "other": "on",
+    "strings": "on"
   },
   "editor.renderWhitespace": "all",
   "editor.rulers": [
     80,
-    100,
-    120
+    125
   ],
   "editor.scrollBeyondLastLine": true,
   "editor.snippetSuggestions": "top",
@@ -59,10 +72,9 @@
       }
     ]
   },
-  "editor.wordBasedSuggestions": true,
+  "editor.wordBasedSuggestions": "matchingDocuments",
   "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
   "editor.wordWrap": "off",
-  "eslint.alwaysShowStatus": true,
   "eslint.options": {
     "extensions": [
       ".html",
@@ -82,6 +94,7 @@
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 100,
   "files.associations": {
+    "*.go": "go",
     ".zshrc*": "shellscript",
     "Jenkinsfile": "groovy"
   },
@@ -97,38 +110,52 @@
   },
   "git.path": "/usr/local/bin/git",
   "git.suggestSmartCommit": false,
+  "gitlens.advanced.fileHistoryFollowsRenames": true,
   "gitlens.advanced.messages": {
     "suppressGitMissingWarning": true,
     "suppressGitVersionWarning": true
   },
   "gitlens.blame.dateFormat": "YYYY/MM/DD HH:mm:ss",
   "gitlens.blame.format": "${id} ${date} ${author}",
+  "gitlens.codeLens.authors.enabled": false,
+  "gitlens.codeLens.recentChange.enabled": false,
   "gitlens.currentLine.dateFormat": "YYYY/MM/DD HH:mm:ss",
   "gitlens.currentLine.format": "${id} ${date} ${author}",
+  "gitlens.currentLine.scrollable": true,
+  "gitlens.hovers.currentLine.over": false,
   "gitlens.statusBar.alignment": "left",
   "gitlens.statusBar.dateFormat": "YYYY/MM/DD HH:mm:ss",
   "gitlens.statusBar.format": "${id} ${date} ${author}",
+  "go.goroot": "/opt/homebrew/Cellar/go/1.21.5/libexec",
   "html.format.indentInnerHtml": true,
-  "javascript.format.enable": false,
+  "javascript.format.enable": true,
   "javascript.preferences.quoteStyle": "single",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "markdown.preview.fontSize": 12,
+  "nxConsole.showNodeVersionOnStartup": false,
   "problems.showCurrentInStatus": true,
   "redhat.telemetry.enabled": true,
+  "remote.SSH.remotePlatform": {
+    "sandbox.6xv5lf.csb": "linux"
+  },
+  "rubyLsp.rubyVersionManager": "chruby",
+  "scss.validate": false,
   "search.collapseResults": "alwaysExpand",
   "search.searchEditor.defaultNumberOfContextLines": 3,
   "search.showLineNumbers": true,
   "search.useGlobalIgnoreFiles": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "stylelint.enable": true,
   "terminal.external.osxExec": "iTerm.app",
   "terminal.integrated.allowChords": false,
-  "terminal.integrated.enableBell": false,
+  "terminal.integrated.fontSize": 12,
   "terminal.integrated.scrollback": 1000000,
-  "terminal.integrated.shell.osx": "/bin/zsh",
   "typescript.preferences.quoteStyle": "single",
   "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "window.openFoldersInNewWindow": "on",
   "window.title": "${activeEditorFull}${separator}${rootName}",
+  "window.zoomLevel": 0,
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#252525",
     "activityBar.activeBorder": "#606020",
@@ -150,9 +177,13 @@
   "workbench.colorTheme": "Community Material Theme Darker High Contrast",
   "workbench.commandPalette.history": 500,
   "workbench.editor.closeOnFileDelete": true,
+  "workbench.editor.empty.hint": "hidden",
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.labelFormat": "short",
   "workbench.editor.revealIfOpen": true,
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
   "workbench.iconTheme": "material-icon-theme",
   "workbench.settings.editor": "json",
   "workbench.settings.openDefaultKeybindings": true,
@@ -167,9 +198,15 @@
   "yaml.schemas": {
     "file:///Users/shannon.schupbach/.vscode/extensions/atlassian.atlascode-2.9.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
   },
-  "workbench.editorAssociations": {
-    "*.ipynb": "jupyter.notebook.ipynb"
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "workbench.editor.untitled.hint": "hidden",
-  "gitlens.advanced.fileHistoryFollowsRenames": true
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "extensions.ignoreRecommendations": true,
+  "accessibility.signals.terminalBell": {
+    "sound": "off"
+  },
+  "terminal.integrated.enableVisualBell": false
 }

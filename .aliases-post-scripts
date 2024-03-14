@@ -23,5 +23,14 @@ alias wxr=weather
 alias netd="network_diagnostics"
 alias on_port=port_checker_local
 alias open_ports=port_checker_remote
-
+function kill_ports {
+  for port in $@; do
+    # check if port in use
+    if [[ $(lsof -i :$port) ]]; then
+      die $(on_port pid $port)
+    else
+      echo "Port $port is not in use"
+    fi
+  done
+}
 echo "Sourced .aliases-post-scripts"

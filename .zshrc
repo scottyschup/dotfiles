@@ -123,9 +123,9 @@ load-nvmrc
 # if [[ `which rbenv` != *"not found" ]]; then
 #   eval "$(rbenv init - zsh)"
 # fi
-source $HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh
-source $HOMEBREW_PREFIX/share/chruby/auto.sh # automatically switches to the version specified in a .ruby_version file
-chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby_version file exists
+source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
+chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
 
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then

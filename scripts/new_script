@@ -24,6 +24,7 @@ end
 
 language = ARGV.shift || "ruby"
 flags = ARGV.shift || (language == "ruby" ? "-w" : "")
+shebang = language == "ruby" ? "#!/usr/bin/env ruby #{flags}" : "#!#{`which #{language}`} #{flags}"
 
 body = nil
 if language == "ruby"
@@ -84,7 +85,7 @@ if language == "ruby"
 end
 
 f = File.open(file_name, 'w')
-f.puts("#!/usr/bin/env #{language} #{flags}")
+f.puts(shebang)
 f.puts
 f.puts body
 f.close
