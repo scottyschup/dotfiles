@@ -97,11 +97,11 @@ class GitBranchHistory
   def list_branches(cmd)
     branches = branches_arr.dup
     grep = @args.shift
-    branches.select! { |branch| branch.match(/#{grep}/).nil? } unless grep.nil?
+    branches.select! { |branch| !branch.match(/#{grep}/i).nil? } unless grep.nil?
     return branches.join(", ") if cmd == "csv"
 
     branches.map! do |branch|
-      current_branch == branch ? "#{branch} (current)".cyan : branch
+      (current_branch == branch && !grep) ? current_branch_pretty : branch
     end
   end
 

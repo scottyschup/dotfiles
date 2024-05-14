@@ -66,7 +66,7 @@ alias gfp="git fetch --all --prune; git pull"
 alias ghl="cat .git/refs/heads/master" # full hash
 alias gho="open_on_github"
 alias ghor="open_on_github -r"
-ghr () { git reset --hard HEAD $@ && git clean -fd; } # git hard reset; cf grh for this command without the git clean part
+ghr () { git reset --hard $@ && git clean -fd; } # git hard reset; cf grh for this command without the git clean part
 alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
 alias gin="git init"
 alias glp="git log -p" # also `gdh`
@@ -80,7 +80,9 @@ alias gpf="git push --force"
 alias gpl="git pull"
 alias gplu="git pull -u"
 alias gpluo="git pull -u origin"
+alias gpfnv="git push --force --no-verify"
 alias gpnv="git push --no-verify"
+alias gpnvf="git push --no-verify --force"
 alias gpsu="git_push_set_upstream"
 alias gpsunv="git_push_set_upstream --no-verify"
 alias gpu="git push -u"
@@ -90,7 +92,7 @@ alias grb="git rebase"
 alias grbc="git rebase --continue"
 alias grbm="git rebase master"
 alias grbs="git rebase --skip"
-alias grh="git reset --hard HEAD" # git reset hard; cf ghr for this plus `git clean -fd`
+alias grh="git reset --hard" # git reset hard; cf ghr for this plus `git clean -fd`
 alias grp="git remote prune"
 alias grpo="git remote prune origin" # removes dead branches from remote origin
 alias grr="git remote remove"
@@ -99,7 +101,7 @@ alias grro="git remote remove origin"
 alias grv="git remote -v"
 alias grsv="git remote -v show"
 alias gs="git status -sb"
-alias gst="git stash"
+alias gst="git stash -u"
 alias gsta="git stash apply"
 if [[ $(which gstaa) != "gstaa not found" && $(which gstaa) != "" ]]; then unalias gstaa; fi
 alias gstai="git stash apply --index"
@@ -107,7 +109,7 @@ alias gstb="git stash branch"
 alias gstl="git stash list"
 alias gstsd="git stash show --text" # git stash show diff
 alias gsts="git stash show"
-alias gstsv="git stash save"
+alias gstsv="git stash save -u"
 alias gstu="git stash show -p | git apply -R" # git stash unapply
 alias gviz="git log --oneline --decorate --graph --all"
 alias gwb="git_working_branches"

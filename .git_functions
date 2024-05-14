@@ -201,17 +201,32 @@ function git_branch_set_upstream {
 function git_checkout {
   local remote=""
   local branch=""
-  git_branch_history add
+  local matched_branch=""
+  local gco_args=""
+  git_branch_history add # ensure current branch is in GBH before changing
   if [ "$1" = "-b" ]; then
-    branch=$2
+    matched_branch=$(git_branch_history ls $2)
+    if [ "$matched_branch" != "" ]; then
+      branch=$matched_branch
+    else
+      branch=$2
+    fi
+    gco_args="-b $branch"
   elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     git checkout --help
     return
   elif [ "$1" = "-t" ] || [ "$1" = "--track" ]; then
     branch="${2#*/}"
     remote="${2%/*}/"
+    gco_args="-t $remote/$branch"
   else
-    branch=$1
+    matched_branch=$(git_branch_history ls $1)
+    if [ "$matched_branch" != "" ]; then
+      branch=$matched_branch
+    else
+      branch=$1
+    fi
+    gco_args=$branch
   fi
 
   echo "Checking out: $remote$branch"
@@ -222,7 +237,7 @@ function git_checkout {
     return 0
   fi
 
-  msg=`git checkout "$@" 2>&1`
+  msg=`git checkout "$gco_args" 2>&1`
   co_status=$?
   if [ $co_status -gt 0 ]; then
     setopt NULL_GLOB
