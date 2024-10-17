@@ -139,7 +139,6 @@ if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init --path)"
   export PATH="$HOME/.pyenv/bin:$PATH"
 fi
- bin no longer works as of NPM v9; use npx
 
 # Add GO bin to PATH
 export PATH=$PATH:$HOME/go/bin
