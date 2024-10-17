@@ -204,29 +204,23 @@ function git_checkout {
   local matched_branch=""
   local gco_args=""
   git_branch_history add # ensure current branch is in GBH before changing
+
   if [ "$1" = "-b" ]; then
-    matched_branch=$(git_branch_history ls $2)
-    if [ "$matched_branch" != "" ]; then
-      branch=$matched_branch
-    else
-      branch=$2
-    fi
-    gco_args="-b $branch"
+    branch=$2
   elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     git checkout --help
     return
   elif [ "$1" = "-t" ] || [ "$1" = "--track" ]; then
-    branch="${2#*/}"
     remote="${2%/*}/"
-    gco_args="-t $remote/$branch"
+    branch="${2#*/}"
   else
     matched_branch=$(git_branch_history ls $1)
     if [ "$matched_branch" != "" ]; then
       branch=$matched_branch
+      set -- "$branch" "${@:2}"
     else
       branch=$1
     fi
-    gco_args=$branch
   fi
 
   echo "Checking out: $remote$branch"
@@ -237,7 +231,7 @@ function git_checkout {
     return 0
   fi
 
-  msg=`git checkout "$gco_args" 2>&1`
+  msg=`git checkout $@ 2>&1`
   co_status=$?
   if [ $co_status -gt 0 ]; then
     setopt NULL_GLOB
@@ -268,11 +262,11 @@ function git_commit_push {
 }
 
 function git_checkout_safe_force {
-  branch=$1
+  local branch=$1
   g_status=${$(git status)[-1]}
 
   if [ "$g_status" != "clean" ]; then
-    stash=1
+    local stash=1
     git stash
   fi
 
@@ -348,7 +342,7 @@ function git_new_branch {
   git_checkout_safe_force $source
   git checkout -b $1
   git commit --allow-empty -m 'Branch initialization'
-  git push -u origin $1
+  git push -u origin $1 --no-verify
 }
 alias gnb=git_new_branch
 

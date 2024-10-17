@@ -82,18 +82,21 @@ fi
 source $DOTFILES/.colors
 export LANG=en_US.UTF-8
 
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
 # Init language version managers
 ## Node/nvm
-export NVM_DIR="$HOME/.nvm"
-export NVM_BREW_PREFIX=$(brew --prefix nvm)
-[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"  # This loads nvm from Homebrew
-# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm from manual installation
-[ -s "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm" ] && . "$NVM_BREW_PREFIX/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+### Load nvm from manual installation:
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# [ -s "$NVM_DIR/etc/bash_completion.d/nvm" ] && . "$NVM_DIR/etc/bash_completion.d/nvm"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/ssschupbach/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ssschupbach/google-cloud-sdk/path.zsh.inc'; fi
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/ssschupbach/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ssschupbach/google-cloud-sdk/completion.zsh.inc'; fi
+### Load nvm from Homebrew
+export NVM_BREW_PREFIX=$(brew --prefix nvm)
+[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"
 
 # Hook into `cd` to automatically swtich Node version if `.nvmrc` present
 # Must be after nvm initialization
@@ -120,25 +123,23 @@ load-nvmrc
 
 ## Ruby
 # Using chruby now :/
-# if [[ `which rbenv` != *"not found" ]]; then
-#   eval "$(rbenv init - zsh)"
-# fi
-source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
-source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
-chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
+if [[ `which rbenv` != *"not found" ]]; then
+  eval "$(rbenv init - zsh)"
+  export PATH="$HOME/.rbenv/bin:$PATH"
+fi
+
+if [[ `which chruby` != *"not found" ]]; then
+  source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+  source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
+  chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
+fi
 
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init --path)"
-  # eval "$(pyenv init - zsh)"
+  export PATH="$HOME/.pyenv/bin:$PATH"
 fi
-
-## Add rbenv/pyenv bin to PATH for scripting. Make sure this is the last PATH variable change.
-# export PATH="$(npm bin):$PATH" # npm bin no longer works as of NPM v9; use npx
-export PATH="$HOME/.pyenv/bin:$PATH"
-
-# Using chruby now :/
-# export PATH="$HOME/.rbenv/bin:$PATH"
+ bin no longer works as of NPM v9; use npx
 
 # Add GO bin to PATH
 export PATH=$PATH:$HOME/go/bin

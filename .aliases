@@ -69,8 +69,8 @@ alias ghor="open_on_github -r"
 ghr () { git reset --hard $@ && git clean -fd; } # git hard reset; cf grh for this command without the git clean part
 alias ghs="git log --pretty=format:"%h" -n 1 | cat" # short hash
 alias gin="git init"
-alias glp="git log -p" # also `gdh`
-alias glpf="git log -p --follow" # also `gdhf`
+alias glp="git log -p" # also: gdh
+alias glpf="git log -p --follow" # also: gdhf
 alias gm="git merge"
 alias gma="git merge --abort; git add .; git stash; git checkout -- .; echo 'Check stash if missing data.'"
 alias gmdr="git merge --no-commit --no-ff"
