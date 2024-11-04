@@ -17,10 +17,10 @@ function toggle_prompt {
   fi
 }
 
-# These openssl hacks were needed in earlier OS versions (v10, v11) but not anymore (v14)
-# For compilers to find openssl@1.1
-export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+# For compilers to find openssl
+export CPPFLAGS="-I$(brew --prefix)/include"
+export LDFLAGS="-L$(brew --prefix)/lib"
+
 # For pkg-config to find openssl@1.1
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 
@@ -88,56 +88,55 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # Init language version managers
-## Node/nvm
-### Load nvm from manual installation:
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-# [ -s "$NVM_DIR/etc/bash_completion.d/nvm" ] && . "$NVM_DIR/etc/bash_completion.d/nvm"
+## Load nvm from Homebrew
+export NVM_DIR="$HOME/.nvm"
+[ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh"
 
-### Load nvm from Homebrew
-export NVM_BREW_PREFIX=$(brew --prefix nvm)
-[ -s "$NVM_BREW_PREFIX/nvm.sh" ] && . "$NVM_BREW_PREFIX/nvm.sh"
+if [[ `which nvm` != *"not found" ]]; then
+  # Hook into `cd` to automatically switch Node version if `.nvmrc` present
+  # Must be after nvm initialization
+  autoload -U add-zsh-hook
+  load-nvmrc() {
+    local node_version="$(nvm version)"
+    local nvmrc_path="$(nvm_find_nvmrc)"
 
-# Hook into `cd` to automatically swtich Node version if `.nvmrc` present
-# Must be after nvm initialization
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local node_version="$(nvm version)"
-  local nvmrc_path="$(nvm_find_nvmrc)"
+    if [ -n "$nvmrc_path" ]; then
+      local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$node_version" ]; then
-      nvm use
+      if [ "$nvmrc_node_version" = "N/A" ]; then
+        nvm install
+      elif [ "$nvmrc_node_version" != "$node_version" ]; then
+        nvm use
+      fi
+    elif [ "$node_version" != "$(nvm version default)" ]; then
+      echo "Reverting to nvm default version"
+      nvm use default
     fi
-  elif [ "$node_version" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
+  }
+  add-zsh-hook chpwd load-nvmrc
+  load-nvmrc
+  echo 'nvm initialized' && node -v && which node
+fi
 
 ## Ruby
-# Using chruby now :/
 if [[ `which rbenv` != *"not found" ]]; then
   eval "$(rbenv init - zsh)"
   export PATH="$HOME/.rbenv/bin:$PATH"
+  echo 'rbenv initialized' && ruby -v && which ruby
 fi
 
 if [[ `which chruby` != *"not found" ]]; then
   source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
   source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
   chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
+  echo 'chruby initialized' && ruby -v && which ruby
 fi
 
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
   eval "$(pyenv init --path)"
   export PATH="$HOME/.pyenv/bin:$PATH"
+  echo 'pyenv initialized' && python --version && which python
 fi
 
 # Add GO bin to PATH
@@ -202,7 +201,15 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked 
 ####################################################################
 # Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
 # slower each time, so duplicates are being removed here.
-export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq[0..-1].join(":")')
+# Note: the double reverse is necessary because Ruby's `uniq` method seems to remove
+# earlier copies as it encounters new ones.
+export PATH=$(ruby -e 'puts `echo $PATH`.split(":").reverse.uniq.reverse.join(":")')
 echo "PATH uniqified!"
+
+# asdf (must be initialized after PATH is uniquified)
+if [[ `which asdf` != *"not found" ]]; then
+  source $(brew --prefix asdf)/libexec/asdf.sh
+  echo 'asdf initialized' && asdf current
+fi
 
 echo 'Sourced .zshrc'
