@@ -201,12 +201,11 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked 
 ####################################################################
 # Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
 # slower each time, so duplicates are being removed here.
-# Note: the double reverse is necessary because Ruby's `uniq` method seems to remove
-# earlier copies as it encounters new ones.
-export PATH=$(ruby -e 'puts `echo $PATH`.split(":").reverse.uniq.reverse.join(":")')
+export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq.join(":")')
 echo "PATH uniqified!"
 
 # asdf (must be initialized after PATH is uniquified)
+# Note: in bash, change `!= *"not found"` to `!= ""`
 if [[ `which asdf` != *"not found" ]]; then
   source $(brew --prefix asdf)/libexec/asdf.sh
   echo 'asdf initialized' && asdf current
