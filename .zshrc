@@ -201,7 +201,10 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked 
 ####################################################################
 # Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
 # slower each time, so duplicates are being removed here.
-export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq.join(":")')
+# The old Ruby way
+# export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq.join(":")')
+# The correct zsh way: https://man.archlinux.org/man/zshall.1.en#U~6
+typeset -U PATH path
 echo "PATH uniqified!"
 
 # asdf (must be initialized after PATH is uniquified)
