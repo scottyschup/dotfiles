@@ -134,7 +134,7 @@ fi
 
 ## Python
 if [[ `which pyenv` != *"not found" ]]; then
-  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
   export PATH="$HOME/.pyenv/bin:$PATH"
   echo 'pyenv initialized' && python --version && which python
 fi
