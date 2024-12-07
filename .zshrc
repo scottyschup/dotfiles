@@ -88,48 +88,52 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # Init language version managers
-## Load nvm from Homebrew
-export NVM_DIR="$HOME/.nvm"
-[ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh"
+## Load nvm from Homebrew unless asdf is installed
+if [[ `which asdf` = *"not found" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh"
 
-if [[ `which nvm` != *"not found" ]]; then
-  # Hook into `cd` to automatically switch Node version if `.nvmrc` present
-  # Must be after nvm initialization
-  autoload -U add-zsh-hook
-  load-nvmrc() {
-    local node_version="$(nvm version)"
-    local nvmrc_path="$(nvm_find_nvmrc)"
+  if [[ `which nvm` != *"not found" ]]; then
+    # Hook into `cd` to automatically switch Node version if `.nvmrc` present
+    # Must be after nvm initialization
+    autoload -U add-zsh-hook
+    load-nvmrc() {
+      local node_version="$(nvm version)"
+      local nvmrc_path="$(nvm_find_nvmrc)"
 
-    if [ -n "$nvmrc_path" ]; then
-      local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+      if [ -n "$nvmrc_path" ]; then
+        local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-      if [ "$nvmrc_node_version" = "N/A" ]; then
-        nvm install
-      elif [ "$nvmrc_node_version" != "$node_version" ]; then
-        nvm use
+        if [ "$nvmrc_node_version" = "N/A" ]; then
+          nvm install
+        elif [ "$nvmrc_node_version" != "$node_version" ]; then
+          nvm use
+        fi
+      elif [ "$node_version" != "$(nvm version default)" ]; then
+        echo "Reverting to nvm default version"
+        nvm use default
       fi
-    elif [ "$node_version" != "$(nvm version default)" ]; then
-      echo "Reverting to nvm default version"
-      nvm use default
-    fi
-  }
-  add-zsh-hook chpwd load-nvmrc
-  load-nvmrc
-  echo 'nvm initialized' && node -v && which node
-fi
+    }
+    add-zsh-hook chpwd load-nvmrc
+    load-nvmrc
+    echo 'nvm initialized' && node -v && which node
+  fi
+fi # end of if !asdf block
 
 ## Ruby
-if [[ `which rbenv` != *"not found" ]]; then
-  eval "$(rbenv init - zsh)"
-  export PATH="$HOME/.rbenv/bin:$PATH"
-  echo 'rbenv initialized' && ruby -v && which ruby
-fi
+if [[ `which asdf` = *"not found" ]]; then
+  if [[ `which rbenv` != *"not found" ]]; then
+    eval "$(rbenv init - zsh)"
+    export PATH="$HOME/.rbenv/bin:$PATH"
+    echo 'rbenv initialized' && ruby -v && which ruby
+  fi
 
-if [[ `which chruby` != *"not found" ]]; then
-  source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
-  source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
-  chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
-  echo 'chruby initialized' && ruby -v && which ruby
+  if [[ `which chruby` != *"not found" ]]; then
+    source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+    source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
+    chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
+    echo 'chruby initialized' && ruby -v && which ruby
+  fi
 fi
 
 ## Python
