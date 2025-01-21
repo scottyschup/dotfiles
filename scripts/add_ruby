@@ -1,0 +1,18 @@
+#! /usr/bin/env zsh
+
+if [[ `which asdf` != *"not found" ]]; then
+  asdf install ruby $1
+elif [[ `which chruby` != *"not found" ]]; then
+  ruby-install $1
+  chruby $1
+else
+  echo "asdf not found"
+  exit 1
+fi
+
+if [[ -f Gemfile.lock ]]; then
+  gem install bundler -v `cat Gemfile.lock | grep -A 1 "BUNDLED WITH" | tail -n 1`
+  bundle
+else
+  gem install bundler
+fi

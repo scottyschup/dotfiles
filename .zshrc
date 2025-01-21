@@ -1,5 +1,8 @@
 #!/usr/bin/zsh -w
 
+# Ensure Homebrew is in path since it's used throughout this file
+export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
+
 source `brew --prefix`/etc/profile.d/z.sh &>/dev/null
 export LANG=en_US.UTF-8
 export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
@@ -203,10 +206,6 @@ ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked 
 ####################################################################
 # Remove duplicates from PATH in the event of re-sourcing dotfiles #
 ####################################################################
-# Repeatedly re-sourcing dotfiles causes the PATH to grow making session startup
-# slower each time, so duplicates are being removed here.
-# The old Ruby way
-# export PATH=$(ruby -e 'puts `echo $PATH`.split(":").uniq.join(":")')
 # The correct zsh way: https://man.archlinux.org/man/zshall.1.en#U~6
 typeset -U PATH path
 echo "PATH uniqified!"

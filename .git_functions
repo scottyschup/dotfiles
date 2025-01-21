@@ -1,4 +1,5 @@
-#!/usr/bin/bash
+#! /bin/bash
+
 # To use personal git settings on work laptop:
 #   * upgl (use personal git local)
 #   * change git@github.com:scottyschup/repo.git to git@github.com.personal:scottyschup/repo.git
@@ -216,7 +217,37 @@ function git_checkout {
   else
     matched_branch=$(git_branch_history ls $1)
     if [ "$matched_branch" != "" ]; then
-      branch=$matched_branch
+      # Handle mutliple matches
+      if [ $(echo "$matched_branch" | wc -l) -gt 1 ]; then
+        echo "There are mutliple matching branches."
+
+        # Initialize an array to hold the lines
+        lines=()
+
+        # Read each line into the array
+        while IFS= read -r line; do
+          lines+=("$line")
+        done <<< "$matched_branch"
+
+        # Present the options to the user
+        for i in {1..${#lines[@]}}; do
+          echo "$i. ${lines[i]}"
+        done
+
+        read "choice?Enter the number of your branch: "
+
+        echo "Choice: $choice"
+        # Validate input
+        if [[ $choice -ge 1 && $choice -le "$(echo "$matched_branch" | wc -l)" ]]; then
+          branch="${lines[$choice]}"
+          echo "You selected: $branch"
+        else
+          echo "Invalid choice. Please run the script again and select a valid option."
+        fi
+      else
+        branch=$matched_branch
+      fi
+
       set -- "$branch" "${@:2}"
     else
       branch=$1
