@@ -1,5 +1,7 @@
 #! /usr/bin/env zsh
 
+# Note: this script is aliased as `on_port` in .aliases-post-scripts
+
 if [ "$1" = "pid" ]
 then
   pid_only=1
