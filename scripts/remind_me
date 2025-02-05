@@ -41,7 +41,7 @@ if $PROGRAM_NAME == __FILE__
   system('clear')
   $stdout.puts("*" * border_len)
   msg_lines.each do |msg|
-    $stdout.puts("*#{padding(p_len - 1)}#{msg.ljust(max_line_len)}#{padding(p_len - 1)}*")
+    $stdout.puts("|#{padding(p_len - 1)}#{msg.ljust(max_line_len)}#{padding(p_len - 1)}|")
   end
   $stdout.puts("*" * border_len)
 end

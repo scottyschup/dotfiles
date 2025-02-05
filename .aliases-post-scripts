@@ -33,4 +33,4 @@ function kill_ports {
     fi
   done
 }
-echo "Sourced .aliases-post-scripts"
+echo "$GRN""Sourced$NONE .aliases-post-scripts"

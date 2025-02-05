@@ -357,6 +357,7 @@ if $PROGRAM_NAME == __FILE__
     opts.on('-i', '--interactive') { options[:interactive] = true }
     opts.on('-r', '--run') { options[:run] = true }
     opts.on('-s', '--summary') { options[:summary] = true }
+    opts.on('-u', '--url') { |url| options[:url] = url }
 
     opts.on_tail('-h', '--help', 'Show this help message') do
       puts opts
@@ -377,14 +378,17 @@ if $PROGRAM_NAME == __FILE__
     github: [{ url: 'github.com', name: 'Gitub' }],
   }
 
-  if options[:named_sets].nil?
-    ping_args = ARGV.empty? ? nil : ARGV.map { |arg| { url: arg, name: arg } }
-  else
-    ping_args = []
+  ping_args = []
+
+  if !options[:named_sets].nil?
     options[:named_sets].each do |named|
       ping_args << named_sets[named.to_sym]
     end
   end
+
+  re = Regexp.new('^[-_a-z]+(\.[-_a-z]+)*$')
+
+  ARGV.empty? ? nil : ARGV.map { |arg| ping_args << { url: arg, name: arg } if arg.match(re) }
 
   pt = PingTracker.new(ping_args&.flatten)
   if options[:run]

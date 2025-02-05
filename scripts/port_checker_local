@@ -1,6 +1,6 @@
 #! /usr/bin/env zsh
 
-if [ $1 = "pid" ]
+if [ "$1" = "pid" ]
 then
   pid_only=1
   shift
@@ -8,7 +8,7 @@ fi
 
 if [ ! $1 ]; then
   path="$0"
-  prefix="$(pwd)/scripts/"
+  prefix=~/.dotfiles/scripts/
   name=${path#"$prefix"}
   echo "$RED""ArgumentError:$NONE expected 1 or more PORT arguments but got none"
   echo "\tUsage: $name [pid] PORT [PORTs ...]"
@@ -20,7 +20,7 @@ num_re='^[0-9]+$'
 
 for port in "$@"; do
   if [ ! $pid_only ]; then
-    printf "Checking port: $port\t\t"
+    printf "$PPL""Checking port: $YLW$port\t\t$NONE"
   fi
 
   if [[ ! "$port" =~ "$num_re" ]]
@@ -32,12 +32,12 @@ for port in "$@"; do
   # Check for open port
   local line=$(lsof -nP -iTCP:$port | grep LISTEN)
   if [[ ! "$line" && ! $pid_only ]]; then
-    echo "$CYN""Nothing found on port $port$NONE" 1>&2
+    echo "\n$CYN""Nothing found on port $port$NONE" 1>&2
   # Successful response
   elif [[ $line && $pid_only ]]; then
-    echo $line | awk '{print $2}'
+    echo "$line" | awk '{print $2}'
   elif [[ $line ]]; then
-    echo $line
+    echo "\n$line"
   fi
 done
 

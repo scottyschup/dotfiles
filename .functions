@@ -72,9 +72,17 @@ function my_watch {
 
 function omni_killer {
   count=0
+  num_re='^[0-9]+$'
   pids="$(pids_for $@)"
 
+  echo "PIDs: $pids"
+
   for pid in $(echo $pids); do
+    if [[ ! "$pid" =~ "$num_re" ]]; then
+      echo "$RED""ArgumentError:$NONE PID '$pid' is not a number :/"
+      echo "Skipping $pid"
+      continue
+    fi
     (kill -9 $(($pid)) || kill -9 $pid) && ((count++))
   done
 
@@ -235,7 +243,7 @@ timezsh() {
   for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
 }
 
-echo 'Sourced .functions'
+echo "$GRN""Sourced$NONE .functions"
 
 #############
 # Shareable #

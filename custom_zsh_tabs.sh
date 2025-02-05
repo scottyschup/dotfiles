@@ -55,4 +55,4 @@ function titleOrPWD {
   echo $TITLE
 }
 
-echo 'Sourced custom_zsh_tabs.sh'
+echo "$GRN""Sourced$NONE custom_zsh_tabs.sh"

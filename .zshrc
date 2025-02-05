@@ -1,5 +1,7 @@
 #!/usr/bin/zsh -w
 
+echo "$GRN""Sourced$NONE .zshenv" # To remind me that .zshenv gets sourced before .zshrc
+
 # Ensure Homebrew is in path since it's used throughout this file
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 
@@ -27,10 +29,7 @@ export LDFLAGS="-L$(brew --prefix)/lib"
 # For pkg-config to find openssl@1.1
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 
-# General
-export DOTFILES=$HOME/.dotfiles
-export GITHUB_HOST=github.com
-export GITHUB_HOST_PERSONAL=github.com.personal
+# ZSH theme/configuration
 export ZSH=~/.oh-my-zsh # or wherever your oh-my-zsh installation lives
 ZSH_THEME="robbyrussell"
 DISABLE_AUTO_UPDATE="true"
@@ -82,7 +81,6 @@ if type brew &>/dev/null; then
 fi
 
 # Definitions
-source $DOTFILES/.colors
 export LANG=en_US.UTF-8
 
 # The next line updates PATH for the Google Cloud SDK.
@@ -120,11 +118,9 @@ if [[ `which asdf` = *"not found" ]]; then
     add-zsh-hook chpwd load-nvmrc
     load-nvmrc
     echo 'nvm initialized' && node -v && which node
-  fi
-fi # end of if !asdf block
+  fi # end of NVM auto-switch setup
 
-## Ruby
-if [[ `which asdf` = *"not found" ]]; then
+  ## Optional rbenv/chruby setup
   if [[ `which rbenv` != *"not found" ]]; then
     eval "$(rbenv init - zsh)"
     export PATH="$HOME/.rbenv/bin:$PATH"
@@ -135,48 +131,17 @@ if [[ `which asdf` = *"not found" ]]; then
     source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
     source /opt/homebrew/share/chruby/auto.sh # automatically switches to the version specified in a .ruby-version file
     chruby ruby-3.2.2 # Global Ruby--default Ruby used unless a .ruby-version file exists
-    echo 'chruby initialized' && ruby -v && which ruby
+    echo "chruby$GRN initialized$NONE" && ruby -v && which ruby
   fi
-fi
 
-## Python
-if [[ `which pyenv` != *"not found" ]]; then
-  eval "$(pyenv init -)"
-  export PATH="$HOME/.pyenv/bin:$PATH"
-  echo 'pyenv initialized' && python --version && which python
-fi
+  ## Optional pyenv setup
+  if [[ `which pyenv` != *"not found" ]]; then
+    eval "$(pyenv init -)"
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    echo "pyenv$GRN initialized$NONE" && python --version && which python
+  fi
 
-# Add GO bin to PATH
-export PATH=$PATH:$HOME/go/bin
-
-# Use Keypad in terminal
-# 0 . Enter
-bindkey -s "^[Op" "0"
-bindkey -s "^[On" "."
-bindkey -s "^[OM" "^M"
-# 1 2 3
-bindkey -s "^[Oq" "1"
-bindkey -s "^[Or" "2"
-bindkey -s "^[Os" "3"
-# 4 5 6
-bindkey -s "^[Ot" "4"
-bindkey -s "^[Ou" "5"
-bindkey -s "^[Ov" "6"
-# 7 8 9
-bindkey -s "^[Ow" "7"
-bindkey -s "^[Ox" "8"
-bindkey -s "^[Oy" "9"
-# + -  * /
-bindkey -s "^[Ok" "+"
-bindkey -s "^[Om" "-"
-bindkey -s "^[Oj" "*"
-bindkey -s "^[Oo" "/"
-bindkey -s "^[OX" "="
-tabs -2
-
-# Custom functions
-source $DOTFILES/.git_functions
-source $DOTFILES/.functions
+fi # end of if !asdf block
 
 # Aliases
 source $DOTFILES/.aliases
@@ -186,35 +151,35 @@ export PATH="$DOTFILES/scripts:$PATH"
 (for file in $(ls -A "$DOTFILES/scripts"); do
   chmod +x "$DOTFILES/scripts/$file"
 done &&
-  echo 'scripts/* have been chmoded and added to PATH') ||
-  echo 'Something happened with the scripts loop :/ ^^^'
+  echo "scripts/* have been$GRN chmoded and added to PATH$NONE") ||
+  echo "$RED""Something happened$NONE with the scripts loop :/ ^^^"
 
 # Aliases that depend on scripts
 source $DOTFILES/.aliases-post-scripts
 
 # Set custom default applications with `duti`
-duti $DOTFILES/.duti && echo 'Set custom default applications'
+(duti $DOTFILES/.duti && echo "$GRN""Set$NONE custom default applications") || echo "$RED""Failed to set$NONE custom default applications"
 
 # Symlink global .gitignore
 if [ -e ~/.gitignore ]; then
   if [ -L ~/.gitignore ] && [ $(symsrc ~/.gitignore) != "$DOTFILES/.gitignore_global" ]; then
-    mv ~/.gitignore ~/.gitignore_bkp &>/dev/null && echo "~/.gitignore already exists; renaming to ~/.gitignore_bkp"
+    mv ~/.gitignore ~/.gitignore_bkp &>/dev/null && echo "~/.gitignore$YLW already exists$NONE; renaming to ~/.gitignore_bkp"
   fi
 fi
-ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore symlinked to $DOTFILES/.gitignore_global"
+ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore$GRN symlinked$NONE to $DOTFILES/.gitignore_global"
 
 ####################################################################
 # Remove duplicates from PATH in the event of re-sourcing dotfiles #
 ####################################################################
 # The correct zsh way: https://man.archlinux.org/man/zshall.1.en#U~6
 typeset -U PATH path
-echo "PATH uniqified!"
+echo "PATH$GRN uniqified$NONE!"
 
 # asdf (must be initialized after PATH is uniquified)
 # Note: in bash, change `!= *"not found"` to `!= ""`
-if [[ `which asdf` != *"not found" ]]; then
+if [[ `which asdf` != *"not found" && `which node` != *".asdf/shims"* ]]; then
   source $(brew --prefix asdf)/libexec/asdf.sh
-  echo 'asdf initialized' && asdf current
+  echo "asdf$GRN initialized$NONE" && asdf current
 fi
 
-echo 'Sourced .zshrc'
+echo "$GRN""Sourced$NONE .zshrc"

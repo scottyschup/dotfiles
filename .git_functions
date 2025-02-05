@@ -401,4 +401,4 @@ function git_include_from_external_dir {
 }
 alias gifed=git_include_from_external_dir
 
-echo 'Sourced .git_functions'
+echo "$GRN""Sourced$NONE .git_functions"
