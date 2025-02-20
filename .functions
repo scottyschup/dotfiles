@@ -12,7 +12,7 @@ function bundle_rails_server_on_port {
     bundle exec rails server -p $1
     return 0
   else
-    echo "${RED}Error: Enter port number to run server on${NONE}"
+    echo "${RED}ERROR: Enter port number to run server on${NONE}"
     return 1
   fi
 }
@@ -132,10 +132,17 @@ function over {
 }
 
 function pids_for {
-  psaux_with_grep $1 |
+  local result=$(psaux_with_grep $1)
+
+  if [ "$result" = "" ]; then
+    return 1
+  fi
+
+  echo "$result" |
   grep -v grep |
   awk '{print $2}' |
-  tr '\n' ' ' |
+  tr ' ' '\n' |
+  sort -u |
   sed 's/[[:space:]]*$//'
 }
 alias pids=pids_for

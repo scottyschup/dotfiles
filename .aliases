@@ -11,6 +11,7 @@ alias brs="brew search"
 alias brsl="brew services list"
 alias brsp="brew services stop"
 alias brsr="brew services restart"
+alias brsra="brew services restart --all"
 alias brss="brew services start"
 alias brci="brew cask install"
 alias brcs="brew cask search"
@@ -101,6 +102,8 @@ alias grro="git remote remove origin"
 alias grv="git remote -v"
 alias grsv="git remote -v show"
 alias gs="git status -sb"
+alias gsha="git rev-parse HEAD" # full hash
+alias gshash="git rev-parse --short HEAD" # short hash
 alias gst="git stash -u"
 alias gsta="git stash apply"
 if [[ $(which gstaa) != "gstaa not found" && $(which gstaa) != "" ]]; then unalias gstaa; fi

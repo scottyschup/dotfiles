@@ -23,11 +23,25 @@ alias wxr=weather
 alias netd="network_diagnostics"
 alias on_port=port_checker_local
 alias open_ports=port_checker_remote
+
+# This is here because it relies on port_checker_local so has to be sourced after it
 function kill_ports {
+  if [ $# -eq 0 ]; then
+    return 0;
+  fi
+
   for port in $@; do
     # check if port in use
     if [[ $(lsof -i :$port) ]]; then
-      die $(on_port pid $port)
+      local pid=$(on_port pid $port)
+
+      if [ ! "$pid" ]; then
+        echo "No PID found for port $port: $pid"
+        return 0
+      fi
+
+      echo "Killing process $pid on port $port"
+      die $pid || echo "ERROR stopping port $port"
     else
       echo "Port $port is not in use"
     fi
