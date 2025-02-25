@@ -28,5 +28,9 @@ class CLIUtils
         skip_display_type = msg_type == :partial
       end
     end
+
+    def clear_line
+      $stdout.print "\e[1A\e[K"
+    end
   end
 end

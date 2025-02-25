@@ -23,7 +23,8 @@ alias wxr=weather
 alias netd="network_diagnostics"
 alias on_port=port_checker_local
 alias open_ports=port_checker_remote
-
+alias rbv=required-ruby-version
+alias rrv=required-ruby-version
 # This is here because it relies on port_checker_local so has to be sourced after it
 function kill_ports {
   if [ $# -eq 0 ]; then

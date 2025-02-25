@@ -1,0 +1,120 @@
+#!/usr/bin/env ruby -w
+
+################
+# Dependencies #
+################
+begin
+  verbose = $VERBOSE
+  $VERBOSE = nil # Suppress deprecation warnings and the like
+
+  # require 'optparse'
+  require 'open3'
+  require_relative '../lib/rb/cli_utils.rb'
+  # add more requires here
+rescue LoadError => err
+  # Error example:
+  #   pry(main)> require 'fake_gem/with/path'
+  #   LoadError: cannot load such file -- fake-gem/with/path
+  #   from /Users/username/.rbenv/versions/2.4.7/lib/ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+  dependency = err.message.split(' -- ').last
+  # Remove '/with/path' from the gem name; noop for all others
+  dependency = dependency.split('/').first
+  warn "Missing dependency: #{dependency}"
+  warn 'Make sure the following command completes successfully before using this script.'
+  warn "\tgem install #{dependency}"
+  exit 1
+ensure
+  $VERBOSE = verbose
+end
+
+#############
+# Ruby code #
+#############
+
+#!/usr/bin/env ruby
+
+require 'open3'
+
+# Check if inside a Git repository
+def inside_git_repo?
+  system('git rev-parse --is-inside-work-tree > /dev/null 2>&1')
+end
+
+# Check for uncommitted changes
+def uncommitted_changes?
+  stdout, _stderr, _status = Open3.capture3('git status --porcelain')
+  !stdout.strip.empty?
+end
+
+# Show current changes
+def show_changes
+  system('git status --short')
+end
+
+# Stash changes
+def stash_changes
+  system('git stash -u')
+  puts "✅ Changes stashed!"
+end
+
+# Overwrite changes
+def overwrite_changes
+  print "⚠️  This will **discard all uncommitted changes!** Are you sure? (yes/no): "
+  confirm = gets.chomp.downcase
+  if confirm == "yes"
+    system('git reset --hard HEAD')
+    puts "✅ Changes overwritten!"
+    return true
+  end
+
+  puts "❌ Overwrite canceled."
+  false
+end
+
+################
+# Shell script #
+################
+if $PROGRAM_NAME == __FILE__
+  # options = {}
+  # OptionParser.new do |opts|
+  #   opts.on('-v', '--verbose', 'More loquacious') do
+  #     options[:verbose] = true
+  #   end
+
+  #   # opts.on('-oVAL', '--option-with-value=VAL', 'Option with value message') do |val|
+  #   #   options[:value] = val
+  #   # end
+
+  #   opts.on_tail('-h', '--help', 'Show this help message') do
+  #     puts opts
+  #     exit
+  #   end
+  # end.parse!
+  if !inside_git_repo?
+    puts "❌ Not a Git repository!"
+    exit 1
+  elsif uncommitted_changes?
+    puts "⚠️  Uncommitted changes detected!"
+    show_changes
+
+    loop do
+      print "Do you want to (s)tash or (o)verwrite changes? (s/o): "
+      choice = gets.chomp.downcase
+
+      case choice
+      when "s"
+        stash_changes
+        break
+      when "o"
+        overwrite_changes && break
+      else
+        puts "❌ Invalid choice. Please enter 's' to stash or 'o' to overwrite."
+      end
+    end
+  else
+    puts "✅ No uncommitted changes detected."
+    exit 2
+  end
+
+  exit 0
+end
