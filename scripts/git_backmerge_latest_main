@@ -26,7 +26,7 @@ end
 push_merged_branch = ARGV.any? { |arg| arg == "push" }
 
 if ARGV.any? { |arg| arg == "help" }
-  $stdout.puts "git_backmerge_latest_master [OPTION]"
+  $stdout.puts "git_backmerge_latest_main [OPTION]"
   $stdout.puts "Options:"
   $stdout.puts "\tpush\t\tPushes to origin after successful merge; no-op if any step fails"
   $stdout.puts "\thelp\t\tShow this help menu."
@@ -48,8 +48,8 @@ end
 stashed_changes = !results[:stash].include?("No local changes to save")
 $stdout.puts "✅ Action `stash` done!"
 
-# Checkout master
-cmd = "git checkout --force master"
+# Checkout main
+cmd = "git checkout --force main"
 $stdout.puts "\nRunning command: '#{cmd}'"
 results[:checkout] = system cmd
 unless results[:checkout]
@@ -79,7 +79,7 @@ end
 $stdout.puts "✅ Action `switch_back` done!"
 
 # Merge
-cmd = "git merge master --no-commit --no-ff"
+cmd = "git merge main --no-commit --no-ff"
 $stdout.puts "\nRunning command: '#{cmd}'"
 results[:merge] = `#{cmd}`
 if results[:merge].include?("Already up to date.")
@@ -92,7 +92,7 @@ end
 $stdout.puts "✅ Action `merge` done!"
 
 # Stage and commit changes after merge
-cmd = "git add -A; git commit -m 'Backmerge master into #{working_branch}'"
+cmd = "git add -A; git commit -m 'Backmerge main into #{working_branch}'"
 $stdout.puts "\nRunning command: '#{cmd}'"
 results[:add_commit] = system cmd
 unless results[:add_commit]

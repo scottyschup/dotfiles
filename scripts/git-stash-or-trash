@@ -54,20 +54,20 @@ end
 # Stash changes
 def stash_changes
   system('git stash -u')
-  puts "✅ Changes stashed!"
+  $stdout.puts "✅ Changes stashed!"
 end
 
 # Overwrite changes
 def overwrite_changes
-  print "⚠️  This will **discard all uncommitted changes!** Are you sure? (yes/no): "
+  print "⚠️  This will **discard all uncommitted changes!** Are you sure? (y/n): "
   confirm = gets.chomp.downcase
-  if confirm == "yes"
+  if confirm == "y"
     system('git reset --hard HEAD')
-    puts "✅ Changes overwritten!"
+    $stdout.puts "✅ Changes overwritten!"
     return true
   end
 
-  puts "❌ Overwrite canceled."
+  $stdout.puts "❌ Overwrite canceled."
   false
 end
 
@@ -91,10 +91,10 @@ if $PROGRAM_NAME == __FILE__
   #   end
   # end.parse!
   if !inside_git_repo?
-    puts "❌ Not a Git repository!"
-    exit 1
+    $stdout.puts "❌ Not a Git repository!"
+    exit 2
   elsif uncommitted_changes?
-    puts "⚠️  Uncommitted changes detected!"
+    $stdout.puts "⚠️ Uncommitted changes detected!"
     show_changes
 
     loop do
@@ -104,16 +104,16 @@ if $PROGRAM_NAME == __FILE__
       case choice
       when "s"
         stash_changes
-        break
+        exit 1
       when "o"
         overwrite_changes && break
       else
-        puts "❌ Invalid choice. Please enter 's' to stash or 'o' to overwrite."
+        $stdout.puts "❌ Invalid choice. Please enter 's' to stash or 'o' to overwrite."
       end
     end
   else
-    puts "✅ No uncommitted changes detected."
-    exit 2
+    $stdout.puts "✅ No uncommitted changes detected."
+    exit 0
   end
 
   exit 0

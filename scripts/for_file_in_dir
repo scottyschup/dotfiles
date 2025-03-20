@@ -4,14 +4,14 @@ def usage(err = nil)
   $stdout.puts err if err
   $stdout.puts if err
   $stdout.puts "Usage:"
-  $stdout.puts "\tfor_file_in_dir DIR 'Ruby code string using `file` as the local variable name'"
+  $stdout.puts "\tfor_file_in_dir DIR 'Ruby code string using `_file` as the local variable name'"
   $stdout.puts "\t Flags:"
   $stdout.puts "\t\t-h --help help       This usage message"
   $stdout.puts "\t\t-d --allow-dirs      Will process dirs as files (does not do this by default)"
   $stdout.puts "\t\t-f --file-name-only  Will use file name only in Proc#call statement (uses full path by default)"
   $stdout.puts
   $stdout.puts "Examples:"
-  $stdout.puts "\tfor_file_in_dir 'f = File.open(file, \"a+\"); f.puts \"Hello World\"'"
+  $stdout.puts "\tfor_file_in_dir 'f = File.open(_file, \"a+\"); f.puts \"Hello World\"'"
   $stdout.puts "\tfor_file_in_dir ~/.dotfiles $stdout.puts file'"
 end
 
@@ -48,7 +48,7 @@ when 1
   dir = '.'
   code_str = ARGV[0]
 else
-  err = ArgumentError.new "ArgumentError: Wrong number of arguments: expected 1 or 2, received #{ARGV.length}"
+  err = ArgumentError.new "ArgumentError: Wrong number of arguments: expected 1 or 2, received #{ARGV.length} not including flags"
   $stdout.puts usage(err)
   exit
 end

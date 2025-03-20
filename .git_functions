@@ -125,7 +125,7 @@ function git_branch_delete {
     ;;
   esac
 }
-alias gbd='git_branch_delete'
+alias gbd=git_branch_delete
 
 function git_branch_delete_usage {
   echo "Usage: git_branch_delete: At least one flag is required:
@@ -234,16 +234,18 @@ function git_checkout {
           echo "$i. ${lines[i]}"
         done
 
-        read "choice?Enter the number of your branch: "
+        while true; do
+          read "choice?Enter the number of your branch: "
 
-        echo "Choice: $choice"
-        # Validate input
-        if [[ $choice -ge 1 && $choice -le "$(echo "$matched_branch" | wc -l)" ]]; then
-          branch="${lines[$choice]}"
-          echo "You selected: $branch"
-        else
-          echo "Invalid choice. Please run the script again and select a valid option."
-        fi
+          # Validate input
+          if [[ $choice -ge 1 && $choice -le "$(echo "$matched_branch" | wc -l)" ]]; then
+            branch="${lines[$choice]}"
+            echo "You selected: $branch"
+            break
+          else
+            echo "$choice is an invalid option."
+          fi
+        done
       else
         branch=$matched_branch
       fi

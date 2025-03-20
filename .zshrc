@@ -10,17 +10,8 @@ export LANG=en_US.UTF-8
 export PATH=/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:$PATH:/mybin
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-ORIGINAL_PROMPT=$PROMPT
-TIMESTAMP_PROMPT='%{$fg[yellow]%}[%D{%f/%m/%y} %D{%L:%M:%S}] '$PROMPT
-
-function toggle_prompt {
-  if [ "$PROMPT" = "$ORIGINAL_PROMPT" ]
-  then
-    PROMPT="$TIMESTAMP_PROMPT"
-  else
-    PROMPT="$ORIGINAL_PROMPT"
-  fi
-}
+# TIMESTAMP_PROMPT='%{$fg[yellow]%}[%D{%H:%M:%S}] '$PROMPT
+RPROMPT="[%D{%H:%M:%S}]"
 
 # For compilers to find openssl
 export CPPFLAGS="-I$(brew --prefix)/include"

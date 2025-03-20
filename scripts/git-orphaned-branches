@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -w
+
+if $PROGRAM_NAME == __FILE__
+  puts "Checking for orphaned branches in #{`pwd`.chomp}..."
+  remote_bs = `git branch -r`.split("\n").map(&:strip)
+  local_bs = `git branch`.split("\n").map { |b| b.strip.gsub(/^\* /, '') }
+
+  labeled_bs = local_bs.map do |lb|
+    "#{remote_bs.any? { |rb| rb.include? lb } ? '✅ ' : '❌ '} #{lb}"
+  end.sort
+
+  $stdout.puts labeled_bs
+end

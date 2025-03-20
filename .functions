@@ -200,6 +200,16 @@ function rails_reset {
 }
 alias rrs='rails_reset'
 
+function truthy_or_falsey {
+  echo "Args: $@"
+  if [ $1 ]; then
+    echo "Truthy"
+  else
+    echo "Falsey"
+  fi
+}
+alias tof=truthy_or_falsey
+
 function uninstallAllLocalGems {
   list=`gem list --no-versions`
   for gem in `echo $list`; do # `echo $list` part is for zsh; bash only needs $list

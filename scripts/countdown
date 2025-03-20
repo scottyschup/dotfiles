@@ -29,6 +29,7 @@ end
 #############
 # Ruby code #
 #############
+
 def run n
   n.downto(0) do |i|
     $stdout.puts "#{i}"
@@ -36,7 +37,6 @@ def run n
     $stdout.print "\e[1A\e[K"
   end
 end
-
 
 ################
 # Shell script #

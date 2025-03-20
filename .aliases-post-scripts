@@ -2,7 +2,7 @@
 alias gbh=git_branch_history
 alias gbhl="gbh list"
 alias gbhc="gbh csv"
-alias gbml="git_backmerge_latest_master"
+alias gblm="git_backmerge_latest_main"
 alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbsu="git_branch_set_upstream"
 alias gcb="git_current_branch"
@@ -11,7 +11,7 @@ alias gmlc='gacp . "Merge $(gbh last) into $(gbh current)"'
 alias bks=buildkite_state
 alias fe="file_editor"
 alias hurls=handy_urls
-alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts file'"
+alias list_scripts="for_file_in_dir --file-name-only $DOTFILES/scripts 'puts _file'"
 alias lss="list_scripts"
 alias psaux="parse_ps_aux"
 alias rebuild_indices="rebuild_open_with_index && rebuild_spotlight_index"
@@ -25,26 +25,25 @@ alias on_port=port_checker_local
 alias open_ports=port_checker_remote
 alias rbv=required-ruby-version
 alias rrv=required-ruby-version
+alias gsot=git-stash-or-trash
+alias gaos=git-apply-or-skip
+alias gob=git-orphaned-branches
+
 # This is here because it relies on port_checker_local so has to be sourced after it
 function kill_ports {
   if [ $# -eq 0 ]; then
+    echo "No ports specified"
     return 0;
   fi
 
   for port in $@; do
     # check if port in use
-    if [[ $(lsof -i :$port) ]]; then
-      local pid=$(on_port pid $port)
-
-      if [ ! "$pid" ]; then
-        echo "No PID found for port $port: $pid"
-        return 0
-      fi
-
-      echo "Killing process $pid on port $port"
-      die $pid || echo "ERROR stopping port $port"
+    local pid=$(on_port pid $port)
+    if [[ "$pid" ]]; then
+      echo "Killing process $CYN$pid$NONE on port $YLW$port$NONE"
+      kill -9 $pid || echo "$RED""ERROR stopping port$NONE $YLW$port$NONE"
     else
-      echo "Port $port is not in use"
+      echo "Port $YLW$port$NONE is not in use"
     fi
   done
 }

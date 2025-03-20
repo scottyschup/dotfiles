@@ -53,9 +53,9 @@ end
 
 # Overwrite changes
 def overwrite_changes
-  print "⚠️  This will **discard all uncommitted changes!** Are you sure? (yes/no): "
+  print "⚠️  This will **discard all uncommitted changes!** Are you sure? (y/n): "
   confirm = gets.chomp.downcase
-  if confirm == "yes"
+  if confirm == "y"
     system('git reset --hard HEAD')
     puts "✅ Changes overwritten!"
     return true
