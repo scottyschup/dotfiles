@@ -230,8 +230,8 @@ alias rbenv_new_versions="brew update; brew upgrade ruby-build"
 alias rnv="rbenv_new_versions"
 
 # server
-alias pys="python -m SimpleHTTPServer"
-alias pyss="python -m SimpleHTTPServer"
+alias pys="python2 -m SimpleHTTPServer"
+alias pyss="python2 -m SimpleHTTPServer"
 alias rbsp="ruby -run -e httpd . -p"
 alias rbs="ruby -run -e httpd ."
 

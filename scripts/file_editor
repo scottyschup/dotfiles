@@ -31,16 +31,24 @@ end
 
 class FileEditor
   def initialize(**kwargs)
+    @filename = kwargs[:filename]
     process_kwargs(**kwargs)
+
+    puts instance_variables
   end
 
   def process_kwargs(**kwargs)
     kwargs.map do |kwarg, val|
-      # do stuff
+      instance_variable_set("@#{kwarg}", val)
     end
   end
 
-  def run; end
+  def run
+    $stdout.puts "This script is a work in progress. It will eventually be able to read from and write to system files."
+    $stdout.puts "For now, it just opens the file in VSCode."
+
+    `code #{@filename}`
+  end
 end
 
 ################

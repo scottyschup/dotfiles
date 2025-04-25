@@ -10,7 +10,7 @@ if ARGV[0]&.include?("-h")
 end
 
 remote = branch = nil
-args = ARGV.select { |el| !el.start_with?('--') }
+args = ARGV.reject { |el| el.start_with?('--') }
 flags = ARGV.select { |el| el.start_with?('--') }.join(' ')
 
 case args.length

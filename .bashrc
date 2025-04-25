@@ -1,7 +1,3 @@
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/sscottschupbach/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
 # asdf (must be initialized after all PATH changes)
 # Note: in zsh, change `!= ""` to `!= *"not found"`
 if [[ `which asdf` != "" ]]; then
@@ -10,3 +6,7 @@ if [[ `which asdf` != "" ]]; then
 fi
 
 echo 'Sourced .bashrc'
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/sscottschupbach/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

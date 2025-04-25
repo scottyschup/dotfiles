@@ -28,6 +28,9 @@ alias rrv=required-ruby-version
 alias gsot=git-stash-or-trash
 alias gaos=git-apply-or-skip
 alias gob=git-orphaned-branches
+alias cpt="copy-template"
+alias jira-qa="copy-template jira-qa"
+alias jqa="copy-template jira-qa"
 
 # This is here because it relies on port_checker_local so has to be sourced after it
 function kill_ports {
@@ -40,10 +43,10 @@ function kill_ports {
     # check if port in use
     local pid=$(on_port pid $port)
     if [[ "$pid" ]]; then
-      echo "Killing process $CYN$pid$NONE on port $YLW$port$NONE"
-      kill -9 $pid || echo "$RED""ERROR stopping port$NONE $YLW$port$NONE"
+      echo "Killing process $YLW$pid$NONE on port $CYN$port$NONE"
+      kill -9 $pid || echo "$RED""ERROR stopping port $YLW$port$NONE"
     else
-      echo "Port $YLW$port$NONE is not in use"
+      echo "Port $CYN$port$NONE is not in use"
     fi
   done
 }

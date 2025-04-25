@@ -7,7 +7,7 @@ begin
   verbose = $VERBOSE
   $VERBOSE = nil # Suppress deprecation warnings and the like
 
-  # require 'optparse'
+  require 'optparse'
   require_relative '../lib/rb/cli_utils'
   # add more requires here
 rescue LoadError => err
@@ -30,23 +30,53 @@ end
 # Ruby code #
 #############
 
-def run n
-  n.downto(0) do |i|
-    $stdout.puts "#{i}"
-    sleep 1
-    $stdout.print "\e[1A\e[K"
-    $stdout.puts "Countdown done!" if i.zero?
+def copy_template(type)
+  case type
+  when 'jira-qa'
+    jira_qa_template
+  else
+    raise "Unknown template type: #{type}"
   end
+end
+
+def jira_qa_template
+  <<~TEMPLATE
+    h2. Local dev QA
+
+    h3. Scenario N
+    {{ncj}}
+
+    {color:purple}Notes{color}
+  TEMPLATE
 end
 
 ################
 # Shell script #
 ################
 if $PROGRAM_NAME == __FILE__
+  # options = {}
+  # OptionParser.new do |opts|
+  #   opts.on('-v', '--verbose', 'More loquacious') do
+  #     options[:verbose] = true
+  #   end
+
+  #   # opts.on('-oVAL', '--option-with-value=VAL', 'Option with value message') do |val|
+  #   #   options[:value] = val
+  #   # end
+
+  #   opts.on_tail('-h', '--help', 'Show this help message') do
+  #     puts opts
+  #     exit
+  #   end
+  # end.parse!
+
   if ARGV.empty?
-    $stdout.puts "Usage: #{$PROGRAM_NAME.split('/').last} <number>"
+    puts 'No arguments provided. Please provide a template type.'
     exit 1
   end
 
-  run ARGV[0].to_i
+  template_type = ARGV[0]
+  template = copy_template(template_type)
+  IO.popen('pbcopy', 'w') { |f| f << template }
+  $stdout.puts "#{template}\n^^^ copied to clipboard"
 end
