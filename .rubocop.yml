@@ -2145,12 +2145,12 @@ Layout/FirstArrayElementLineBreak:
 #   CountBlocks: false
 #   Max: 3
 
-# Metrics/ClassLength:
+Metrics/ClassLength:
 #   Description: 'Avoid classes longer than 100 lines of code.'
 #   Enabled: true
 #   VersionAdded: '0.25'
 #   CountComments: false  # count full line comments?
-#   Max: 100
+  Max: 300
 
 # # Avoid complex methods.
 # Metrics/CyclomaticComplexity:
@@ -3595,12 +3595,12 @@ Naming/MethodParameterName:
 #     - zero_only
 
 
-# Style/NumericLiterals:
+Style/NumericLiterals:
 #   Description: >-
 #                  Add underscores to large numeric literals to improve their
 #                  readability.
 #   StyleGuide: '#underscores-in-numerics'
-#   Enabled: true
+  Enabled: false # default: true
 #   VersionAdded: '0.9'
 #   VersionChanged: '0.48'
 #   MinDigits: 5
