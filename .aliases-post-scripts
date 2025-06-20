@@ -50,4 +50,27 @@ function kill_ports {
     fi
   done
 }
+
+function git-pull-latest-safely {
+  if [ $# -eq 0 ]; then
+    branch_name=$(git_current_branch)
+  else
+    branch_name=$1
+  fi
+
+  git-stash-or-trash
+  stashed=$? # 0 if no changes or overwritten, 1 if stashed, 2 if not a git repo
+
+  if [ $stashed -gt 1 ]; then
+    echo "$RED""Stash or trash failed. Exiting."
+    return 1
+  fi
+
+  gco $branch_name
+  gfp
+  [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply"
+}
+alias gpls="git-pull-latest-safely"
+alias gplsm="git-pull-latest-safely main"
+
 echo "$GRN""Sourced$NONE .aliases-post-scripts"

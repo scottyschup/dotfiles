@@ -29,10 +29,12 @@ end
 #############
 # Ruby code #
 #############
+$stdout.sync = true
 
 def run n
   n.downto(0) do |i|
     $stdout.puts "#{i}"
+    $stdout.flush
     sleep 1
     $stdout.print "\e[1A\e[K"
     $stdout.puts "Countdown done!" if i.zero?

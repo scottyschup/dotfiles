@@ -15,6 +15,7 @@ alias brsra="brew services restart --all"
 alias brss="brew services start"
 alias brci="brew cask install"
 alias brcs="brew cask search"
+alias brlogs="du -sh /opt/homebrew/var/log/*"
 
 # bundle => ruby/rails
 
