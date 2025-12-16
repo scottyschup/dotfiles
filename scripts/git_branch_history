@@ -10,7 +10,9 @@ rescue LoadError => err
   rescue StandardError => err
     $stderr.puts "Error attempting to install #{dependency}"
     $stderr.puts err
-    $stderr.puts "Git Branch History is missing a dependency: #{dependency}\nMake sure the following command completes successfully before using this script.\n\tgem install #{dependency}"
+    $stderr.puts "Git Branch History is missing a dependency: #{dependency}
+      Make sure the following command completes successfully before using this script.
+      \tgem install #{dependency}"
     exit
   end
 end

@@ -39,15 +39,16 @@ function kill_ports {
     return 0;
   fi
 
-  for port in $@; do
+  for port in ${(f)1}; do
     # check if port in use
-    local pid=$(on_port pid $port)
-    if [[ "$pid" ]]; then
-      echo "Killing process $YLW$pid$NONE on port $CYN$port$NONE"
-      kill -9 $pid || echo "$RED""ERROR stopping port $YLW$port$NONE"
-    else
-      echo "Port $CYN$port$NONE is not in use"
-    fi
+    for pid in ${(f)"$(on_port pid $port)"}; do
+      if [[ "$pid" ]]; then
+        echo "Killing process $YLW$pid$NONE on port $CYN$port$NONE"
+        kill -9 $pid || echo "$RED""ERROR stopping port $YLW$port$NONE"
+      else
+        echo "Port $CYN$port$NONE is not in use"
+      fi
+    done
   done
 }
 

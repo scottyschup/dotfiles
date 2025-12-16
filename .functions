@@ -39,6 +39,15 @@ function cors_test {
   curl -H "Origin: $1" -I "$2"
 }
 
+function psql_users {
+  psql \
+    -U enova_dev_superuser \
+    -d postgres \
+    -c "SELECT pid, usename, application_name, state, query FROM pg_stat_activity WHERE datname = 'postal_service_development';"
+}
+alias db_users=psql_users
+alias psqlu=psql_users
+
 # Colored echo helpers
 function echo_ok { echo -e '\033[1;32m'"$1"'\033[0m'; }
 function echo_warn { echo -e '\033[1;33m'"$1"'\033[0m'; }

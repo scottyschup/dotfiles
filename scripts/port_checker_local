@@ -32,12 +32,18 @@ for port in "$@"; do
   fi
 
   # Check for open port
-  local line=$(lsof -nPi :$port | grep LISTEN)
+  # if pid_only, use -t flag, otherwise don't
+  if [ $pid_only ]; then
+    line=$(lsof -tnPi :$port 2>&1)
+  else
+    line=$(lsof -nPi :$port 2>&1 | grep LISTEN)
+  fi
+
   if [[ ! "$line" && ! $pid_only ]]; then
     echo "\n$CYN""Nothing found on port $port$NONE" 1>&2
   # Successful response
   elif [[ $line && $pid_only ]]; then
-    echo "$line" | awk '{print $2}' | tr ' ' '\n' | sort -u # | tr '\n' ' '
+    echo "$line"
   elif [[ $line ]]; then
     echo "\n$line"
   fi

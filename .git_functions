@@ -240,7 +240,6 @@ function git_checkout {
           # Validate input
           if [[ $choice -ge 1 && $choice -le "$(echo "$matched_branch" | wc -l)" ]]; then
             branch="${lines[$choice]}"
-            echo "You selected: $branch"
             break
           else
             echo "$choice is an invalid option."
@@ -367,14 +366,17 @@ alias gmpu=git_merge_push
 function git_new_branch {
   if [ ! $1 ]
   then
-    echo "Usage $0: Must provide a name for the new branch (and optional source branch)"
+    echo "You must provide a name for the new branch (and may provide an optional source branch)"
+    echo "Usage $0: branch_name [source_branch]"
     return
   fi
   current_branch=`cgb`
   if [ $2 ]; then source=$2; else source=$current_branch; fi
-  git_checkout_safe_force $source
-  git checkout -b $1
-  git commit --allow-empty -m 'Branch initialization'
+  git-stash-or-trash
+  gco $source
+  gcob $1
+  git-apply-or-skip
+  git commit --allow-empty -m "$1"
   git push -u origin $1 --no-verify
 }
 alias gnb=git_new_branch

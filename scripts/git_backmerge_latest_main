@@ -3,7 +3,6 @@
 # WIP! Needs lots of testing/UAT
 
 require 'English'
-require 'English'
 begin
   verbose = $VERBOSE
   $VERBOSE = nil # Suppress deprecation warnings and the like

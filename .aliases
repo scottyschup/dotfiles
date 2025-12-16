@@ -115,6 +115,7 @@ alias gstsd="git stash show --text" # git stash show diff
 alias gsts="git stash show"
 alias gstsv="git stash save -u"
 alias gstu="git stash show -p | git apply -R" # git stash unapply
+alias gus="git restore --staged" # git un-stage <filename>
 alias gviz="git log --oneline --decorate --graph --all"
 alias gwb="git_working_branches"
 alias upgg="git config --global user.email 'ssschupbach@gmail.com'; \
@@ -181,6 +182,7 @@ alias up="cd .."
 alias upl="cd .. && k -Ah"
 alias upp="cd ../.."
 alias uppl="cd ../.. && k -Ah"
+alias zdf="z $DOTFILES"
 
 # Python
 alias pi="pip install"
@@ -248,21 +250,23 @@ alias start_pg="brew services start postgresql@9.4"
 alias stop_pg="brew services stop postgresql@9.4"
 
 # text editing
-## atom
-alias a="atom"
-alias ad="atom $DOTFILES"
-alias aa="atom $DOTFILES/.aliases"
-alias af="atom $DOTFILES/.functions"
-alias av="atom $DOTFILES/.vimrc"
-alias az="atom $DOTFILES/.zshrc"
+alias shrug="echo '¯\_(ツ)_/¯'"
 
-## sublime
-alias s="subl"
-alias sba="subl $DOTFILES/.aliases"
-alias sbd="subl $DOTFILES' # opens subl with navigation pane for all dotfile"
-alias sbf="subl $DOTFILES/.functions"
-alias sbv="subl $DOTFILES/.vimrc"
-alias sbz="subl $DOTFILES/.zshrc"
+# ## atom
+# alias a="atom"
+# alias ad="atom $DOTFILES"
+# alias aa="atom $DOTFILES/.aliases"
+# alias af="atom $DOTFILES/.functions"
+# alias av="atom $DOTFILES/.vimrc"
+# alias az="atom $DOTFILES/.zshrc"
+
+# ## sublime
+# alias s="subl"
+# alias sba="subl $DOTFILES/.aliases"
+# alias sbd="subl $DOTFILES' # opens subl with navigation pane for all dotfile"
+# alias sbf="subl $DOTFILES/.functions"
+# alias sbv="subl $DOTFILES/.vimrc"
+# alias sbz="subl $DOTFILES/.zshrc"
 
 ## vim
 alias v="vim"
