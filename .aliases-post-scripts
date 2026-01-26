@@ -69,7 +69,7 @@ function git-pull-latest-safely {
 
   gco $branch_name
   gfp
-  [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply"
+  [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply$NONE"
 }
 alias gpls="git-pull-latest-safely"
 alias gplsm="git-pull-latest-safely main"

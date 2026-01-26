@@ -372,10 +372,21 @@ function git_new_branch {
   fi
   current_branch=`cgb`
   if [ $2 ]; then source=$2; else source=$current_branch; fi
+
   git-stash-or-trash
+  stashed=$? # 0 if no changes or overwritten, 1 if stashed, 2 if not a git repo
+
+  if [ $stashed -gt 1 ]; then
+    echo "$RED""Stash or trash failed. Exiting."
+    return 1
+  fi
+
   gco $source
+  gfp
+
+  [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply$NONE"
+
   gcob $1
-  git-apply-or-skip
   git commit --allow-empty -m "$1"
   git push -u origin $1 --no-verify
 }

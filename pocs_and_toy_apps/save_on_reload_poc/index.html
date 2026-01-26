@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>localStorage POC</title>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 2rem;
+      max-width: 700px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    button.reset {
+      background: #f5f5f5;
+    }
+
+    dl {
+      margin-top: 1.5rem;
+      border-top: 1px solid #ddd;
+    }
+
+    dt {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    dd {
+      margin-left: 0;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      white-space: pre-wrap;
+    }
+
+    .delete {
+      background: none;
+      border: none;
+      color: #c00;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 1rem;
+    }
+
+    .empty {
+      color: #777;
+      font-style: italic;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Save-on-Reload POC</h1>
+
+  <div class="controls">
+    <input id="entryInput" type="text" placeholder="Type something…" />
+    <button id="saveBtn">Save</button>
+    <button id="resetBtn" class="reset">Reset</button>
+  </div>
+
+  <div id="display"></div>
+
+  <script>
+    const STORAGE_KEY = 'pocEntries';
+
+    // In-memory object (source of truth)
+    let store = {};
+
+    function loadStore() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        store = raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        store = {};
+      }
+    }
+
+    function saveStore() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    }
+
+    function render() {
+      const container = document.getElementById('display');
+      container.innerHTML = '';
+
+      const keys = Object.keys(store).sort();
+
+      if (keys.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'No entries yet.';
+        container.appendChild(empty);
+        return;
+      }
+
+      const dl = document.createElement('dl');
+
+      keys.forEach(key => {
+        const dt = document.createElement('dt');
+        dt.textContent = key;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'X';
+        deleteBtn.className = 'delete';
+        deleteBtn.addEventListener('click', () => {
+          delete store[key];
+          saveStore();
+          render();
+        });
+
+        dt.appendChild(deleteBtn);
+
+        const dd = document.createElement('dd');
+        dd.textContent = store[key];
+
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+      });
+
+      container.appendChild(dl);
+    }
+
+    function addEntry(value) {
+      const timestamp = new Date().toISOString();
+      store[timestamp] = value;
+      saveStore();
+      render();
+    }
+
+    function resetStore() {
+      store = {};
+      saveStore();
+      render();
+    }
+
+    // Initial load
+    loadStore();
+    render();
+
+    // UI wiring
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const input = document.getElementById('entryInput');
+      const value = input.value.trim();
+      if (!value) return;
+
+      addEntry(value);
+      input.value = '';
+      input.focus();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Clear all entries?')) {
+        resetStore();
+      }
+    });
+
+    // Save on Cmd+R / Ctrl+R (and let reload proceed)
+    window.addEventListener('keydown', (e) => {
+      const isReload =
+        (e.metaKey || e.ctrlKey) &&
+        (e.key === 'r' || e.key === 'R');
+
+      if (isReload) {
+        saveStore();
+      }
+    });
+
+    // Also save on unload as a fallback
+    window.addEventListener('beforeunload', () => {
+      saveStore();
+    });
+  </script>
+</body>
+</html>
