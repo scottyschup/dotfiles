@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Page Viewer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='40' cy='40' r='25' fill='none' stroke='%235B3A9E' stroke-width='8'/><line x1='58' y1='58' x2='85' y2='85' stroke='%235B3A9E' stroke-width='8' stroke-linecap='round'/></svg>">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      header {
+        background: #4A2E7E;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        max-width: 500px;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background: #7B68EE;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      button:hover:not(:disabled) {
+        background: #6A5ACD;
+      }
+
+      button:disabled {
+        background: #9FA8B3;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .add-btn {
+        background: #8B6FC9;
+        min-width: 40px;
+      }
+
+      .add-btn:hover:not(:disabled) {
+        background: #7A5FB8;
+      }
+
+      .rotate-btn {
+        background: #9B7FD9;
+      }
+
+      .rotate-btn:hover {
+        background: #8B6FC9;
+      }
+
+      .layout-btn {
+        background: #8B5BCF;
+      }
+
+      .layout-btn:hover {
+        background: #7A4ABF;
+      }
+
+      #iframe-container {
+        flex: 1;
+        display: grid;
+        gap: 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .resize-handle {
+        background: #9FA8B3;
+        position: relative;
+        z-index: 5;
+        transition: background 0.2s;
+      }
+
+      .resize-handle:hover,
+      .resize-handle.dragging {
+        background: #7B68EE;
+      }
+
+      .resize-handle-vertical {
+        width: 4px;
+        cursor: col-resize;
+      }
+
+      .resize-handle-horizontal {
+        height: 4px;
+        cursor: row-resize;
+      }
+
+      .iframe-wrapper {
+        position: relative;
+        background: #F3F0F9;
+        border: 1px solid #C9BFE0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .iframe-header {
+        background: #E6E6FA;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        border-bottom: 1px solid #C9BFE0;
+      }
+
+      iframe {
+        width: 100%;
+        flex: 1;
+        border: none;
+      }
+
+      .remove-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        background: #9B4E9E;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin-left: auto;
+        transition: background 0.2s;
+      }
+
+      .remove-btn:hover {
+        background: #7B3E7E;
+      }
+
+      .iframe-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .url-display {
+        background: white;
+        color: #333;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 1px solid #C9BFE0;
+        transition: all 0.2s;
+      }
+
+      .url-display:hover {
+        background: #F8F8FF;
+        border-color: #7B68EE;
+      }
+
+      .url-input {
+        background: white;
+        color: #333;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        border: 2px solid #7B68EE;
+        outline: none;
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .refresh-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        padding: 0;
+        background: #7B68EE;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .refresh-btn:hover {
+        background: #6A5ACD;
+        transform: rotate(90deg);
+      }
+
+      .duplicate-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        padding: 0;
+        background: #7B68EE;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .duplicate-btn:hover {
+        background: #6A5ACD;
+      }
+
+      /* Layout Classes */
+      .layout-single {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+      }
+
+      /* Dynamic layouts - will be set via JavaScript */
+      .layout-two-vertical,
+      .layout-two-horizontal,
+      .layout-three-grid,
+      .layout-three-columns,
+      .layout-three-rows,
+      .layout-four-grid,
+      .layout-four-columns {
+        /* Grid templates set dynamically */
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <span>MULTI-IFRAME VIEWER</span>
+      <div class="input-group">
+        <input type="text" id="url-input" placeholder="Enter URL (e.g., https://example.com)" />
+        <button class="add-btn" id="add-btn">+</button>
+      </div>
+      <button class="rotate-btn" id="rotate-btn" style="display: none;">Rotate</button>
+      <button class="layout-btn" id="layout-btn" style="display: none;">Columns</button>
+    </header>
+
+    <div id="iframe-container"></div>
+
+    <script>
+      class IFrameManager {
+        constructor() {
+          this.STORAGE_KEY = 'iframeManagerState';
+
+          this.iframes = [];
+          this.wrapperElements = []; // Store references to wrapper DOM elements
+          this.twoIframeLayout = 'vertical'; // 'vertical' or 'horizontal'
+          this.threeIframeLayout = 'grid'; // 'grid', 'columns', or 'rows'
+          this.fourIframeLayout = 'grid'; // 'grid' or 'columns'
+
+          // Track custom sizes for each layout type (as percentages)
+          this.sizes = {
+            twoVertical: [50, 50],
+            twoHorizontal: [50, 50],
+            threeGrid: [50, 50, 50], // [col1, col2, row1]
+            threeColumns: [33.33, 33.33, 33.34],
+            threeRows: [33.33, 33.33, 33.34],
+            four: [50, 50, 50, 50], // [col1, col2, row1, row2]
+            fourColumns: [25, 25, 25, 25] // [col1, col2, col3, col4]
+          };
+
+          this.isDragging = false;
+          this.dragStartPos = 0;
+          this.dragHandle = null;
+
+          this.urlInput = document.getElementById('url-input');
+          this.addBtn = document.getElementById('add-btn');
+          this.rotateBtn = document.getElementById('rotate-btn');
+          this.layoutBtn = document.getElementById('layout-btn');
+          this.container = document.getElementById('iframe-container');
+
+          this.loadState();
+          this.createInitialWrappers(); // Create wrappers for loaded iframes
+          this.initEventListeners();
+          this.initSaveOnReload();
+          this.initResizeDrag();
+          this.render();
+        }
+
+        initEventListeners() {
+          this.addBtn.addEventListener('click', () => this.addIframe());
+          this.urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addIframe();
+          });
+          this.rotateBtn.addEventListener('click', () => this.rotate());
+          this.layoutBtn.addEventListener('click', () => this.toggleLayout());
+        }
+
+        initSaveOnReload() {
+          // Save on Cmd+R / Ctrl+R (and let reload proceed)
+          window.addEventListener('keydown', (e) => {
+            const isReload = (e.metaKey || e.ctrlKey) && (e.key === 'r' || e.key === 'R');
+            if (isReload) {
+              this.saveState();
+            }
+          });
+
+          // Also save on unload as a fallback
+          window.addEventListener('beforeunload', () => {
+            this.saveState();
+          });
+        }
+
+        saveState() {
+          const state = {
+            iframes: this.iframes,
+            twoIframeLayout: this.twoIframeLayout,
+            threeIframeLayout: this.threeIframeLayout,
+            fourIframeLayout: this.fourIframeLayout,
+            sizes: this.sizes
+          };
+          try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+          } catch (e) {
+            console.error('Failed to save state:', e);
+          }
+        }
+
+        loadState() {
+          try {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (raw) {
+              const state = JSON.parse(raw);
+              this.iframes = state.iframes || [];
+              this.twoIframeLayout = state.twoIframeLayout || 'vertical';
+              this.threeIframeLayout = state.threeIframeLayout || 'grid';
+              this.fourIframeLayout = state.fourIframeLayout || 'grid';
+              if (state.sizes) {
+                this.sizes = state.sizes;
+              }
+            }
+          } catch (e) {
+            console.error('Failed to load state:', e);
+          }
+        }
+
+        createInitialWrappers() {
+          // Create wrapper elements for iframes loaded from localStorage
+          this.iframes.forEach((url, index) => {
+            const wrapper = this.createIframeElementWrapper(index);
+            this.wrapperElements.push(wrapper);
+          });
+        }
+
+        addIframe() {
+          if (this.iframes.length >= 4) return;
+
+          let url = this.urlInput.value.trim();
+          if (!url) return;
+
+          // Add protocol if missing
+          if (!url.match(/^https?:\/\//i)) {
+            url = 'https://' + url;
+          }
+
+          const index = this.iframes.length;
+          this.iframes.push(url);
+
+          // Create new wrapper element and store it
+          const wrapper = this.createIframeElementWrapper(index);
+          this.wrapperElements.push(wrapper);
+
+          this.urlInput.value = '';
+          this.render();
+        }
+
+        removeIframe(index) {
+          this.iframes.splice(index, 1);
+
+          // Remove the wrapper element
+          const removedWrapper = this.wrapperElements.splice(index, 1)[0];
+          if (removedWrapper && removedWrapper.parentNode) {
+            removedWrapper.parentNode.removeChild(removedWrapper);
+          }
+
+          // Update event handlers for remaining wrappers
+          this.updateWrapperEventHandlers();
+
+          // Adjust layout when removing from 4 iframes
+          if (this.iframes.length === 3) {
+            // Keep grid layout when going from 4 to 3
+            this.threeIframeLayout = 'grid';
+          }
+
+          this.render();
+        }
+
+        updateIframeUrl(index, newUrl) {
+          if (!newUrl || !newUrl.trim()) return;
+
+          let url = newUrl.trim();
+          if (!url.match(/^https?:\/\//i)) {
+            url = 'https://' + url;
+          }
+
+          this.iframes[index] = url;
+
+          // Update the specific iframe's src
+          const wrapper = this.wrapperElements[index];
+          if (wrapper) {
+            const iframe = wrapper.querySelector('iframe');
+            if (iframe) {
+              iframe.src = url;
+            }
+
+            // Update the URL display text
+            const urlDisplay = wrapper.querySelector('.url-display');
+            if (urlDisplay) {
+              urlDisplay.textContent = url;
+            }
+          }
+
+          this.saveState();
+        }
+
+        refreshIframe(index) {
+          const wrapper = this.wrapperElements[index];
+          if (wrapper) {
+            const iframe = wrapper.querySelector('iframe');
+            if (iframe) {
+              iframe.src = iframe.src;
+            }
+          }
+        }
+
+        rotate() {
+          const count = this.iframes.length;
+
+          if (count === 2) {
+            // Rotate clockwise: always change orientation, and swap frames when going from horizontal to vertical
+            if (this.twoIframeLayout === 'horizontal') {
+              // horizontal -> vertical (and swap to continue clockwise)
+              this.twoIframeLayout = 'vertical';
+              // Swap both the URL array and wrapper elements array
+              [this.iframes[0], this.iframes[1]] = [this.iframes[1], this.iframes[0]];
+              [this.wrapperElements[0], this.wrapperElements[1]] = [this.wrapperElements[1], this.wrapperElements[0]];
+            } else {
+              // vertical -> horizontal (no swap needed for clockwise)
+              this.twoIframeLayout = 'horizontal';
+            }
+          } else if (count === 3) {
+            if (this.threeIframeLayout === 'grid') {
+              // Rotate iframes clockwise: [0,1,2] -> [2,0,1]
+              this.iframes.unshift(this.iframes.pop());
+              this.wrapperElements.unshift(this.wrapperElements.pop());
+            } else if (this.threeIframeLayout === 'columns') {
+              this.threeIframeLayout = 'rows';
+            } else if (this.threeIframeLayout === 'rows') {
+              this.threeIframeLayout = 'columns';
+            }
+          } else if (count === 4) {
+            if (this.fourIframeLayout === 'grid') {
+              // Rotate positions clockwise: [0,1,2,3] -> [3,0,1,2]
+              this.iframes.unshift(this.iframes.pop());
+              this.wrapperElements.unshift(this.wrapperElements.pop());
+            }
+            // For columns layout, no rotation needed (all in same row)
+          }
+
+          // Update event handlers after rotation
+          this.updateWrapperEventHandlers();
+          this.render();
+        }
+
+        toggleLayout() {
+          const count = this.iframes.length;
+          if (count === 3) {
+            if (this.threeIframeLayout === 'grid') {
+              this.threeIframeLayout = 'columns';
+            } else {
+              this.threeIframeLayout = 'grid';
+            }
+            this.render();
+          } else if (count === 4) {
+            if (this.fourIframeLayout === 'grid') {
+              this.fourIframeLayout = 'columns';
+            } else {
+              this.fourIframeLayout = 'grid';
+            }
+            this.render();
+          }
+        }
+        updateControls() {
+          const count = this.iframes.length;
+
+          // Disable input and add button when 4 iframes exist
+          this.urlInput.disabled = count >= 4;
+          this.addBtn.disabled = count >= 4;
+
+          // Show rotate button when 2 or more iframes (but only for grid layout with 4)
+          if (count === 4) {
+            this.rotateBtn.style.display = this.fourIframeLayout === 'grid' ? '' : 'none';
+          } else {
+            this.rotateBtn.style.display = count >= 2 ? '' : 'none';
+          }
+
+          // Show layout button for 3 or 4 iframes
+          this.layoutBtn.style.display = (count === 3 || count === 4) ? '' : 'none';
+
+          // Update layout button text
+          if (count === 3) {
+            if (this.threeIframeLayout === 'grid') {
+              this.layoutBtn.textContent = 'Columns';
+            } else {
+              this.layoutBtn.textContent = 'Grid';
+            }
+          } else if (count === 4) {
+            if (this.fourIframeLayout === 'grid') {
+              this.layoutBtn.textContent = 'Columns';
+            } else {
+              this.layoutBtn.textContent = 'Grid';
+            }
+          }
+        }
+
+        getLayoutClass() {
+          const count = this.iframes.length;
+
+          if (count === 1) return 'layout-single';
+          if (count === 2) return `layout-two-${this.twoIframeLayout}`;
+          if (count === 3) return `layout-three-${this.threeIframeLayout}`;
+          if (count === 4) return `layout-four-${this.fourIframeLayout}`;
+
+          return '';
+        }
+
+        applyGridTemplate() {
+          const count = this.iframes.length;
+
+          if (count === 1) {
+            this.container.style.gridTemplateColumns = '1fr';
+            this.container.style.gridTemplateRows = '1fr';
+          } else if (count === 2 && this.twoIframeLayout === 'vertical') {
+            this.container.style.gridTemplateColumns = `${this.sizes.twoVertical[0]}% 4px ${this.sizes.twoVertical[1]}%`;
+            this.container.style.gridTemplateRows = '1fr';
+          } else if (count === 2 && this.twoIframeLayout === 'horizontal') {
+            this.container.style.gridTemplateColumns = '1fr';
+            this.container.style.gridTemplateRows = `${this.sizes.twoHorizontal[0]}% 4px ${this.sizes.twoHorizontal[1]}%`;
+          } else if (count === 3 && this.threeIframeLayout === 'grid') {
+            this.container.style.gridTemplateColumns = `${this.sizes.threeGrid[0]}% 4px ${this.sizes.threeGrid[1]}%`;
+            this.container.style.gridTemplateRows = `${this.sizes.threeGrid[2]}% 4px ${100 - this.sizes.threeGrid[2]}%`;
+          } else if (count === 3 && this.threeIframeLayout === 'columns') {
+            this.container.style.gridTemplateColumns = `${this.sizes.threeColumns[0]}% 4px ${this.sizes.threeColumns[1]}% 4px ${this.sizes.threeColumns[2]}%`;
+            this.container.style.gridTemplateRows = '1fr';
+          } else if (count === 3 && this.threeIframeLayout === 'rows') {
+            this.container.style.gridTemplateColumns = '1fr';
+            this.container.style.gridTemplateRows = `${this.sizes.threeRows[0]}% 4px ${this.sizes.threeRows[1]}% 4px ${this.sizes.threeRows[2]}%`;
+          } else if (count === 4 && this.fourIframeLayout === 'grid') {
+            this.container.style.gridTemplateColumns = `${this.sizes.four[0]}% 4px ${this.sizes.four[1]}%`;
+            this.container.style.gridTemplateRows = `${this.sizes.four[2]}% 4px ${this.sizes.four[3]}%`;
+          } else if (count === 4 && this.fourIframeLayout === 'columns') {
+            this.container.style.gridTemplateColumns = `${this.sizes.fourColumns[0]}% 4px ${this.sizes.fourColumns[1]}% 4px ${this.sizes.fourColumns[2]}% 4px ${this.sizes.fourColumns[3]}%`;
+            this.container.style.gridTemplateRows = '1fr';
+          }
+        }
+
+        createResizeHandle(type, index) {
+          const handle = document.createElement('div');
+          handle.className = `resize-handle resize-handle-${type}`;
+          handle.dataset.type = type;
+          handle.dataset.index = index;
+
+          handle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            this.isDragging = true;
+            this.dragHandle = { type, index };
+            this.dragStartPos = type === 'vertical' ? e.clientX : e.clientY;
+            handle.classList.add('dragging');
+            document.body.style.cursor = type === 'vertical' ? 'col-resize' : 'row-resize';
+
+            // Disable pointer events on iframes during drag to prevent them from interfering
+            const iframes = this.container.querySelectorAll('iframe');
+            iframes.forEach(iframe => iframe.style.pointerEvents = 'none');
+          });
+
+          return handle;
+        }
+
+        initResizeDrag() {
+          // Prevent duplicate event listeners
+          if (this.resizeDragInitialized) return;
+          this.resizeDragInitialized = true;
+
+          const handleMouseMove = (e) => {
+            if (!this.isDragging || !this.dragHandle) return;
+
+            e.preventDefault();
+            const { type, index } = this.dragHandle;
+            const containerRect = this.container.getBoundingClientRect();
+            const count = this.iframes.length;
+
+            if (type === 'vertical') {
+              const deltaPercent = ((e.clientX - this.dragStartPos) / containerRect.width) * 100;
+              this.dragStartPos = e.clientX;
+
+              if (count === 2 && this.twoIframeLayout === 'vertical') {
+                this.sizes.twoVertical[0] = Math.max(10, Math.min(90, this.sizes.twoVertical[0] + deltaPercent));
+                this.sizes.twoVertical[1] = 100 - this.sizes.twoVertical[0];
+              } else if (count === 3 && this.threeIframeLayout === 'grid') {
+                this.sizes.threeGrid[0] = Math.max(10, Math.min(90, this.sizes.threeGrid[0] + deltaPercent));
+                this.sizes.threeGrid[1] = 100 - this.sizes.threeGrid[0];
+              } else if (count === 3 && this.threeIframeLayout === 'columns') {
+                if (index === 0) {
+                  this.sizes.threeColumns[0] = Math.max(10, Math.min(80, this.sizes.threeColumns[0] + deltaPercent));
+                  const remaining = 100 - this.sizes.threeColumns[0];
+                  const ratio = this.sizes.threeColumns[1] / (this.sizes.threeColumns[1] + this.sizes.threeColumns[2]);
+                  this.sizes.threeColumns[1] = remaining * ratio;
+                  this.sizes.threeColumns[2] = remaining * (1 - ratio);
+                } else {
+                  this.sizes.threeColumns[1] = Math.max(10, Math.min(80, this.sizes.threeColumns[1] + deltaPercent));
+                  const remaining = 100 - this.sizes.threeColumns[1];
+                  const ratio = this.sizes.threeColumns[0] / (this.sizes.threeColumns[0] + this.sizes.threeColumns[2]);
+                  this.sizes.threeColumns[0] = remaining * ratio;
+                  this.sizes.threeColumns[2] = remaining * (1 - ratio);
+                }
+              } else if (count === 4 && this.fourIframeLayout === 'grid') {
+                this.sizes.four[0] = Math.max(10, Math.min(90, this.sizes.four[0] + deltaPercent));
+                this.sizes.four[1] = 100 - this.sizes.four[0];
+              } else if (count === 4 && this.fourIframeLayout === 'columns') {
+                if (index === 0) {
+                  this.sizes.fourColumns[0] = Math.max(10, Math.min(70, this.sizes.fourColumns[0] + deltaPercent));
+                  const remaining = 100 - this.sizes.fourColumns[0];
+                  const total = this.sizes.fourColumns[1] + this.sizes.fourColumns[2] + this.sizes.fourColumns[3];
+                  this.sizes.fourColumns[1] = (this.sizes.fourColumns[1] / total) * remaining;
+                  this.sizes.fourColumns[2] = (this.sizes.fourColumns[2] / total) * remaining;
+                  this.sizes.fourColumns[3] = (this.sizes.fourColumns[3] / total) * remaining;
+                } else if (index === 1) {
+                  this.sizes.fourColumns[1] = Math.max(10, Math.min(70, this.sizes.fourColumns[1] + deltaPercent));
+                  const remaining = 100 - this.sizes.fourColumns[1];
+                  const total = this.sizes.fourColumns[0] + this.sizes.fourColumns[2] + this.sizes.fourColumns[3];
+                  this.sizes.fourColumns[0] = (this.sizes.fourColumns[0] / total) * remaining;
+                  this.sizes.fourColumns[2] = (this.sizes.fourColumns[2] / total) * remaining;
+                  this.sizes.fourColumns[3] = (this.sizes.fourColumns[3] / total) * remaining;
+                } else if (index === 2) {
+                  this.sizes.fourColumns[2] = Math.max(10, Math.min(70, this.sizes.fourColumns[2] + deltaPercent));
+                  const remaining = 100 - this.sizes.fourColumns[2];
+                  const total = this.sizes.fourColumns[0] + this.sizes.fourColumns[1] + this.sizes.fourColumns[3];
+                  this.sizes.fourColumns[0] = (this.sizes.fourColumns[0] / total) * remaining;
+                  this.sizes.fourColumns[1] = (this.sizes.fourColumns[1] / total) * remaining;
+                  this.sizes.fourColumns[3] = (this.sizes.fourColumns[3] / total) * remaining;
+                }
+              }
+            } else {
+              const deltaPercent = ((e.clientY - this.dragStartPos) / containerRect.height) * 100;
+              this.dragStartPos = e.clientY;
+
+              if (count === 2 && this.twoIframeLayout === 'horizontal') {
+                this.sizes.twoHorizontal[0] = Math.max(10, Math.min(90, this.sizes.twoHorizontal[0] + deltaPercent));
+                this.sizes.twoHorizontal[1] = 100 - this.sizes.twoHorizontal[0];
+              } else if (count === 3 && this.threeIframeLayout === 'grid') {
+                this.sizes.threeGrid[2] = Math.max(10, Math.min(90, this.sizes.threeGrid[2] + deltaPercent));
+              } else if (count === 3 && this.threeIframeLayout === 'rows') {
+                if (index === 0) {
+                  this.sizes.threeRows[0] = Math.max(10, Math.min(80, this.sizes.threeRows[0] + deltaPercent));
+                  const remaining = 100 - this.sizes.threeRows[0];
+                  const ratio = this.sizes.threeRows[1] / (this.sizes.threeRows[1] + this.sizes.threeRows[2]);
+                  this.sizes.threeRows[1] = remaining * ratio;
+                  this.sizes.threeRows[2] = remaining * (1 - ratio);
+                } else {
+                  this.sizes.threeRows[1] = Math.max(10, Math.min(80, this.sizes.threeRows[1] + deltaPercent));
+                  const remaining = 100 - this.sizes.threeRows[1];
+                  const ratio = this.sizes.threeRows[0] / (this.sizes.threeRows[0] + this.sizes.threeRows[2]);
+                  this.sizes.threeRows[0] = remaining * ratio;
+                  this.sizes.threeRows[2] = remaining * (1 - ratio);
+                }
+              } else if (count === 4 && this.fourIframeLayout === 'grid') {
+                this.sizes.four[2] = Math.max(10, Math.min(90, this.sizes.four[2] + deltaPercent));
+                this.sizes.four[3] = 100 - this.sizes.four[2];
+              }
+              // No horizontal resize for 4-columns layout
+            }
+
+            this.applyGridTemplate();
+          };
+
+          const stopDragging = () => {
+            if (this.isDragging) {
+              this.isDragging = false;
+              this.dragHandle = null;
+              document.body.style.cursor = '';
+              const handles = this.container.querySelectorAll('.resize-handle');
+              handles.forEach(h => h.classList.remove('dragging'));
+              // Re-enable pointer events on iframes
+              const iframes = this.container.querySelectorAll('iframe');
+              iframes.forEach(iframe => iframe.style.pointerEvents = '');
+              this.saveState();
+            }
+          };
+
+          document.addEventListener('mousemove', handleMouseMove, { capture: true });
+          document.addEventListener('mouseup', stopDragging, { capture: true });
+          window.addEventListener('blur', stopDragging); // Stop dragging if window loses focus
+        }
+
+        render() {
+          // Remove only resize handles, keep iframe wrappers in place
+          const children = Array.from(this.container.children);
+          children.forEach(child => {
+            if (!child.classList.contains('iframe-wrapper')) {
+              child.remove();
+            }
+          });
+
+          // Ensure all wrappers are in the container
+          this.wrapperElements.forEach((wrapper) => {
+            if (!this.container.contains(wrapper)) {
+              this.container.appendChild(wrapper);
+            }
+            // Reset inline grid styles
+            wrapper.style.gridColumn = '';
+            wrapper.style.gridRow = '';
+          });
+
+          this.container.className = this.getLayoutClass();
+
+          const count = this.iframes.length;
+
+          // Use grid positioning instead of DOM reordering
+          if (count === 2 && this.twoIframeLayout === 'vertical') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '3';
+            this.wrapperElements[1].style.gridRow = '1';
+            const handle = this.createResizeHandle('vertical', 0);
+            handle.style.gridColumn = '2';
+            handle.style.gridRow = '1';
+            this.container.appendChild(handle);
+          } else if (count === 2 && this.twoIframeLayout === 'horizontal') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '1';
+            this.wrapperElements[1].style.gridRow = '3';
+            const handle = this.createResizeHandle('horizontal', 0);
+            handle.style.gridColumn = '1';
+            handle.style.gridRow = '2';
+            this.container.appendChild(handle);
+          } else if (count === 3 && this.threeIframeLayout === 'grid') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '3';
+            this.wrapperElements[1].style.gridRow = '1';
+            this.wrapperElements[2].style.gridColumn = '1 / 4';
+            this.wrapperElements[2].style.gridRow = '3';
+
+            const vHandle = this.createResizeHandle('vertical', 0);
+            vHandle.style.gridColumn = '2';
+            vHandle.style.gridRow = '1';
+            this.container.appendChild(vHandle);
+
+            const hHandle = this.createResizeHandle('horizontal', 0);
+            hHandle.style.gridColumn = '1 / 4';
+            hHandle.style.gridRow = '2';
+            this.container.appendChild(hHandle);
+          } else if (count === 3 && this.threeIframeLayout === 'columns') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '3';
+            this.wrapperElements[1].style.gridRow = '1';
+            this.wrapperElements[2].style.gridColumn = '5';
+            this.wrapperElements[2].style.gridRow = '1';
+
+            const handle1 = this.createResizeHandle('vertical', 0);
+            handle1.style.gridColumn = '2';
+            handle1.style.gridRow = '1';
+            this.container.appendChild(handle1);
+
+            const handle2 = this.createResizeHandle('vertical', 1);
+            handle2.style.gridColumn = '4';
+            handle2.style.gridRow = '1';
+            this.container.appendChild(handle2);
+          } else if (count === 3 && this.threeIframeLayout === 'rows') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '1';
+            this.wrapperElements[1].style.gridRow = '3';
+            this.wrapperElements[2].style.gridColumn = '1';
+            this.wrapperElements[2].style.gridRow = '5';
+
+            const handle1 = this.createResizeHandle('horizontal', 0);
+            handle1.style.gridColumn = '1';
+            handle1.style.gridRow = '2';
+            this.container.appendChild(handle1);
+
+            const handle2 = this.createResizeHandle('horizontal', 1);
+            handle2.style.gridColumn = '1';
+            handle2.style.gridRow = '4';
+            this.container.appendChild(handle2);
+          } else if (count === 4 && this.fourIframeLayout === 'grid') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '3';
+            this.wrapperElements[1].style.gridRow = '1';
+            this.wrapperElements[2].style.gridColumn = '1';
+            this.wrapperElements[2].style.gridRow = '3';
+            this.wrapperElements[3].style.gridColumn = '3';
+            this.wrapperElements[3].style.gridRow = '3';
+
+            const vHandle1 = this.createResizeHandle('vertical', 0);
+            vHandle1.style.gridColumn = '2';
+            vHandle1.style.gridRow = '1';
+            this.container.appendChild(vHandle1);
+
+            const hHandle = this.createResizeHandle('horizontal', 0);
+            hHandle.style.gridColumn = '1 / 4';
+            hHandle.style.gridRow = '2';
+            this.container.appendChild(hHandle);
+
+            const vHandle2 = this.createResizeHandle('vertical', 0);
+            vHandle2.style.gridColumn = '2';
+            vHandle2.style.gridRow = '3';
+            this.container.appendChild(vHandle2);
+          } else if (count === 4 && this.fourIframeLayout === 'columns') {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+            this.wrapperElements[1].style.gridColumn = '3';
+            this.wrapperElements[1].style.gridRow = '1';
+            this.wrapperElements[2].style.gridColumn = '5';
+            this.wrapperElements[2].style.gridRow = '1';
+            this.wrapperElements[3].style.gridColumn = '7';
+            this.wrapperElements[3].style.gridRow = '1';
+
+            const handle1 = this.createResizeHandle('vertical', 0);
+            handle1.style.gridColumn = '2';
+            handle1.style.gridRow = '1';
+            this.container.appendChild(handle1);
+
+            const handle2 = this.createResizeHandle('vertical', 1);
+            handle2.style.gridColumn = '4';
+            handle2.style.gridRow = '1';
+            this.container.appendChild(handle2);
+
+            const handle3 = this.createResizeHandle('vertical', 2);
+            handle3.style.gridColumn = '6';
+            handle3.style.gridRow = '1';
+            this.container.appendChild(handle3);
+          } else if (count === 1) {
+            this.wrapperElements[0].style.gridColumn = '1';
+            this.wrapperElements[0].style.gridRow = '1';
+          }
+
+          this.applyGridTemplate();
+          this.updateControls();
+          this.saveState();
+        }
+
+        updateWrapperEventHandlers() {
+          // Update all event handlers with current indices after rotation/removal
+          this.wrapperElements.forEach((wrapper, index) => {
+            const url = this.iframes[index];
+
+            // Update URL display
+            const urlDisplay = wrapper.querySelector('.url-display');
+            if (urlDisplay) {
+              urlDisplay.textContent = url;
+              // Remove old event listener by replacing the element
+              const newUrlDisplay = urlDisplay.cloneNode(true);
+              newUrlDisplay.textContent = url;
+
+              newUrlDisplay.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'url-input';
+                input.value = url;
+
+                input.addEventListener('blur', () => {
+                  input.replaceWith(newUrlDisplay);
+                });
+
+                input.addEventListener('keypress', (e) => {
+                  if (e.key === 'Enter') {
+                    this.updateIframeUrl(index, input.value);
+                    input.blur();
+                  }
+                });
+
+                newUrlDisplay.replaceWith(input);
+                input.focus();
+                input.select();
+              });
+
+              urlDisplay.replaceWith(newUrlDisplay);
+            }
+
+            // Update refresh button
+            const refreshBtn = wrapper.querySelector('.refresh-btn');
+            if (refreshBtn) {
+              const newRefreshBtn = refreshBtn.cloneNode(true);
+              newRefreshBtn.addEventListener('click', () => this.refreshIframe(index));
+              refreshBtn.replaceWith(newRefreshBtn);
+            }
+
+            // Update duplicate button
+            const duplicateBtn = wrapper.querySelector('.duplicate-btn');
+            if (duplicateBtn) {
+              const newDuplicateBtn = duplicateBtn.cloneNode(true);
+              newDuplicateBtn.addEventListener('click', () => {
+                this.urlInput.value = url;
+                this.addIframe();
+              });
+              duplicateBtn.replaceWith(newDuplicateBtn);
+            }
+
+            // Update remove button
+            const removeBtn = wrapper.querySelector('.remove-btn');
+            if (removeBtn) {
+              const newRemoveBtn = removeBtn.cloneNode(true);
+              newRemoveBtn.addEventListener('click', () => this.removeIframe(index));
+              removeBtn.replaceWith(newRemoveBtn);
+            }
+          });
+        }
+
+        createIframeElementWrapper(index) {
+          const url = this.iframes[index];
+          const wrapper = document.createElement('div');
+          wrapper.className = 'iframe-wrapper';
+
+          // Create header
+          const header = document.createElement('div');
+          header.className = 'iframe-header';
+
+          // Create controls container
+          const controls = document.createElement('div');
+          controls.className = 'iframe-controls';
+
+          // Create URL display/editor
+          const urlDisplay = document.createElement('div');
+          urlDisplay.className = 'url-display';
+          urlDisplay.textContent = url;
+          urlDisplay.title = 'Click to edit URL';
+
+          urlDisplay.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'url-input';
+            input.value = url;
+
+            input.addEventListener('blur', () => {
+              input.replaceWith(urlDisplay);
+            });
+
+            input.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                this.updateIframeUrl(index, input.value);
+                input.blur();
+              }
+            });
+
+            urlDisplay.replaceWith(input);
+            input.focus();
+            input.select();
+          });
+
+          // Create refresh button
+          const refreshBtn = document.createElement('button');
+          refreshBtn.className = 'refresh-btn';
+          refreshBtn.textContent = '↻';
+          refreshBtn.title = 'Refresh iframe';
+          refreshBtn.addEventListener('click', () => this.refreshIframe(index));
+
+          // Create duplicate button
+          const duplicateBtn = document.createElement('button');
+          duplicateBtn.className = 'duplicate-btn';
+          duplicateBtn.textContent = '⏩';
+          duplicateBtn.title = 'Duplicate iframe';
+          duplicateBtn.addEventListener('click', () => {
+            this.urlInput.value = url;
+            this.addIframe();
+          });
+
+          // Create remove button
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'remove-btn';
+          removeBtn.textContent = 'x';
+          removeBtn.title = 'Close';
+          removeBtn.addEventListener('click', () => this.removeIframe(index));
+
+          controls.appendChild(urlDisplay);
+          controls.appendChild(refreshBtn);
+          controls.appendChild(duplicateBtn);
+
+          header.appendChild(controls);
+          header.appendChild(removeBtn);
+
+          // Create iframe
+          const iframe = document.createElement('iframe');
+          iframe.src = url;
+          // iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups');
+
+          wrapper.appendChild(header);
+          wrapper.appendChild(iframe);
+
+          return wrapper;
+        }
+      }
+
+      // Initialize the app
+      const manager = new IFrameManager();
+    </script>
+  </body>
+
+</html>

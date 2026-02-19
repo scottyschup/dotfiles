@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iframe Grid</title>
+    <style>
+      :root {
+        --header-h: 56px;
+        --gap: 8px;
+        --bg: #0b0f14;
+        --panel: #121826;
+        --border: #243047;
+        --text: #e6edf7;
+        --muted: #9fb0cc;
+        --btn: #1f2a3d;
+        --btn-hover: #263550;
+        --danger: #b42318;
+        --danger-hover: #d92d20;
+        --radius: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      .app {
+        height: 100%;
+        display: grid;
+        grid-template-rows: var(--header-h) 1fr;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 12px;
+        background: rgba(18, 24, 38, 0.9);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .url-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      input[type="text"] {
+        height: 36px;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(10, 14, 22, 0.7);
+        color: var(--text);
+        padding: 0 12px;
+        outline: none;
+      }
+
+      input[type="text"]::placeholder {
+        color: rgba(159, 176, 204, 0.75);
+      }
+
+      button {
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--btn);
+        color: var(--text);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        user-select: none;
+      }
+
+      button:hover:enabled {
+        background: var(--btn-hover);
+      }
+
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .btn-icon {
+        width: 36px;
+        padding: 0;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      main {
+        padding: var(--gap);
+        height: calc(100vh - var(--header-h));
+      }
+
+      .grid {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        gap: var(--gap);
+      }
+
+      /* Layouts */
+      .layout-1 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "a";
+      }
+
+      .layout-2-vertical {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "a b";
+      }
+
+      .layout-2-horizontal {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+          "a"
+          "b";
+      }
+
+      /* 3: two quarters on top, one half on bottom */
+      .layout-3-2top1bottom {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+          "a b"
+          "c c";
+      }
+
+      /* 3: three columns */
+      .layout-3-cols {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "a b c";
+      }
+
+      /* 3: three rows */
+      .layout-3-rows {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-areas:
+          "a"
+          "b"
+          "c";
+      }
+
+      /* 4: quarters */
+      .layout-4 {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+          "a b"
+          "c d";
+      }
+
+      .cell {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        min-height: 0;
+      }
+
+      .cell iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+        background: #fff;
+      }
+
+      .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        z-index: 3;
+      }
+
+      .close:hover {
+        background: rgba(0, 0, 0, 0.65);
+      }
+
+      .src-pill {
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        max-width: calc(100% - 16px - 40px);
+        padding: 6px 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.55);
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 12px;
+        line-height: 1.2;
+        z-index: 3;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: text;
+      }
+
+      .src-pill[contenteditable="true"] {
+        background: rgba(0, 0, 0, 0.75);
+        outline: 2px solid rgba(159, 176, 204, 0.35);
+        white-space: normal;
+        overflow: auto;
+        text-overflow: clip;
+      }
+
+      /* Assign areas */
+      .area-a {
+        grid-area: a;
+      }
+
+      .area-b {
+        grid-area: b;
+      }
+
+      .area-c {
+        grid-area: c;
+      }
+
+      .area-d {
+        grid-area: d;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <header>
+        <div class="url-row">
+          <input id="urlInput" type="text" placeholder="Enter a URL (e.g., https://example.com)" autocomplete="off"
+            spellcheck="false" />
+          <button id="addBtn" class="btn-icon" title="Add iframe">+</button>
+        </div>
+
+        <button id="rotateBtn" title="Rotate / toggle orientation">
+          Rotate
+        </button>
+
+        <button id="layoutBtn" title="Toggle 3-up layout (only when 3 iframes)">
+          3 Columns
+        </button>
+      </header>
+
+      <main>
+        <div id="grid" class="grid"></div>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        /**
+         * State
+         */
+        let frames = []; // { id: string, url: string }
+        let split2Orientation = "vertical"; // 'vertical' | 'horizontal'
+
+        // For n=3 only:
+        // mode3 = '2top1bottom' | '3col' (and within 3col, orientation can be cols/rows toggled by rotate)
+        let mode3 = "2top1bottom";
+        let mode3Orientation = "cols"; // 'cols' | 'rows' (only meaningful when mode3 === '3col')
+
+        // For n=4, we keep quarters. Rotate moves content clockwise.
+        let nextId = 1;
+
+        const STORAGE_KEY = "iframe_grid_frames";
+
+        function saveFramesToStorage() {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(frames));
+          } catch {
+            // ignore
+          }
+        }
+
+        function loadFramesFromStorage() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+
+            const parsed = JSON.parse(raw);
+            if (!Array.isArray(parsed)) return;
+
+            frames = parsed
+              .filter((f) => f && typeof f.url === "string")
+              .slice(0, 4)
+              .map((f) => ({
+                id: String(f.id ?? nextId++),
+                url: f.url,
+              }));
+
+            const maxId = frames
+              .map((f) => Number(f.id))
+              .filter((n) => Number.isFinite(n))
+              .reduce((acc, n) => Math.max(acc, n), 0);
+
+            nextId = Math.max(nextId, maxId + 1);
+          } catch {
+            // ignore
+          }
+        }
+
+        const el = {
+          grid: document.getElementById("grid"),
+          urlInput: document.getElementById("urlInput"),
+          addBtn: document.getElementById("addBtn"),
+          rotateBtn: document.getElementById("rotateBtn"),
+          layoutBtn: document.getElementById("layoutBtn"),
+        };
+
+        /**
+         * Helpers
+         */
+        function normalizeUrl(raw) {
+          const s = String(raw || "").trim();
+          if (!s) return null;
+
+          // Allow about:blank explicitly.
+          if (s === "about:blank") return "about:blank";
+
+          // If no scheme, default to https://
+          const hasScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(s);
+          const candidate = hasScheme ? s : "https://" + s;
+
+          try {
+            const u = new URL(candidate);
+            return u.toString();
+          } catch {
+            return null;
+          }
+        }
+
+        function setControls() {
+          const atMax = frames.length >= 4;
+          el.urlInput.disabled = atMax;
+          el.addBtn.disabled = atMax;
+
+          el.rotateBtn.disabled = frames.length < 2;
+
+          const showLayoutBtn = frames.length === 3;
+          el.layoutBtn.style.display = showLayoutBtn ? "inline-flex" : "none";
+
+          if (atMax) {
+            el.urlInput.placeholder = "Max 4 iframes reached";
+          } else {
+            el.urlInput.placeholder =
+              "Enter a URL (e.g., https://example.com)";
+          }
+        }
+
+        function applyLayoutClass() {
+          const n = frames.length;
+          const g = el.grid;
+
+          g.className = "grid";
+          if (n === 0) return;
+
+          if (n === 1) {
+            g.classList.add("layout-1");
+            return;
+          }
+
+          if (n === 2) {
+            g.classList.add(
+              split2Orientation === "vertical"
+                ? "layout-2-vertical"
+                : "layout-2-horizontal",
+            );
+            return;
+          }
+
+          if (n === 3) {
+            if (mode3 === "2top1bottom") {
+              g.classList.add("layout-3-2top1bottom");
+            } else {
+              g.classList.add(
+                mode3Orientation === "cols" ? "layout-3-cols" : "layout-3-rows",
+              );
+            }
+            return;
+          }
+
+          if (n === 4) {
+            g.classList.add("layout-4");
+            return;
+          }
+        }
+
+        function render() {
+          setControls();
+          applyLayoutClass();
+
+          el.grid.innerHTML = "";
+
+          const n = frames.length;
+          if (n === 0) return;
+
+          const areasByCount = {
+            1: ["a"],
+            2: ["a", "b"],
+            3: ["a", "b", "c"],
+            4: ["a", "b", "c", "d"],
+          };
+
+          const areas = areasByCount[n] || [];
+          for (let i = 0; i < n; i++) {
+            const f = frames[i];
+            const area = areas[i];
+
+            const cell = document.createElement("div");
+            cell.className = `cell area-${area}`;
+
+            const iframe = document.createElement("iframe");
+            iframe.src = f.url;
+            iframe.loading = "lazy";
+            iframe.referrerPolicy = "no-referrer";
+            iframe.allow = "fullscreen; clipboard-read; clipboard-write";
+
+            const close = document.createElement("button");
+            close.className = "close";
+            close.type = "button";
+            close.title = "Remove iframe";
+            close.textContent = "X";
+            close.addEventListener("click", function () {
+              removeFrameById(f.id);
+            });
+
+            const srcPill = document.createElement("div");
+            srcPill.className = "src-pill";
+            srcPill.textContent = f.url;
+            srcPill.title = "Click to edit URL. Enter to save. Esc to cancel.";
+
+            let originalText = f.url;
+
+            function exitEditMode({ save }) {
+              srcPill.setAttribute("contenteditable", "false");
+              srcPill.blur();
+
+              const nextRaw = srcPill.textContent || "";
+              if (!save) {
+                srcPill.textContent = originalText;
+                return;
+              }
+
+              const normalized = normalizeUrl(nextRaw);
+              if (!normalized) {
+                // Revert if invalid
+                srcPill.textContent = originalText;
+                return;
+              }
+
+              originalText = normalized;
+              srcPill.textContent = normalized;
+
+              // Update state + iframe
+              f.url = normalized;
+              iframe.src = normalized;
+
+              saveFramesToStorage();
+            }
+
+            srcPill.addEventListener("click", function (e) {
+              e.stopPropagation();
+              // Enter edit mode
+              originalText = f.url;
+              srcPill.setAttribute("contenteditable", "true");
+              srcPill.focus();
+
+              // place cursor at end
+              const range = document.createRange();
+              range.selectNodeContents(srcPill);
+              range.collapse(false);
+              const sel = window.getSelection();
+              if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+              }
+            });
+
+            srcPill.addEventListener("keydown", function (e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                exitEditMode({ save: true });
+              } else if (e.key === "Escape") {
+                e.preventDefault();
+                exitEditMode({ save: false });
+              }
+            });
+
+            srcPill.addEventListener("blur", function () {
+              // Save on blur (common UX); invalid -> revert
+              if (srcPill.getAttribute("contenteditable") === "true") {
+                exitEditMode({ save: true });
+              }
+            });
+
+            cell.appendChild(iframe);
+            cell.appendChild(close);
+            cell.appendChild(srcPill);
+            el.grid.appendChild(cell);
+          }
+        }
+
+        /**
+         * Behavior
+         */
+        function addFrame(url) {
+          if (frames.length >= 4) return;
+
+          frames.push({
+            id: String(nextId++),
+            url,
+          });
+
+          if (frames.length === 3) {
+            mode3 = "2top1bottom";
+            mode3Orientation = "cols";
+          }
+
+          saveFramesToStorage();
+          render();
+        }
+
+        function removeFrameById(id) {
+          const beforeCount = frames.length;
+          const idx = frames.findIndex((f) => f.id === id);
+          if (idx === -1) return;
+
+          frames.splice(idx, 1);
+
+          const afterCount = frames.length;
+
+          if (beforeCount === 3 && afterCount === 2) {
+            if (mode3 === "3col") {
+              split2Orientation = mode3Orientation === "cols" ? "vertical" : "horizontal";
+            }
+          }
+
+          if (beforeCount === 4 && afterCount === 3) {
+            mode3 = "2top1bottom";
+            mode3Orientation = "cols";
+          }
+
+          saveFramesToStorage();
+          render();
+        }
+
+        function rotate() {
+          const n = frames.length;
+          if (n < 2) return;
+
+          if (n === 2) {
+            if (split2Orientation === "vertical") {
+              split2Orientation = "horizontal";
+              // keep order: [left,right] becomes [top,bottom]
+            } else {
+              split2Orientation = "vertical";
+              // swap order: [top,bottom] becomes [left,right] with clockwise rotation
+              frames = [frames[1], frames[0]];
+            }
+            render();
+            return;
+          }
+
+          if (n === 3) {
+            if (mode3 === "3col") {
+              mode3Orientation = mode3Orientation === "cols" ? "rows" : "cols";
+              render();
+              return;
+            }
+
+            frames = [frames[2], frames[0], frames[1]];
+            render();
+            return;
+          }
+
+          if (n === 4) {
+            frames = [frames[2], frames[0], frames[3], frames[1]];
+            render();
+            return;
+          }
+        }
+
+        function toggle3Layout() {
+          if (frames.length !== 3) return;
+
+          if (mode3 === "2top1bottom") {
+            mode3 = "3col";
+            mode3Orientation = "cols";
+          } else {
+            mode3 = "2top1bottom";
+            mode3Orientation = "cols";
+          }
+          render();
+        }
+
+        /**
+         * Wiring
+         */
+        el.addBtn.addEventListener("click", function () {
+          const url = normalizeUrl(el.urlInput.value);
+          if (!url) {
+            el.urlInput.focus();
+            el.urlInput.select();
+            return;
+          }
+          addFrame(url);
+          el.urlInput.value = "";
+          el.urlInput.focus();
+        });
+
+        el.urlInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            el.addBtn.click();
+          }
+        });
+
+        el.rotateBtn.addEventListener("click", rotate);
+        el.layoutBtn.addEventListener("click", toggle3Layout);
+
+        // Start
+        loadFramesFromStorage();
+        render();
+
+        // Optional: add one iframe quickly for testing by appending ?url=...
+        try {
+          const params = new URLSearchParams(location.search);
+          const u = params.get("url");
+          if (u) {
+            const url = normalizeUrl(u);
+            if (url) addFrame(url);
+          }
+        } catch {
+          // ignore
+        }
+      })();
+    </script>
+  </body>
+
+</html>
