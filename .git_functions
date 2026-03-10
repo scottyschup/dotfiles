@@ -283,11 +283,14 @@ function git_checkout {
     echo "$(git_branch_history last) => $(git_branch_history current)"
   fi
 }
+alias gco="git_checkout"
+alias gcob="gco -b"
+alias gcog="gco gh-pages"
+alias gcol="gco $(git_branch_history last)"
 
-function git_checkout_last {
-  branch=`git_branch_history last`
-  git_checkout $branch
-}
+alias gcof="gco --force"
+gcofm () { gcof main || gcof trunk || gcof master; }
+gcom () { gco main || gco trunk || gco master; }
 
 function git_commit_push {
   git commit -m $1 && git push
@@ -370,6 +373,9 @@ function git_new_branch {
     echo "Usage $0: branch_name [source_branch]"
     return
   fi
+
+  # check to make sure dotfiles are properly sourced by seeing if cgb works
+
   current_branch=`cgb`
   if [ $2 ]; then source=$2; else source=$current_branch; fi
 

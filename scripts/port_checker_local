@@ -2,18 +2,19 @@
 
 # Note: this script is aliased as `on_port` in .aliases-post-scripts
 
-if [ "$1" = "pid" ]
-then
+pid_only=0
+
+if [[ ${1-} == "pid" ]]; then
   pid_only=1
   shift
 fi
 
-if [ ! $1 ]; then
+if [[ -z ${1-} ]]; then
   path="$0"
   prefix=~/.dotfiles/scripts/
   name=${path#"$prefix"}
-  echo "$RED""ArgumentError:$NONE expected 1 or more PORT arguments but got none"
-  echo "\tUsage: $name [pid] PORT [PORTs ...]"
+  echo "$RED""ArgumentError:$NONE expected 1 or more PORT arguments but got none" >&2
+  echo "\tUsage: $name [pid] PORT [PORTs ...]" >&2
   exit 1
 fi
 
@@ -21,31 +22,34 @@ fi
 num_re='^[0-9]+$'
 
 for port in "$@"; do
-  if [ ! $pid_only ]; then
+  if (( ! pid_only )); then
     printf "$PPL""Checking port: $YLW$port\t\t$NONE"
   fi
 
-  if [[ ! "$port" =~ "$num_re" ]]
-  then
-    echo "$RED""ArgumentError:$NONE Port '$port' is not a number :/"
+  if [[ ! "$port" =~ $num_re ]]; then
+    echo "$RED""ArgumentError:$NONE Port '$port' is not a number :/" >&2
     exit 3
   fi
 
   # Check for open port
   # if pid_only, use -t flag, otherwise don't
-  if [ $pid_only ]; then
-    line=$(lsof -tnPi :$port 2>&1)
+  if (( pid_only )); then
+    line=$(command lsof -tnPi :$port 2>/dev/null)
   else
-    line=$(lsof -nPi :$port 2>&1 | grep LISTEN)
+    line=$(command lsof -nPi :$port 2>/dev/null | command grep LISTEN)
   fi
 
-  if [[ ! "$line" && ! $pid_only ]]; then
-    echo "\n$CYN""Nothing found on port $port$NONE" 1>&2
-  # Successful response
-  elif [[ $line && $pid_only ]]; then
-    echo "$line"
-  elif [[ $line ]]; then
-    echo "\n$line"
+  if [[ -z "$line" ]]; then
+    if (( ! pid_only )); then
+      printf '\n%s\n' "$CYN""Nothing found on port $port$NONE" >&2
+    fi
+    continue
+  fi
+
+  if (( pid_only )); then
+    printf '%s\n' "$line"
+  else
+    printf '\n%s\n' "$line"
   fi
 done
 

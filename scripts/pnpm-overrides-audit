@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const lock = fs.readFileSync('pnpm-lock.yaml', 'utf8');
+
+const overrides = pkg?.pnpm?.overrides ?? {};
+const overrideEntries = Object.entries(overrides);
+
+if (overrideEntries.length === 0) {
+  console.log('No pnpm.overrides found.');
+  process.exit(0);
+}
+
+// collect package keys from lockfile "packages:" section
+const lines = lock.split('\n');
+let inPackages = false;
+const lockPkgKeys = [];
+for (const line of lines) {
+  if (!inPackages) {
+    if (line.trim() === 'packages:') inPackages = true;
+    continue;
+  }
+  // left packages section when top-level key starts (no indent)
+  if (/^[^\s].*:\s*$/.test(line)) break;
+
+  // package key line (2 spaces, then key, then :)
+  const m = line.match(/^ {2}['"]?([^'"]+)['"]?:\s*$/);
+  if (m) lockPkgKeys.push(m[1]);
+}
+
+const lockNames = new Set();
+for (const key of lockPkgKeys) {
+  // examples:
+  // @scope/name@1.2.3
+  // name@1.2.3
+  // /name@1.2.3 (old format)
+  let k = key.startsWith('/') ? key.slice(1) : key;
+  const idx = k.lastIndexOf('@');
+  if (idx <= 0) continue;
+  const name = k.slice(0, idx);
+  lockNames.add(name);
+}
+
+const parseOverrideKeyToPkgName = (key) => {
+  // pnpm supports selectors, e.g. "a>b", "a@1>b", "pkg@^1"
+  const rightMost = key.split('>').pop().trim();
+  if (rightMost.startsWith('@')) {
+    // scoped pkg: @scope/name@range
+    const at = rightMost.lastIndexOf('@');
+    return at > 0 ? rightMost.slice(0, at) : rightMost;
+  }
+  const at = rightMost.indexOf('@');
+  return at > 0 ? rightMost.slice(0, at) : rightMost;
+};
+
+const noEffect = [];
+const present = [];
+
+for (const [k, v] of overrideEntries) {
+  const name = parseOverrideKeyToPkgName(k);
+  if (!lockNames.has(name)) {
+    noEffect.push({ override: k, target: String(v) });
+  } else {
+    present.push({ override: k, target: String(v) });
+  }
+}
+
+console.log('\nOverrides in package.json:', overrideEntries.length);
+console.log('Present in lockfile packages:', present.length);
+console.log('Not present in lockfile (likely no effect):', noEffect.length);
+
+if (noEffect.length) {
+  console.log('\n--- Likely no-effect overrides ---');
+  for (const row of noEffect) {
+    console.log(`- ${row.override} -> ${row.target}`);
+  }
+}

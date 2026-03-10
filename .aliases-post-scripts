@@ -21,7 +21,6 @@ alias update_slack_theme="add_custom_theme_to_slack"
 alias w2f="file_editor"
 alias wxr=weather
 alias netd="network_diagnostics"
-alias on_port=port_checker_local
 alias open_ports=port_checker_remote
 alias rbv=required-ruby-version
 alias rrv=required-ruby-version
@@ -41,10 +40,10 @@ function kill_ports {
 
   for port in ${(f)1}; do
     # check if port in use
-    for pid in ${(f)"$(on_port pid $port)"}; do
+    for pid in ${(f)"$(on_port pid "$port")"}; do
       if [[ "$pid" ]]; then
         echo "Killing process $YLW$pid$NONE on port $CYN$port$NONE"
-        kill -9 $pid || echo "$RED""ERROR stopping port $YLW$port$NONE"
+        kill -9 "$pid" || echo "$RED""ERROR stopping port $YLW$port$NONE"
       else
         echo "Port $CYN$port$NONE is not in use"
       fi

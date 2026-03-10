@@ -1,0 +1,3 @@
+#! /usr/bin/env zsh
+
+exec "$HOME/.dotfiles/scripts/port_checker_local" "$@"

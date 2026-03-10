@@ -46,13 +46,6 @@ alias gcfm="git checkout --force master"
 alias gcm="git commit -m"
 alias gcmt="git commit --allow-empty -m 'Empty commit'"
 alias gcmp="git_commit_push"
-alias gco="git_checkout"
-alias gcob="gco -b"
-alias gcof="gco --force"
-gcofm () { gcof main || gcof trunk || gcof master; }
-alias gcog="gco gh-pages"
-gcom () { gco main || gco trunk || gco master; }
-alias gcol="git_checkout_last"
 alias gconf="git config -l"
 alias gconfg="git config --global -l"
 alias gcp="git cherry-pick"
@@ -283,7 +276,7 @@ alias cz="code $DOTFILES/.zshrc"
 
 ## dotfiles
 alias sa="source $DOTFILES/.aliases"
-alias sd="source ~/.zshenv; source ~/.zshrc"
+alias sd="source ~/.zshenv && source ~/.zshrc"
 alias sf="source $DOTFILES/.functions"
 
 echo "$GRN""Sourced$NONE .aliases"
