@@ -48,4 +48,6 @@ export IRED="\033[0;91m"  # Red
 # Reset all
 export NONE="\033[0m"  # Text Reset
 
-echo "$GRN""Sourced$NONE .$RED""c$YLW""o$GRN""l$CYN""o$BLU""r$PPL""s$NONE!"
+if [[ -o interactive ]]; then
+	echo "$GRN""Sourced$NONE .$RED""c$YLW""o$GRN""l$CYN""o$BLU""r$PPL""s$NONE!"
+fi

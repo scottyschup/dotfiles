@@ -50,6 +50,9 @@ function kill_ports {
     done
   done
 }
+alias kill_port="kill_ports"
+alias kill-port="kill_ports"
+alias kill-ports="kill_ports"
 
 function git-pull-latest-safely {
   if [ $# -eq 0 ]; then

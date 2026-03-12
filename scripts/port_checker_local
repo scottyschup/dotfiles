@@ -41,7 +41,7 @@ for port in "$@"; do
 
   if [[ -z "$line" ]]; then
     if (( ! pid_only )); then
-      printf '\n%s\n' "$CYN""Nothing found on port $port$NONE" >&2
+      printf '\n%b\n' "$CYN""Nothing found on port $port$NONE" >&2
     fi
     continue
   fi

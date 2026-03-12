@@ -269,7 +269,9 @@ timezsh() {
   for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
 }
 
-echo "$GRN""Sourced$NONE .functions"
+if [[ -o interactive ]]; then
+  echo "$GRN""Sourced$NONE .functions"
+fi
 
 #############
 # Shareable #
