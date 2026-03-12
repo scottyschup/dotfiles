@@ -1,4 +1,16 @@
-require 'colorize'
+begin
+  require 'colorize'
+rescue LoadError => err
+  dependency = err.message.split(" -- ").last
+  begin
+    system("gem install #{dependency}")
+    require 'colorize'
+  rescue StandardError => install_err
+    warn "Error installing #{dependency}: #{install_err}"
+    warn "Install manually with: gem install colorize"
+    exit 1
+  end
+end
 
 class CLIUtils
   MSG_TYPE_TO_METHOD_AND_COLOR_MAP = {
