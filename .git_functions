@@ -283,7 +283,8 @@ function git_checkout {
     echo "$(git_branch_history last) => $(git_branch_history current)"
   fi
 }
-alias gco="git_checkout"
+# NOTE: alias gco="git_checkout" is defined in .aliases-post-scripts
+# (after oh-my-zsh loads) to override the oh-my-zsh git plugin's gco="git checkout"
 alias gcob="gco -b"
 alias gcog="gco gh-pages"
 # Use function instead of alias to defer git_branch_history execution until runtime
@@ -292,8 +293,8 @@ function gcol() {
 }
 
 alias gcof="gco --force"
-gcofm () { gcof main || gcof trunk || gcof master; }
-gcom () { gco main || gco trunk || gco master; }
+gcofm () { gcof main || gcof master; }
+gcom () { gco main || gco master; }
 
 function git_commit_push {
   git commit -m $1 && git push
@@ -391,7 +392,8 @@ function git_new_branch {
   fi
 
   gco $source
-  gfp
+  git fetch --all --prune
+  git pull
 
   [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply$NONE"
 

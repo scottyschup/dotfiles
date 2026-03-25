@@ -1,0 +1,92 @@
+#!/usr/bin/env zsh
+
+# Classify PR size based on the policy:
+# * Normal:      <= 16 files AND <= 627 lines
+# * Large:       17-35 files OR 628-1522 lines
+# * Too big:     36+ files OR 1523+ lines
+# * Exceptional: 46+ files OR 5531+ lines
+#
+# This script accepts:
+#   1) files changed
+#   2) lines changed (insertions + deletions)
+#
+# Example:
+#   ./pr-size.zsh 12 500
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0 <files_changed> <lines_changed>"
+  echo "Example: $0 12 500"
+  exit 1
+}
+
+# Require exactly 2 arguments.
+[[ $# -eq 2 ]] || usage
+
+files_changed="$1"
+lines_changed="$2"
+
+# Validate that both arguments are non-negative integers.
+# The =~ operator does regex matching in zsh's [[ ... ]] test syntax.
+if ! [[ "$files_changed" =~ ^[0-9]+$ ]]; then
+  echo "Error: files_changed must be a non-negative integer." >&2
+  exit 1
+fi
+
+if ! [[ "$lines_changed" =~ ^[0-9]+$ ]]; then
+  echo "Error: lines_changed must be a non-negative integer." >&2
+  exit 1
+fi
+
+classify_files() {
+  local files="$1"
+
+  if (( files >= 46 )); then
+    echo "exceptional"
+  elif (( files >= 36 )); then
+    echo "too big"
+  elif (( files >= 17 )); then
+    echo "large"
+  else
+    echo "normal"
+  fi
+}
+
+classify_lines() {
+  local lines="$1"
+
+  if (( lines >= 5531 )); then
+    echo "exceptional"
+  elif (( lines >= 1523 )); then
+    echo "too big"
+  elif (( lines >= 628 )); then
+    echo "large"
+  else
+    echo "normal"
+  fi
+}
+
+severity_rank() {
+  local label="$1"
+
+  case "$label" in
+    normal) echo 1 ;;
+    large) echo 2 ;;
+    "too big") echo 3 ;;
+    exceptional) echo 4 ;;
+    *)
+      echo "Unknown label: $label" >&2
+      exit 1
+      ;;
+  esac
+}
+
+files_size="$(classify_files "$files_changed")"
+lines_size="$(classify_lines "$lines_changed")"
+
+files_rank="$(severity_rank "$files_size")"
+lines_rank="$(severity_rank "$lines_size")"
+
+echo "Files changed: $files_changed -> $files_size"
+echo "Lines changed: $lines_changed -> $lines_size"

@@ -1,0 +1,145 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0"
+  echo "Reads PR size directly from git diff statistics."
+  echo
+  echo "Examples:"
+  echo "  $0"
+  echo "  BASE=origin/main HEAD=HEAD $0"
+  exit 1
+}
+
+# Allow callers to override the comparison range.
+# Defaults are useful for local CI-style checks against main.
+BASE="${BASE:-origin/main}"
+HEAD="${HEAD:-HEAD}"
+
+# Sanity-check that git is available and we are inside a repo.
+command -v git >/dev/null 2>&1 || {
+  echo "Error: git is not installed or not on PATH." >&2
+  exit 1
+}
+
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  echo "Error: not inside a git repository." >&2
+  exit 1
+}
+
+# Verify the refs exist before using them in git diff.
+git rev-parse --verify "$BASE" >/dev/null 2>&1 || {
+  echo "Error: base ref '$BASE' does not exist." >&2
+  exit 1
+}
+
+git rev-parse --verify "$HEAD" >/dev/null 2>&1 || {
+  echo "Error: head ref '$HEAD' does not exist." >&2
+  exit 1
+}
+
+classify_files() {
+  local files="$1"
+
+  if (( files >= 46 )); then
+    echo "exceptional"
+  elif (( files >= 36 )); then
+    echo "too big"
+  elif (( files >= 17 )); then
+    echo "large"
+  else
+    echo "normal"
+  fi
+}
+
+classify_lines() {
+  local lines="$1"
+
+  if (( lines >= 5531 )); then
+    echo "exceptional"
+  elif (( lines >= 1523 )); then
+    echo "too big"
+  elif (( lines >= 628 )); then
+    echo "large"
+  else
+    echo "normal"
+  fi
+}
+
+severity_rank() {
+  case "$1" in
+    normal) echo 1 ;;
+    large) echo 2 ;;
+    "too big") echo 3 ;;
+    exceptional) echo 4 ;;
+    *)
+      echo "Unknown size label: $1" >&2
+      exit 1
+      ;;
+  esac
+}
+
+# We use --shortstat because it gives a compact machine-parseable summary like:
+# "3 files changed, 25 insertions(+), 7 deletions(-)"
+shortstat="$(git diff --shortstat "$BASE...$HEAD" || true)"
+
+# An empty shortstat means there are no changes in the diff range.
+if [[ -z "$shortstat" ]]; then
+  files_changed=0
+  insertions=0
+  deletions=0
+else
+  # Extract the first run of digits that appears before each keyword.
+  # grep -oE prints only the matching portion.
+  # awk '{print $1}' then pulls out just the number.
+  files_changed="$(
+    printf '%s\n' "$shortstat" \
+      | grep -oE '[0-9]+ file[s]? changed' \
+      | awk '{print $1}'
+  )"
+
+  # insertions/deletions may be absent, so default them to 0.
+  insertions="$(
+    printf '%s\n' "$shortstat" \
+      | grep -oE '[0-9]+ insertion[s]?\(\+\)' \
+      | awk '{print $1}' \
+      || true
+  )"
+
+  deletions="$(
+    printf '%s\n' "$shortstat" \
+      | grep -oE '[0-9]+ deletion[s]?\(-\)' \
+      | awk '{print $1}' \
+      || true
+  )"
+
+  files_changed="${files_changed:-0}"
+  insertions="${insertions:-0}"
+  deletions="${deletions:-0}"
+fi
+
+# Total changed lines is defined as insertions + deletions.
+lines_changed=$(( insertions + deletions ))
+
+files_size="$(classify_files "$files_changed")"
+lines_size="$(classify_lines "$lines_changed")"
+
+files_rank="$(severity_rank "$files_size")"
+lines_rank="$(severity_rank "$lines_size")"
+
+# Average the two dimensions for the overall PR size.
+overall_rank=$(( (files_rank + lines_rank) / 2 ))
+
+echo "Range: $BASE...$HEAD"
+echo "Files changed: $files_changed -> $files_size"
+echo "Insertions: $insertions"
+echo "Deletions: $deletions"
+echo "Lines changed: $lines_changed -> $lines_size"
+echo "Overall PR rank (1 - 4): $overall_rank"
+
+# Exit non-zero when the PR is classified as "too big" or "exceptional".
+# This makes the script usable in CI checks.
+if (( overall_rank >= 3 )); then
+  exit 2
+fi
