@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby -w
+
+require 'open3'
+
+GREEN = "\e[32m"
+RED = "\e[31m"
+NONE = "\e[0m"
+
+TESTS_ROOT = File.expand_path('../__tests__', __dir__)
+SKIP_NAMES = %w[README.md].freeze
+SKIP_DIRS = %w[support].freeze
+
+def test_files
+  Dir.glob(File.join(TESTS_ROOT, '**', '*'))
+    .select { |path| File.file?(path) }
+    .reject { |path| SKIP_NAMES.include?(File.basename(path)) }
+    .reject { |path| SKIP_DIRS.any? { |dir| path.split(File::SEPARATOR).include?(dir) } }
+    .sort
+end
+
+def shebang_for(path)
+  File.open(path, 'r') do |file|
+    file.gets&.strip
+  end
+end
+
+def command_for(path)
+  shebang = shebang_for(path)
+
+  case shebang
+  when /^#!\/usr\/bin\/env bats(?:\s+(.*))?$/
+    ['bats', path]
+  when /^#!\/usr\/bin\/env zsh(?:\s+(.*))?$/
+    ['zsh', path]
+  when /^#!\/usr\/bin\/env ruby(?:\s+(.*))?$/
+    ruby_flags = Regexp.last_match(1)
+    ruby_flags ? ['ruby', *ruby_flags.split, path] : ['ruby', path]
+  when /^#!(.+)$/
+    interpreter = Regexp.last_match(1).split
+    [*interpreter, path]
+  else
+    raise "Missing shebang for test file: #{path}"
+  end
+end
+
+def green(text)
+  "#{GREEN}#{text}#{NONE}"
+end
+
+def red(text)
+  "#{RED}#{text}#{NONE}"
+end
+
+def run_test(path)
+  command = command_for(path)
+  puts "==> #{path.sub(%r{^#{Regexp.escape(TESTS_ROOT)}/?}, '')}"
+
+  stdout, stderr, status = Open3.capture3(*command)
+  print stdout unless stdout.empty?
+  warn red(stderr) unless stderr.empty?
+
+  return puts(green("ok - #{File.basename(path)}")) if status.success?
+
+  warn red("Test failed: #{path}")
+  exit 1
+end
+
+files = test_files
+
+if files.empty?
+  warn red("No test files found under #{TESTS_ROOT}")
+  exit 1
+end
+
+files.each { |path| run_test(path) }
+
+puts green("\n#{files.length} test files passed")

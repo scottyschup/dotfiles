@@ -1,0 +1,86 @@
+{
+  "mcpServers": {
+    "atlassian-rovo": {
+      "args": [
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/mcp"
+      ],
+      "command": "npx",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    },
+    "aws-knowledge": {
+      "tools": [
+        "*"
+      ],
+      "type": "http",
+      "url": "https://knowledge-mcp.global.api.aws"
+    },
+    "enova-context7": {
+      "args": [
+        "-c",
+        "npx supergateway --streamableHttp https://mcp-registry.enova.com/proxy/context7/ --header \"X-GitHub-Token: $(gh auth token --hostname git.enova.com)\""
+      ],
+      "command": "sh",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    },
+    "enova-datadog": {
+      "args": [
+        "-c",
+        "npx supergateway --streamableHttp https://mcp-registry.enova.com/proxy/datadog/ --header \"X-GitHub-Token: $(gh auth token --hostname git.enova.com)\""
+      ],
+      "command": "sh",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    },
+    "enova-splunk": {
+      "args": [
+        "-c",
+        "npx supergateway --streamableHttp https://mcp-registry.enova.com/proxy/splunk/ --header \"X-GitHub-Token: $(gh auth token --hostname git.enova.com)\""
+      ],
+      "command": "sh",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "microsoft-playwright": {
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "command": "npx",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    },
+    "yamadashy-repomix": {
+      "args": [
+        "repomix@latest",
+        "--mcp"
+      ],
+      "command": "npx",
+      "env": {},
+      "tools": [
+        "*"
+      ],
+      "type": "stdio"
+    }
+  }
+}

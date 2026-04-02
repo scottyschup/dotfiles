@@ -92,7 +92,7 @@ function omni_killer {
       echo "Skipping $pid"
       continue
     fi
-    (kill -9 $(($pid)) || kill -9 $pid) && ((count++))
+    (kill -9 $(($pid)) || kill -9 $pid) && ((++count))
   done
 
   if [ $count = 1 ]; then

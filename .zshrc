@@ -159,6 +159,17 @@ if [ -e ~/.gitignore ]; then
 fi
 ln -sf $DOTFILES/.gitignore_global ~/.gitignore && echo "~/.gitignore$GRN symlinked$NONE to $DOTFILES/.gitignore_global"
 
+# Symlink global .agents
+if [ -e ~/.agents ] || [ -L ~/.agents ]; then
+  if [ -L ~/.agents ] && [ $(symsrc ~/.agents) != "$DOTFILES/.agents" ]; then
+    mv ~/.agents ~/.agents_bkp &>/dev/null && echo "~/.agents$YLW already exists$NONE; renaming to ~/.agents_bkp"
+  elif [ ! -L ~/.agents ]; then
+    mv ~/.agents ~/.agents_bkp &>/dev/null && echo "~/.agents$YLW already exists$NONE; renaming to ~/.agents_bkp"
+  fi
+fi
+ln -sfn $DOTFILES/.agents ~/.agents && echo "~/.agents$GRN symlinked$NONE to $DOTFILES/.agents"
+ln -sfn $DOTFILES/AGENTS.md ~/AGENTS.md && echo "~/AGENTS.md$GRN symlinked$NONE to $DOTFILES/AGENTS.md"
+
 ####################################################################
 # Remove duplicates from PATH in the event of re-sourcing dotfiles #
 ####################################################################

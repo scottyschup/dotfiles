@@ -2,20 +2,63 @@
 
 set -euo pipefail
 
+SCRIPT_NAME="$(basename "$0")"
+
 usage() {
-  echo "Usage: $0"
+  echo "Usage: $SCRIPT_NAME [OPTIONS]"
   echo "Reads PR size directly from git diff statistics."
   echo
+  echo "Options:"
+  echo "  -b, --base BRANCH           Compare against this branch (default: origin/main)"
+  echo "  -h, --head BRANCH           Compare up to this branch (default: HEAD)"
+  echo "  -u, --include-uncommitted   Include current uncommitted changes in the diff"
+  echo "  -H, --help                  Show this help message"
+  echo
   echo "Examples:"
-  echo "  $0"
-  echo "  BASE=origin/main HEAD=HEAD $0"
+  echo "  $SCRIPT_NAME"
+  echo "  $SCRIPT_NAME --include-uncommitted"
+  echo "  $SCRIPT_NAME --base main --head feature-branch"
   exit 1
 }
+
+# Color variables
+RED=$(tput setaf 1)
+YLW=$(tput setaf 3)
+CYN=$(tput setaf 6)
+NONE=$(tput sgr0)
 
 # Allow callers to override the comparison range.
 # Defaults are useful for local CI-style checks against main.
 BASE="${BASE:-origin/main}"
 HEAD="${HEAD:-HEAD}"
+
+# Parse command-line arguments
+include_uncommitted=false
+while (( $# > 0 )); do
+  case "$1" in
+    -b|--base)
+      shift
+      BASE="$1"
+      shift
+      ;;
+    -h|--head)
+      shift
+      HEAD="$1"
+      shift
+      ;;
+    -u|--include-uncommitted)
+      include_uncommitted=true
+      shift
+      ;;
+    -H|--help)
+      usage
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage
+      ;;
+  esac
+done
 
 # Sanity-check that git is available and we are inside a repo.
 command -v git >/dev/null 2>&1 || {
@@ -80,9 +123,33 @@ severity_rank() {
   esac
 }
 
+colorize_metric() {
+  local classification="$1"
+  local value="$2"
+
+  case "$classification" in
+    exceptional)
+      echo "${CYN}${value}${NONE}"
+      ;;
+    "too big")
+      echo "${RED}${value}${NONE}"
+      ;;
+    large)
+      echo "${YLW}${value}${NONE}"
+      ;;
+    *)
+      echo "${value}"
+      ;;
+  esac
+}
+
 # We use --shortstat because it gives a compact machine-parseable summary like:
 # "3 files changed, 25 insertions(+), 7 deletions(-)"
-shortstat="$(git diff --shortstat "$BASE...$HEAD" || true)"
+if [[ "$include_uncommitted" == true ]]; then
+  shortstat="$(git diff --shortstat "$BASE" || true)"
+else
+  shortstat="$(git diff --shortstat "$BASE...$HEAD" || true)"
+fi
 
 # An empty shortstat means there are no changes in the diff range.
 if [[ -z "$shortstat" ]]; then
@@ -132,10 +199,10 @@ lines_rank="$(severity_rank "$lines_size")"
 overall_rank=$(( (files_rank + lines_rank) / 2 ))
 
 echo "Range: $BASE...$HEAD"
-echo "Files changed: $files_changed -> $files_size"
+echo "Files changed: $(colorize_metric "$files_size" "$files_changed -> $files_size")"
 echo "Insertions: $insertions"
 echo "Deletions: $deletions"
-echo "Lines changed: $lines_changed -> $lines_size"
+echo "Lines changed: $(colorize_metric "$lines_size" "$lines_changed -> $lines_size")"
 echo "Overall PR rank (1 - 4): $overall_rank"
 
 # Exit non-zero when the PR is classified as "too big" or "exceptional".
