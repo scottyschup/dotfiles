@@ -1,0 +1,38 @@
+#! /opt/homebrew/bin/zsh
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source_ref="main"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -s|--source)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: $1 requires a value." >&2
+        exit 1
+      fi
+      source_ref="$2"
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "Error: unknown option: $1" >&2
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 [-s|--source <branch>] <pathspec>..." >&2
+  exit 1
+fi
+
+git restore --source="$source_ref" --staged --worktree -- "$@"

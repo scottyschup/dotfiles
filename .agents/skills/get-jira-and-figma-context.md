@@ -15,3 +15,4 @@ To retrieve context from Jira and Figma, follow these steps:
 
 # General instructions
 * do not open any links in a browser, instead use the appropriate commands to retrieve context from th relevant MCPs.
+* Use the skill `/create-new-component` from this same dir anytime a new component is needed. Use the skill `/implement-component` from this same dir to complete the implementation once the new component is created.

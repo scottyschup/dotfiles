@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TS=$(date +%Y%m%d-%H%M%S)
+BACKUP_ROOT="$HOME/copilot-vscode-backups"
+BACKUP_DIR="$BACKUP_ROOT/backup-$TS"
+mkdir -p "$BACKUP_DIR"
+
+echo "Backup location: $BACKUP_DIR"
+echo
+echo "IMPORTANT: This script WILL NOT delete Keychain items or these credential files/dirs:"
+echo "  - ~/.ssh"
+echo "  - ~/.git-credentials"
+echo "  - ~/.netrc"
+echo "  - ~/.config/gh"
+echo "  - macOS Keychain (not modified)"
+echo
+echo "The script WILL back up those credential files/directories but will NOT delete them."
+echo
+
+paths_to_backup=(
+  "/Applications/Visual Studio Code.app"
+  "/Applications/Visual Studio Code - Insiders.app"
+  "$HOME/Library/Application Support/Code"
+  "$HOME/Library/Caches/com.microsoft.VSCode"
+  "$HOME/Library/Caches/Code"
+  "$HOME/Library/Preferences/com.microsoft.VSCode.plist"
+  "$HOME/Library/Saved Application State/com.microsoft.VSCode.savedState"
+  "$HOME/.vscode"
+  "$HOME/.vscode-server"
+  "$HOME/.vscode-insiders"
+  "$HOME/.vscode/extensions"
+  "$HOME/.copilot"
+  "$HOME/.config/github-copilot"
+  "$HOME/Library/Caches/copilot"
+  "$HOME/.cache/github-copilot"
+  "$HOME/.config/gh"
+  "$HOME/.ssh"
+  "$HOME/.git-credentials"
+  "$HOME/.netrc"
+)
+
+echo "Paths to be backed up (if present):"
+for p in "${paths_to_backup[@]}"; do
+  if [ -e "$p" ]; then
+    echo "  - $p"
+  fi
+done
+
+echo
+read -rp "Proceed to create backups for the listed items? (y/N) " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+  echo "Aborted by user."
+  exit 0
+fi
+
+echo
+echo "Creating backups..."
+mkdir -p "$BACKUP_DIR/archives"
+for p in "${paths_to_backup[@]}"; do
+  if [ -e "$p" ]; then
+    name=$(echo "$p" | sed 's|/|_|g' | sed 's|^_||')
+    archive="$BACKUP_DIR/archives/${name}.tar.gz"
+    echo "  Archiving: $p -> $archive"
+    tar -czf "$archive" -C / "$(echo "$p" | sed 's|^/||')" 2>/dev/null || {
+      tar -czf "$archive" -C "$HOME" "$(echo "$p" | sed "s|$HOME/||")" 2>/dev/null || true
+    }
+  fi
+done
+
+if command -v npm >/dev/null 2>&1; then
+  NPM_ROOT=$(npm root -g 2>/dev/null || true) || true
+  echo "NPM global root: $NPM_ROOT" > "$BACKUP_DIR/npm-info.txt"
+  npm -g ls --depth=0 2>/dev/null > "$BACKUP_DIR/npm-global-list.txt" || true
+fi
+
+command -v copilot >/dev/null 2>&1 && command -v copilot > "$BACKUP_DIR/copilot-path.txt" || true
+command -v code >/dev/null 2>&1 && command -v code > "$BACKUP_DIR/code-path.txt" || true
+
+echo
+echo "Backup completed. Contents:"
+ls -la "$BACKUP_DIR"
+echo
+
+echo "Deletion phase will REMOVE application binaries, VS Code user data, Copilot extension folders, Copilot CLI npm package, and caches."
+echo "The credential items listed earlier will NOT be deleted."
+read -rp "Type 'DELETE' to proceed with deletion, anything else to abort: " delconfirm
+if [[ "$delconfirm" != "DELETE" ]]; then
+  echo "Deletion aborted. Backups remain in $BACKUP_DIR"
+  exit 0
+fi
+
+echo
+echo "Starting deletion..."
+
+sudo rm -rf "/Applications/Visual Studio Code.app" "/Applications/Visual Studio Code - Insiders.app" || true
+
+rm -rf "$HOME/Library/Application Support/Code"
+rm -rf "$HOME/Library/Caches/com.microsoft.VSCode" "$HOME/Library/Caches/Code"
+rm -rf "$HOME/Library/Preferences/com.microsoft.VSCode.plist"
+rm -rf "$HOME/Library/Saved Application State/com.microsoft.VSCode.savedState"
+
+rm -rf "$HOME/.vscode/extensions" "$HOME/Library/Application Support/Code/CachedExtensionVSIXs" "$HOME/Library/Application Support/Code/CachedExtensions" || true
+rm -rf "$HOME/.vscode" "$HOME/.vscode-server" "$HOME/.vscode-insiders" || true
+
+if command -v npm >/dev/null 2>&1; then
+  npm -g uninstall @github/copilot @githubnext/gh-copilot-cli github-copilot-cli github-copilot 2>/dev/null || true
+  if [ -n "${NPM_ROOT:-}" ]; then
+    rm -rf "$NPM_ROOT/@github/copilot" "$NPM_ROOT/@githubnext/gh-copilot-cli" 2>/dev/null || true
+  fi
+fi
+
+if command -v copilot >/dev/null 2>&1; then
+  COP_BIN=$(command -v copilot)
+  echo "Removing copilot binary at: $COP_BIN"
+  rm -f "$COP_BIN" || true
+fi
+
+rm -rf "$HOME/.copilot" "$HOME/.copilot-cli" "$HOME/.config/github-copilot" "$HOME/Library/Caches/copilot" "$HOME/.cache/github-copilot" 2>/dev/null || true
+
+if command -v code >/dev/null 2>&1; then
+  CODE_BIN=$(command -v code)
+  echo "Removing code CLI at: $CODE_BIN"
+  sudo rm -f "$CODE_BIN" || true
+fi
+
+echo
+echo "Deletion phase complete."
+echo
+echo "Verification:"
+command -v copilot >/dev/null 2>&1 && echo "copilot CLI: still present at $(command -v copilot)" || echo "copilot CLI: not found"
+command -v code >/dev/null 2>&1 && echo "code CLI: still present at $(command -v code)" || echo "code CLI: not found"
+ls -ld "/Applications/Visual Studio Code.app" "/Applications/Visual Studio Code - Insiders.app" 2>/dev/null || echo "VS Code app bundles: not present"
+echo
+echo "Remaining credential items (unchanged):"
+[ -d "$HOME/.ssh" ] && echo "  - ~/.ssh exists"
+[ -f "$HOME/.git-credentials" ] && echo "  - ~/.git-credentials exists"
+[ -f "$HOME/.netrc" ] && echo "  - ~/.netrc exists"
+[ -d "$HOME/.config/gh" ] && echo "  - ~/.config/gh exists"
+echo
+echo "Backups are stored at: $BACKUP_DIR"
