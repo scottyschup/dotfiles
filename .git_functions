@@ -21,30 +21,6 @@
 #     IdentityFile ~/.ssh/id_rsa_personal
 #   ```
 
-####################
-# Git autocomplete #
-####################
-# from: https://stackoverflow.com/a/46696505
-# our handler that returns choices by populating Bash array COMPREPLY
-# (filtered by the currently entered word ($2) via compgen builtin)
-
-# _git_branch_autocomplete() {
-#     branches=$(git branch -l | cut -c3-)
-#     COMPREPLY=($(compgen -W "$branches" -- "$2"))
-# }
-
-# we now register our handler to provide completion hints for the "gitpull" command
-
-# complete -F git_branch_delete _git_branch_autocomplete
-# complete -F git_branch_delete_usage _git_branch_autocomplete
-# complete -F git_branch_delete_local _git_branch_autocomplete
-# complete -F git_branch_delete_remote _git_branch_autocomplete
-# complete -F git_branch_delete_local_and_remote _git_branch_autocomplete
-# complete -F git_branch_set_upstream _git_branch_autocomplete
-# complete -F git_checkout _git_branch_autocomplete
-# complete -F git_checkout_last _git_branch_autocomplete
-# complete -F git_checkout_safe_force _git_branch_autocomplete
-
 ########################
 # Custom Git functions #
 ########################
@@ -369,6 +345,41 @@ function git_merge_push {
 }
 alias gmpu=git_merge_push
 
+function git_commit_message_from_branch {
+  local raw_message="${1:-}"
+  local jira_ticket=""
+  local jira_ticket_upper=""
+  local prefix="[NCFE-TBD]"
+  local remainder="$raw_message"
+  local formatted_message=""
+
+  jira_ticket=$(printf '%s\n' "$raw_message" | sed -nE 's/^([A-Za-z]{3,4}-[0-9]{1,5})([-_].*)?$/\1/p')
+  if [ "$jira_ticket" != "" ]; then
+    jira_ticket_upper=$(printf '%s' "$jira_ticket" | tr '[:lower:]' '[:upper:]')
+    prefix="[$jira_ticket_upper]"
+    remainder="${raw_message#"$jira_ticket"}"
+    remainder="${remainder#-}"
+    remainder="${remainder#_}"
+  fi
+
+  formatted_message=$(printf '%s\n' "$remainder" \
+    | tr '_-' ' ' \
+    | awk '{
+        $1=$1
+        if (NF > 0) {
+          $1=toupper(substr($1, 1, 1)) substr($1, 2)
+          print
+        }
+      }')
+
+  if [ "$formatted_message" != "" ]; then
+    printf '%s %s\n' "$prefix" "$formatted_message"
+  else
+    printf '%s\n' "$prefix"
+  fi
+}
+alias gcmb=git_commit_message_from_branch
+
 function git_new_branch {
   if [ ! $1 ]
   then
@@ -378,7 +389,6 @@ function git_new_branch {
   fi
 
   # check to make sure dotfiles are properly sourced by seeing if cgb works
-
   current_branch=`cgb`
   if [ $2 ]; then source=$2; else source=$current_branch; fi
 
@@ -397,7 +407,7 @@ function git_new_branch {
   [ $stashed -eq 1 ] && git-apply-or-skip || echo "$GRN""No stashed changes to apply$NONE"
 
   gcob $1
-  git commit --allow-empty -m "$1"
+  git commit --allow-empty -m "$(git_commit_message_from_branch "$1")"
   git push -u origin $1 --no-verify
 }
 alias gnb=git_new_branch

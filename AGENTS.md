@@ -3,7 +3,7 @@
 **ALWAYS USE THE `/terminal-workaround` SKILL WHEN RUNNING TERMINAL COMMANDS!**
 
 Use `./.agents/skills/*` when asked to use skills or unrecognized slash commands.
-Read the [Copilot Instructions](.github/copilot-instructions.md) for coding standards and best practices when contributing to this repository.
+Read the [Copilot Instructions](./.github/copilot-instructions.md) for coding standards and best practices when contributing to a repository.
 
 **Never guess or make assumptions about configuration. Always look for relevant documentation. Always reference package management files for relevant version information or run `{command} --version` in the terminal to get accurate version information. Use the version found locally to know whether you're looking at the right version of the docs.**
 

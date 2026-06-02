@@ -88,6 +88,8 @@ alias grbc="git rebase --continue"
 alias grbm="git rebase master"
 alias grbs="git rebase --skip"
 alias grh="git reset --hard" # git reset hard; cf ghr for this plus `git clean -fd`
+if [[ $(which grs) != "grs not found" && $(which grs) != '' ]]; then unalias grs; fi
+alias grs="git reset"
 alias grp="git remote prune"
 alias grpo="git remote prune origin" # removes dead branches from remote origin
 alias grr="git remote remove"

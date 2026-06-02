@@ -1,13 +1,20 @@
 #! /bin/zsh
+alias gaos=git-apply-or-skip
 alias gbh=git_branch_history
-alias gbhl="gbh list"
 alias gbhc="gbh csv"
+alias gbhl="gbh list"
 alias gblm="git_backmerge_latest_main"
 alias gbmlc='gacp . "Backmerge $(gbh last) into $(gbh current)"'
 alias gbsu="git_branch_set_upstream"
 alias gcb="git_current_branch"
+alias gco="git_checkout" # Override oh-my-zsh git plugin's gco="git checkout" with custom git_checkout function
 alias glb="gbh last"
 alias gmlc='gacp . "Merge $(gbh last) into $(gbh current)"'
+alias gob=git-orphaned-branches
+alias grs="git reset"
+alias grst="git-restore"
+alias grsts="git-restore --staged"
+alias gsot=git-stash-or-trash
 alias bks=buildkite_state
 alias fe="file_editor"
 alias hurls=handy_urls
@@ -24,11 +31,6 @@ alias netd="network_diagnostics"
 alias open_ports=port_checker_remote
 alias rbv=required-ruby-version
 alias rrv=required-ruby-version
-alias gsot=git-stash-or-trash
-alias gaos=git-apply-or-skip
-alias gob=git-orphaned-branches
-# Override oh-my-zsh git plugin's gco="git checkout" with custom git_checkout function
-alias gco="git_checkout"
 alias cpt="copy-template"
 alias jira-qa="copy-template jira-qa"
 alias jqa="copy-template jira-qa"
